@@ -1,0 +1,74 @@
+[
+  {
+    "source_turn_id": "st-001",
+    "actor_role": "operator",
+    "context_scope": "b2b_outreach",
+    "timestamp": "2026-07-10T04:00:00Z",
+    "text": "Before outreach, inspect the lead's actual business context and only then draft the message.",
+    "derived_asset_keys": ["prompt:lead_research_brief_v2", "decision:source_first_before_generation_v1"]
+  },
+  {
+    "source_turn_id": "st-002",
+    "actor_role": "operator",
+    "context_scope": "website_delivery",
+    "timestamp": "2026-07-10T04:01:00Z",
+    "text": "The website handoff must define proof, structure, and anti-template boundaries before implementation starts.",
+    "derived_asset_keys": ["prompt:website_handoff_brief_v1"]
+  },
+  {
+    "source_turn_id": "st-003",
+    "actor_role": "operator",
+    "context_scope": "content_operations",
+    "timestamp": "2026-07-10T04:02:00Z",
+    "text": "Comment drafting quality improved when post context research became mandatory instead of optional.",
+    "derived_asset_keys": ["workflow:linkedin_comment_research_v2"]
+  },
+  {
+    "source_turn_id": "st-004",
+    "actor_role": "operator",
+    "context_scope": "meeting_operations",
+    "timestamp": "2026-07-10T04:03:00Z",
+    "text": "Meeting outcomes should preserve transcript evidence and scoring outputs inside the operational record.",
+    "derived_asset_keys": ["workflow:zoom_monday_call_scoring_v1"]
+  },
+  {
+    "source_turn_id": "st-005",
+    "actor_role": "operator",
+    "context_scope": "ai_enablement",
+    "timestamp": "2026-07-10T04:04:00Z",
+    "text": "Workspace setup became reliable only after environment creation was standardized into a repeatable onboarding flow.",
+    "derived_asset_keys": ["workflow:ai_workspace_onboarding_v1"]
+  },
+  {
+    "source_turn_id": "st-006",
+    "actor_role": "architect",
+    "context_scope": "automation_infrastructure",
+    "timestamp": "2026-07-10T04:05:00Z",
+    "text": "Deterministic orchestration should remain explicit while AI is used only in bounded steps where it adds value.",
+    "derived_asset_keys": ["agent:node_red_ops_orchestrator_v1"]
+  },
+  {
+    "source_turn_id": "st-007",
+    "actor_role": "operator",
+    "context_scope": "quality_control",
+    "timestamp": "2026-07-10T04:06:00Z",
+    "text": "Generation quality consistently improved after source review became a hard prerequisite.",
+    "derived_asset_keys": ["decision:source_first_before_generation_v1"]
+  },
+  {
+    "source_turn_id": "st-008",
+    "actor_role": "reviewer",
+    "context_scope": "governance",
+    "timestamp": "2026-07-10T04:07:00Z",
+    "text": "Public demos must route only reviewed synthetic corpora and keep richer internal material isolated.",
+    "derived_asset_keys": ["practice:public_safe_demo_boundary_v1"]
+  },
+  {
+    "source_turn_id": "st-009",
+    "actor_role": "operator",
+    "context_scope": "website_delivery",
+    "timestamp": "2026-07-10T04:08:00Z",
+    "text": "A premium technical website is easier to ship when proof, architecture, and content hierarchy are defined before build execution.",
+    "derived_asset_keys": ["workflow:portfolio_site_delivery_v1"]
+  }
+]

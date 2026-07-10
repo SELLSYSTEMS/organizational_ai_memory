@@ -1,0 +1,44 @@
+[Unit]
+Description=Organizational AI Memory public application
+After=network-online.target postgresql.service organizational-ai-memory-codex.service
+Wants=network-online.target organizational-ai-memory-codex.service
+
+[Service]
+Type=simple
+User=tgops
+Group=tgops
+SupplementaryGroups=oam-codex
+WorkingDirectory=/home/admin/organizational-ai-memory
+Environment=NODE_ENV=production
+Environment=OAM_HOST=127.0.0.1
+Environment=OAM_PORT=3000
+Environment=OAM_CODEX_ASSIST_ENABLED=true
+Environment=OAM_CODEX_SOCKET_PATH=/run/organizational-ai-memory-codex/assist.sock
+Environment=OAM_PUBLIC_GENERATIONS_PER_MINUTE=6
+EnvironmentFile=/etc/tg_ops/platform.env
+ExecStart=/usr/bin/node app/server.mjs
+Restart=on-failure
+RestartSec=3s
+TimeoutStartSec=20s
+TimeoutStopSec=10s
+UMask=0027
+
+AmbientCapabilities=
+CapabilityBoundingSet=
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateTmp=true
+ProtectClock=true
+ProtectControlGroups=true
+ProtectHome=read-only
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectSystem=strict
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=true
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

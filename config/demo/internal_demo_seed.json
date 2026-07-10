@@ -1,0 +1,86 @@
+{
+  "thread": {
+    "thread_key": "oam_internal_eval_v1",
+    "brand_key": "sell_systems_hackathon_internal",
+    "scope_kind": "internal_evaluation",
+    "scope_key": "project:ridgeway_internal_eval",
+    "source_system": "sanitized_internal_demo",
+    "external_thread_ref": "internal/ridgeway-eval",
+    "title": "Ridgeway internal retrieval evaluation",
+    "language_code": "en",
+    "status": "active",
+    "metadata": {
+      "corpus": "internal_demo",
+      "visibility": "internal_demo_only",
+      "synthetic_demo": true,
+      "review_status": "internal_only",
+      "description": "Sanitized fictional corpus for private regression tests."
+    }
+  },
+  "turns": [
+    {
+      "source_turn_id": "internal-t001",
+      "actor_role": "client",
+      "actor_key": "team:ridgeway_eval",
+      "turn_kind": "message",
+      "sent_at": "2026-05-01T08:00:00Z",
+      "text_raw": "We are based in Helsinki and communication should be in English."
+    },
+    {
+      "source_turn_id": "internal-t002",
+      "actor_role": "client",
+      "actor_key": "team:ridgeway_eval",
+      "turn_kind": "message",
+      "sent_at": "2026-05-01T08:04:00Z",
+      "text_raw": "Budget is 7000 EUR per month."
+    },
+    {
+      "source_turn_id": "internal-t003",
+      "actor_role": "client",
+      "actor_key": "team:ridgeway_eval",
+      "turn_kind": "message",
+      "sent_at": "2026-05-01T08:08:00Z",
+      "text_raw": "We use Jira, Teams, and SharePoint today."
+    },
+    {
+      "source_turn_id": "internal-t004",
+      "actor_role": "client",
+      "actor_key": "team:ridgeway_eval",
+      "turn_kind": "message",
+      "sent_at": "2026-05-01T08:12:00Z",
+      "text_raw": "Timezone is EET and we need the audit ready by September 2, 2026."
+    },
+    {
+      "source_turn_id": "internal-t005",
+      "actor_role": "client",
+      "actor_key": "team:ridgeway_eval",
+      "turn_kind": "message",
+      "sent_at": "2026-05-01T08:16:00Z",
+      "text_raw": "No on-site deployment is allowed; everything should be remote."
+    },
+    {
+      "source_turn_id": "internal-t006",
+      "actor_role": "operator",
+      "actor_key": "operator:internal_eval",
+      "turn_kind": "message",
+      "sent_at": "2026-05-01T08:20:00Z",
+      "text_raw": "We will test contradiction handling, missing evidence, and source lineage."
+    },
+    {
+      "source_turn_id": "internal-t007",
+      "actor_role": "client",
+      "actor_key": "team:ridgeway_eval",
+      "turn_kind": "message",
+      "sent_at": "2026-05-15T10:00:00Z",
+      "text_raw": "Budget is 8200 EUR per month."
+    },
+    {
+      "source_turn_id": "internal-t008",
+      "actor_role": "client",
+      "actor_key": "team:ridgeway_eval",
+      "turn_kind": "message",
+      "sent_at": "2026-05-16T10:00:00Z",
+      "text_raw": "The audit is now due by September 16, 2026."
+    }
+  ]
+}

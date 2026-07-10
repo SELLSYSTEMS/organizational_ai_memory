@@ -1,0 +1,54 @@
+limit_req_zone $binary_remote_addr zone=oam_query:10m rate=1r/s;
+limit_req_zone $binary_remote_addr zone=oam_generation:10m rate=6r/m;
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name memory.sellsystems.agency;
+
+    set_real_ip_from __TRUSTED_PROXY_CIDR__;
+    real_ip_header X-Forwarded-For;
+    real_ip_recursive on;
+
+    client_max_body_size 8k;
+    limit_req_status 429;
+
+    location ^~ /internal {
+        return 404;
+    }
+
+    location = /api/public/query {
+        limit_req zone=oam_query burst=8 nodelay;
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 3s;
+        proxy_read_timeout 15s;
+    }
+
+    location = /api/public/capability-assist {
+        limit_req zone=oam_generation burst=2 nodelay;
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 3s;
+        proxy_read_timeout 12s;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 3s;
+        proxy_read_timeout 15s;
+    }
+}

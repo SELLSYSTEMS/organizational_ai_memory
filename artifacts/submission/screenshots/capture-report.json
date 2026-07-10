@@ -1,0 +1,43 @@
+{
+  "base_url": "https://memory.sellsystems.agency",
+  "captured_at": "2026-07-10T12:23:06.869Z",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "browser": "Playwright with system Chrome at /usr/bin/google-chrome",
+  "captures": [
+    {
+      "filename": "01-home-capability-memory-1440.png",
+      "route": "/",
+      "status": 200,
+      "errors": []
+    },
+    {
+      "filename": "02-demo-website-delivery-recommendation-1440.png",
+      "route": "/demo?task=website_delivery_handoff",
+      "status": 200,
+      "errors": []
+    },
+    {
+      "filename": "03-assets-governance-provenance-1440.png",
+      "route": "/assets?asset=prompt%3Awebsite_handoff_brief_v1",
+      "status": 200,
+      "errors": []
+    },
+    {
+      "filename": "04-demo-temporal-truth-1440.png",
+      "route": "/demo?task=website_delivery_handoff",
+      "status": 200,
+      "errors": []
+    },
+    {
+      "filename": "05-method-authority-1440.png",
+      "route": "/method",
+      "status": 200,
+      "errors": []
+    }
+  ],
+  "failures": [],
+  "passed": true
+}

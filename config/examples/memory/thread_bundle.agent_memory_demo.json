@@ -1,0 +1,75 @@
+{
+  "thread": {
+    "thread_key": "agent_memory_demo_thread_v1",
+    "brand_key": "sell_systems",
+    "scope_kind": "lead_dialog",
+    "scope_key": "lead:acme_hk",
+    "source_system": "memory_example_bundle",
+    "external_thread_ref": "demo/acme-hk",
+    "title": "ACME HK managed AI ops discovery thread",
+    "language_code": "en",
+    "status": "active",
+    "metadata": {
+      "demo": true,
+      "owner": "codex"
+    }
+  },
+  "turns": [
+    {
+      "source_turn_id": "t001",
+      "actor_role": "founder",
+      "actor_key": "founder:iurii",
+      "turn_kind": "message",
+      "sent_at": "2026-06-25T12:00:00Z",
+      "text_raw": "We can support your Hong Kong company with AI-managed monthly operations, server baseline, and automation maintenance."
+    },
+    {
+      "source_turn_id": "t002",
+      "actor_role": "client",
+      "actor_key": "client:acme_hk",
+      "turn_kind": "message",
+      "sent_at": "2026-06-25T12:01:00Z",
+      "text_raw": "We are based in Hong Kong and prefer short written updates in English."
+    },
+    {
+      "source_turn_id": "t003",
+      "actor_role": "client",
+      "actor_key": "client:acme_hk",
+      "turn_kind": "message",
+      "sent_at": "2026-06-25T12:02:00Z",
+      "text_raw": "Current budget is 3000 USD per month."
+    },
+    {
+      "source_turn_id": "t004",
+      "actor_role": "client",
+      "actor_key": "client:acme_hk",
+      "turn_kind": "message",
+      "sent_at": "2026-06-25T12:03:00Z",
+      "text_raw": "We use Monday.com, Slack, and Google Drive today."
+    },
+    {
+      "source_turn_id": "t005",
+      "actor_role": "client",
+      "actor_key": "client:acme_hk",
+      "turn_kind": "message",
+      "sent_at": "2026-06-25T12:04:00Z",
+      "text_raw": "We do not want shipping or on-site hardware; everything should be remote."
+    },
+    {
+      "source_turn_id": "t006",
+      "actor_role": "founder",
+      "actor_key": "founder:iurii",
+      "turn_kind": "message",
+      "sent_at": "2026-06-25T12:05:00Z",
+      "text_raw": "We will start with an audit, server baseline, and CRM cleanup."
+    },
+    {
+      "source_turn_id": "t007",
+      "actor_role": "client",
+      "actor_key": "client:acme_hk",
+      "turn_kind": "message",
+      "sent_at": "2026-06-25T12:06:00Z",
+      "text_raw": "Timezone is HKT and we need the first phase before July 15, 2026."
+    }
+  ]
+}
