@@ -48,9 +48,9 @@ asset -> observation -> source turn
 6. Codex runs through a Unix-socket sidecar under the isolated `oam-codex`
    account. It has no database credentials, application environment, or
    repository access.
-7. Codex authentication is not currently provisioned for that account. The
-   assist API therefore returns its deterministic recommendation with an HTTP
-   `200` fallback interaction; application readiness does not depend on Codex.
+7. The isolated account is authenticated and the generated path is verified.
+   Any model or sidecar failure still returns the deterministic recommendation
+   with an HTTP `200` fallback; application readiness does not depend on Codex.
 8. The original public continuity corpus remains `public_demo + public_safe`.
    Its internal regression counterpart is a separate tenant with no public
    route.
@@ -244,8 +244,10 @@ See:
 
 1. Deterministic Postgres selection is authoritative; Spark prose is optional
    and non-authoritative.
-2. The isolated `oam-codex` account is not authenticated yet, so generation
-   currently exercises the documented fallback path.
+2. The isolated generated path is live, but remains optional and bounded by a
+   7-second deadline, concurrency 1, and strict rate limits. The deployed
+   ChatGPT-account login supports the exact `gpt-5.3-codex-spark` pin; a direct
+   `gpt-5.3-spark` probe was rejected for that authentication type.
 3. Semantic retrieval is intentionally non-gating and unavailable.
 4. The asset seed is intentionally compact: 9 assets and 5 tasks, not a broad
    enterprise catalog.

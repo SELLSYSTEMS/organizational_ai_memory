@@ -1,7 +1,8 @@
 # Final Organizational AI Memory Hackathon MVP Handoff
 
 Status: packaged and verified on the target instance at
-`2026-07-10T12:27:25Z`.
+`2026-07-10T12:27:25Z`; isolated generation was activated and reverified at
+`2026-07-10T14:13:07Z`.
 
 Public product: `https://memory.sellsystems.agency/`
 
@@ -153,23 +154,31 @@ decision:source_first_before_generation_v1          approved
 
 ### Optional Spark interaction
 
-The sidecar is pinned to `gpt-5.3-codex-spark`. The isolated account currently
-reports `Not logged in`, so the public assist path truthfully returned:
+The sidecar is pinned to `gpt-5.3-codex-spark`. The isolated account reports
+`Logged in using ChatGPT`, and the public assist path now returns:
 
 ```text
-interaction.status: fallback
+interaction.status: generated
 interaction.model: gpt-5.3-codex-spark
-interaction.fallback_reason: unavailable
+interaction.fallback_reason: null
 selected assets: all three canonical deterministic records
 HTTP status: 200
 ```
 
-The deterministic recommendation remains complete and visible. Readiness does
-not depend on model authentication.
+The generated explanation is labeled non-authoritative. The deterministic
+recommendation remains complete and visible, and readiness does not depend on
+model authentication.
 
-One fresh device-auth request was started only to confirm the isolated account
-path and was cancelled before authorization. No credential was written or
-copied. Root was not authenticated for the production assist path.
+The operator later completed device authorization directly under `oam-codex`.
+The credential is owned by that isolated account; no credential was copied from
+another user and root was not authenticated for the production assist path.
+
+A runner-equivalent `gpt-5.3-spark` probe was also performed under that exact
+isolated ChatGPT login. Codex returned HTTP `400`, stating that the model name
+is not supported for ChatGPT-account Codex. The verified
+`gpt-5.3-codex-spark` pin was restored immediately. Its next canonical public
+request returned generated prose in `3.19` seconds with all three deterministic
+asset keys unchanged.
 
 ### Temporal continuity
 
@@ -193,7 +202,7 @@ Each fact retains `fact -> observation -> source turn` provenance.
 | Public HTTPS browser QA | 35 passed, 0 failed |
 | Canonical Demo default | `website_delivery_handoff` |
 | Recommendation row contract | 3 rows, 3 review badges, 3 why-it-worked lines, 3 evidence links |
-| Assist browser state | deterministic fallback, recommendation preserved |
+| Assist browser state | generated, non-authoritative, recommendation preserved |
 | Temporal browser state | 2 current and 2 superseded fact rows |
 | Recommendation provenance navigation | canonical prompt opened with 1 expanded evidence path |
 | Curated screenshots | 5 captured, 0 browser errors |
@@ -205,8 +214,8 @@ Each fact retains `fact -> observation -> source turn` provenance.
 Raw browser QA remains ignored locally. The final live report is:
 
 ```text
-artifacts/qa/submission-final-live/report.json
-generated_at: 2026-07-10T12:22:08.484Z
+artifacts/qa/submission-post-auth-live/report.json
+generated_at: 2026-07-10T14:14:17.541Z
 base_url: https://memory.sellsystems.agency
 ```
 
@@ -236,7 +245,7 @@ node --check scripts/evaluation/run_app_browser_qa.mjs
 
 OAM_QA_BASE_URL=https://memory.sellsystems.agency \
   node scripts/evaluation/run_app_browser_qa.mjs \
-  artifacts/qa/submission-final-live
+  artifacts/qa/submission-post-auth-live
 
 node scripts/evaluation/capture_submission_screenshots.mjs \
   artifacts/submission/screenshots
@@ -285,15 +294,32 @@ git diff --cached --name-status
 git commit -m "Package Organizational AI Memory hackathon MVP"
 ```
 
+Post-authentication activation also ran:
+
+```bash
+runuser -u oam-codex -- \
+  env HOME=/var/lib/oam-codex \
+  CODEX_HOME=/var/lib/oam-codex/.codex \
+  codex login status
+
+./scripts/deploy/install_codex_sidecar.sh
+systemctl restart organizational-ai-memory-codex.service
+systemctl is-active organizational-ai-memory-codex.service
+
+curl -fsS -H 'content-type: application/json' \
+  -d '{"task_key":"website_delivery_handoff","request":"Adapt this starting point for a small agency team preparing a client handoff."}' \
+  https://memory.sellsystems.agency/api/public/capability-assist
+```
+
 Targeted staged scans were also run for private keys, bearer headers, API-key
 and password assignments, the provided Stitch-key prefix, private-address
 patterns, SSH material, and restricted host aliases. Matches were limited to
 empty or `change-me` examples, a deliberate error-redaction test value, and the
 publishing guide's own scan expressions.
 
-## 6. Later isolated authentication
+## 6. Isolated authentication maintenance
 
-The operator can authenticate only the isolated sidecar account:
+If the isolated session expires, authenticate only the sidecar account:
 
 ```bash
 sudo runuser -u oam-codex -- \
@@ -315,21 +341,19 @@ sudo systemctl restart organizational-ai-memory.service
 ```
 
 Finally run the canonical assist request and confirm
-`interaction.status = "generated"` before changing any availability claim or
-capturing generated-state evidence. Do not authenticate as root and do not copy
-another user's Codex state.
+`interaction.status = "generated"` with model `gpt-5.3-codex-spark`. Do not
+authenticate as root and do not copy another user's Codex state.
 
 ## 7. Remaining work
 
 Operator-only:
 
-1. authenticate `oam-codex` if generated adaptation is desired
-2. provide and confirm a Git remote, then push the local `main` branch
-3. record the planned 110-second video or upload another factual recording
-4. create the Builder Hub project draft
-5. confirm the hackathon track
-6. upload repository, video, and screenshots
-7. review declarations and submit in the portal
+1. provide and confirm a Git remote, then push the local `main` branch
+2. record the planned 110-second video or upload another factual recording
+3. create the Builder Hub project draft
+4. confirm the hackathon track
+5. upload repository, video, and screenshots
+6. review declarations and submit in the portal
 
 Product gaps remain factual and documented in `docs/KNOWN_GAPS.md`:
 
@@ -340,7 +364,7 @@ Product gaps remain factual and documented in `docs/KNOWN_GAPS.md`:
 - authored, not autonomously inferred, duplication and gap signals
 - compact seed and incomplete external lineage
 - no broad ingestion, autonomous writeback, or multi-tenant administration
-- no real generated-path browser verification until isolated authentication
+- authenticated CLI subprocess edge cases are not exhaustively unit-tested
 
 ## 8. Known degraded modes
 

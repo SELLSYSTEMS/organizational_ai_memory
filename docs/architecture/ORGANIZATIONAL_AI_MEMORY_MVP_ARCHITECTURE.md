@@ -109,8 +109,10 @@ deadline fails, the endpoint returns HTTP `200` with the complete
 deterministic recommendation and an explicit fallback interaction. Application
 readiness does not depend on optional generation.
 
-As verified on `2026-07-10`, the isolated `oam-codex` account is not
-authenticated, so the live assist path currently exercises this fallback.
+As verified on `2026-07-10`, the isolated `oam-codex` account is authenticated
+and the live assist path returns bounded generated prose. The fallback contract
+remains active for any authentication, model, schema, socket, or deadline
+failure.
 
 ### Continuity query
 

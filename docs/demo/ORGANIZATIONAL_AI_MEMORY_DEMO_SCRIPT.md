@@ -65,23 +65,16 @@ Adapt this starting point for a small agency team preparing a client handoff.
 
 Select `Generate adaptation`.
 
-Current expected result:
-
-```text
-Deterministic records loaded; adaptation unavailable.
-```
+Current expected result: concise prose labeled
+`Non-authoritative - gpt-5.3-codex-spark` below the unchanged deterministic
+record.
 
 Say:
 
-> The isolated Codex account is not authenticated yet, so the API returns an
-> HTTP 200 fallback with the full deterministic recommendation. Readiness does
-> not depend on optional generation.
-
-After isolated authentication is deliberately provisioned, the same action can
-show concise prose labeled `Non-authoritative - gpt-5.3-codex-spark`. The model
-receives only the selected public-safe record, cannot choose new assets, cannot
-write memory, and cannot access the database, application environment, or
-repository.
+> The isolated Codex account is authenticated, but the model receives only the
+> selected public-safe record. It cannot choose new assets, write memory, or
+> access the database, application environment, or repository. If generation
+> fails, the API returns HTTP 200 with the full deterministic recommendation.
 
 ## 5. Prove temporal truth
 

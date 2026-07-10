@@ -7,7 +7,7 @@ capabilities that are not deployed.
 
 | Gap | Current behavior | Judge impact or next step |
 | --- | --- | --- |
-| Spark authentication | The isolated `oam-codex` account is not logged in. Capability assist returns HTTP `200` with the authoritative deterministic recommendation and an explicit `fallback` interaction. | The complete memory demo still works. An operator can authenticate that account later without authenticating or running the application as root. |
+| Model entitlement | The isolated ChatGPT-account login generates successfully with `gpt-5.3-codex-spark`. The alternate `gpt-5.3-spark` name returned HTTP `400` under the same isolated identity and runner flags. | Keep the verified model pin. Re-test under the production account before changing model identifiers or authentication type. |
 | Semantic retrieval | `pgvector` is installed, but no live semantic retrieval lane is configured. | Exact and lexical Postgres retrieval remains available and is identified honestly in the UI. |
 | Governance enforcement | Assets carry visibility, review status, version, owner, consumer roles, and validation metadata. There is no authenticated user model, enforced RBAC, or role-aware approval action. | Describe this as a governance record and product direction, not as deployed access control. |
 | Historical growth analytics | The analytics route reports current asset counts and stored duplication and gap signals. It has no time-series snapshots or growth history. | Do not claim organizational-memory growth trends. A future version needs periodic snapshots and dated comparison queries. |
@@ -17,7 +17,7 @@ capabilities that are not deployed.
 | Incomplete external lineage | Some prior-version and usage keys refer to assets outside the sanitized pack. They are retained as external references rather than fabricated records. | The inspector can show the reference, but cannot open a complete historical version catalog. |
 | Ingestion and writeback | There is no broad connector library, autonomous extraction service, or model-driven writeback in the public MVP. Seed imports are controlled scripts. | The demo proves storage, retrieval, provenance, and reuse, not a production ingestion platform. |
 | Multi-tenant administration | Public APIs are deliberately pinned to one public-safe demonstration scope. There is no tenant administration surface. | Scope isolation is real for the demo, but this is not a general multi-tenant product. |
-| Generated-path test coverage | The fallback path and sidecar boundary are tested, but a real generated browser interaction cannot be verified until isolated authentication is provisioned. | After login, run the canonical assist request and record `interaction.status = "generated"` before changing any availability claim. |
+| Generated subprocess coverage | The live generated browser path, strict response contract, and fallback boundary are verified. Unit tests do not yet exercise every authenticated CLI subprocess outcome such as deadline termination and malformed provider output. | Keep the live canonical smoke test and add isolated subprocess fixtures before treating model-runtime coverage as exhaustive. |
 | Submission operations | Source and evidence artifacts can be prepared locally, but hackathon portal actions remain manual. | An operator must create the project entry, confirm the track, upload artifacts, and submit. |
 
 ## Authority during degraded operation

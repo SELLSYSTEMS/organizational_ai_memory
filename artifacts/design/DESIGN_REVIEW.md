@@ -88,10 +88,10 @@ The generation treatment is accepted only with all of these constraints:
    from an HTTP `200` response
 8. `/api/readyz` does not depend on optional generation
 
-The `oam-codex` account is not authenticated at this review point. Therefore,
-the fallback is the only truthful current interaction state. A generated-state
-screenshot must not be presented as live evidence until isolated login and an
-actual public response are verified.
+The `oam-codex` account is authenticated and a live public generated response
+has been verified. Generated prose remains visually subordinate and
+non-authoritative; the deterministic fallback remains the required failure
+state.
 
 ## Stitch bounded-wave review
 
@@ -157,12 +157,12 @@ permitted in the first viewport.
 | Temporal truth | Current and superseded facts remain available | Preserved from continuity phase |
 | Responsive behavior | Table-to-record conversion, no horizontal page overflow | Passed at 390/560/680/768/1080/1280/1440 |
 | Accessibility | Keyboard filters/rows/disclosures, focus, labels, live status | Browser interaction checks passed |
-| Runtime copy | Live generation state matches isolated authentication | Deterministic fallback verified; generated renderer contract-tested |
+| Runtime copy | Live generation state matches isolated authentication | Live generated path verified; deterministic fallback contract-tested |
 
 Raw browser QA output remains local and ignored. Five curated, public-safe
 captures plus a machine-readable report are stored under
 `artifacts/submission/screenshots/`. The final browser suite exercises 35
 route, viewport, interaction, fallback, and provenance checks against the live
 HTTPS origin. The mobile interaction retains three stored recommendation rows
-through Spark fallback and returns four grounded fact rows from the evidence
-query.
+through a non-authoritative generated adaptation and returns four grounded fact
+rows from the evidence query.

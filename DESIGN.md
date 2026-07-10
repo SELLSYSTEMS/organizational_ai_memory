@@ -211,8 +211,8 @@ Typography:
   minute, including direct local socket traffic.
 - Any Spark failure returns HTTP `200` with the deterministic selection and a
   fallback interaction. Application readiness does not depend on Spark.
-- The isolated Codex account is not authenticated yet; the current truthful UI
-  state is the fallback.
+- The isolated Codex account is authenticated; the current verified UI state is
+  generated prose below the unchanged deterministic recommendation.
 - Empty retrieval or missing metadata produces an honest empty state.
 - Semantic retrieval failure is a degraded optional lane; exact Postgres
   retrieval remains available.

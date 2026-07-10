@@ -174,9 +174,10 @@ Provision a separate login only through the command printed by the installer:
 sudo runuser -u oam-codex -- env HOME=/var/lib/oam-codex CODEX_HOME=/var/lib/oam-codex/.codex codex login --device-auth
 ```
 
-Authentication has not yet been provisioned for `oam-codex`. Do not report
-Spark generation as available until that command is completed and an actual
-assist response returns `interaction.status = "generated"`.
+Authentication is provisioned for `oam-codex`. Preserve that account boundary:
+never copy credentials from another user and never authenticate the production
+assist path as root. Treat `interaction.status = "generated"` from the public
+canonical request as the availability check.
 
 After the login is provisioned, restart both units so group membership and
 credentials are read cleanly:
@@ -206,6 +207,12 @@ Unix socket. The sidecar:
 - applies a sidecar-wide budget of 12 generation attempts per minute, including
   direct local socket traffic
 - exposes no TCP listener
+
+Model entitlement is authentication-specific. On `2026-07-10`, an isolated
+runner-equivalent probe of `gpt-5.3-spark` under the production `oam-codex`
+ChatGPT login returned HTTP `400` because that model name is not supported for
+ChatGPT-account Codex. Keep `gpt-5.3-codex-spark` pinned unless the same
+isolated identity and production flags pass a fresh probe with another model.
 
 nginx and the application each cap public assist traffic at 6 requests per IP
 per minute. The nginx upstream timeout is 12 seconds; the sidecar runner
@@ -279,9 +286,10 @@ ss -ltnp
 ```
 
 Expected application listener: `127.0.0.1:3000`, not `0.0.0.0:3000`. The
-Codex sidecar appears as a Unix socket, not a TCP port. At present, the login
-status command is expected to report that `oam-codex` is not logged in, and the
-assist call should return a deterministic fallback.
+Codex sidecar appears as a Unix socket, not a TCP port. The login status command
+is expected to report `Logged in using ChatGPT`, and the canonical assist call
+should return `interaction.status = "generated"` with model
+`gpt-5.3-codex-spark`.
 
 Verify nginx and public routing:
 
@@ -295,8 +303,8 @@ curl -fsS https://memory.sellsystems.agency/api/readyz
 ## Honest runtime limits
 
 1. Deterministic Postgres records, not generated prose, are authoritative.
-2. The optional Spark account is unprovisioned and currently follows the
-   fallback path.
+2. The optional Spark account is provisioned and verified, but generation
+   remains non-authoritative and can fall back without affecting readiness.
 3. `pgvector` is installed, but no semantic retrieval lane is live.
 4. The asset pack is a compact sanitized seed, not a complete enterprise
    capability catalog.
