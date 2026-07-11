@@ -1012,6 +1012,92 @@ pre {
   color: var(--muted);
 }
 
+.filter-bar {
+  display: flex;
+  min-height: 45px;
+  align-items: stretch;
+  border-bottom: 1px solid var(--rule);
+}
+
+.filter-bar .view-tabs {
+  min-width: 0;
+  flex: 1;
+  border-bottom: 0;
+}
+
+.filter-bar > .history-disclosure {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 2px 0 16px;
+  border: 0;
+  background: transparent;
+  color: var(--blue);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 680;
+}
+
+.audit-history-band {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  gap: 24px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface-soft);
+}
+
+.audit-history-context {
+  display: grid;
+  min-width: 240px;
+  gap: 2px;
+  padding-left: 12px;
+}
+
+.audit-history-context strong {
+  font-size: 11px;
+}
+
+.audit-history-context small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.audit-history-tabs {
+  display: flex;
+  align-self: stretch;
+  gap: 8px;
+}
+
+.audit-history-tabs button {
+  min-height: 34px;
+  align-self: center;
+  padding: 0 10px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--surface);
+  cursor: pointer;
+  color: #39423e;
+  font-size: 10px;
+}
+
+.audit-history-tabs button[aria-selected="true"] {
+  border-color: var(--teal);
+  background: var(--teal-soft);
+  color: var(--teal-dark);
+  font-weight: 700;
+}
+
+.audit-history-tabs button.is-alert {
+  color: var(--red);
+}
+
+.audit-history-tabs span {
+  margin-left: 4px;
+  color: var(--muted);
+}
+
 .principals-page,
 .candidates-page {
   display: grid;
@@ -2117,6 +2203,26 @@ pre {
 
   .view-tabs button {
     flex: 0 0 auto;
+  }
+
+  .filter-bar > .history-disclosure {
+    flex: 0 0 auto;
+  }
+
+  .audit-history-band {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .audit-history-tabs {
+    width: 100%;
+    overflow-x: auto;
+    padding: 0 12px;
+  }
+
+  .job-drawer {
+    margin: 32px -14px -44px;
   }
 
   .principal-inspector > header,

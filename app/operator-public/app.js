@@ -1,4 +1,9 @@
 import { filterProvisioningJobs } from './provisioning-filter.js';
+import {
+  filterPrincipals,
+  isOperationalPrincipal,
+  principalFilterCounts,
+} from './principal-filter.js';
 
 const mountPrefix = window.location.pathname === '/architect'
   || window.location.pathname.startsWith('/architect/')
@@ -25,6 +30,8 @@ const ui = {
   principalTab: 'application',
   principalFilter: 'operational',
   provisioningFilter: 'current',
+  principalHistoryOpen: false,
+  provisioningHistoryOpen: false,
   principalSearch: '',
   effectiveAccess: null,
   effectiveAccessError: '',
@@ -214,21 +221,6 @@ function personalPairFor(principalId) {
   )) || null;
 }
 
-function isProofFixture(record = {}) {
-  const value = [
-    record.display_name,
-    record.principal_key,
-    record.title,
-    record.candidate_key,
-    record.original_name,
-  ].filter(Boolean).join(' ').toLowerCase();
-  return value.includes('identity proof') || value.includes('proofisolated');
-}
-
-function isOperationalPrincipal(principal = {}) {
-  return !isProofFixture(principal) && ['active', 'draft'].includes(principal.status);
-}
-
 function operationalPrincipals() {
   return ui.state.principals.filter(isOperationalPrincipal);
 }
@@ -332,8 +324,15 @@ async function refreshAll({ render = false } = {}) {
     ui.loadErrors.audit = errorMessage(auditResult.reason);
   }
   const selectedPrincipal = principalById(ui.selectedPrincipalId);
-  if (!selectedPrincipal || (ui.principalFilter === 'operational' && isProofFixture(selectedPrincipal))) {
-    ui.selectedPrincipalId = preferredOperationalPrincipal()?.id || '';
+  const visiblePrincipals = filterPrincipals(
+    ui.state.principals,
+    ui.principalFilter,
+    ui.principalSearch,
+  );
+  if (!selectedPrincipal || !visiblePrincipals.some((principal) => principal.id === selectedPrincipal.id)) {
+    ui.selectedPrincipalId = ui.principalFilter === 'operational'
+      ? preferredOperationalPrincipal()?.id || ''
+      : visiblePrincipals[0]?.id || '';
   }
   if (ui.selectedCandidateId !== '__closed__') {
     const selectedCandidate = ui.candidates.find((candidate) => candidate.id === ui.selectedCandidateId);
@@ -458,8 +457,12 @@ function renderPageError(title, message) {
 function renderOverview() {
   const principals = operationalPrincipals();
   const principalIds = new Set(principals.map((principal) => principal.id));
-  const activeBindings = ui.state.runtime_bindings.filter((item) => item.status === 'active').length;
-  const openJobs = ui.state.provisioning_jobs.filter((item) => ['queued', 'confirmed', 'running'].includes(item.status)).length;
+  const activeBindings = ui.state.runtime_bindings.filter((item) => (
+    principalIds.has(item.principal_id) && item.status === 'active'
+  )).length;
+  const openJobs = ui.state.provisioning_jobs.filter((item) => (
+    principalIds.has(item.principal_id) && ['queued', 'confirmed', 'running'].includes(item.status)
+  )).length;
   const pendingCandidates = candidateCount(['review_pending', 'reviewed']);
   const recentJobs = ui.state.provisioning_jobs.filter((job) => principalIds.has(job.principal_id)).slice(0, 5);
   return `
@@ -477,7 +480,7 @@ function renderOverview() {
       </section>
       <div class="overview-columns">
         <section class="open-section"><div class="section-heading"><h2>Recent provisioning</h2><button class="text-button" data-view-target="provisioning">View all</button></div>${recentJobs.length ? `<div class="compact-list">${recentJobs.map((job) => `<button data-job-id="${escapeHtml(job.id)}" data-view-target="provisioning"><span><strong>${escapeHtml(humanize(job.job_type || job.plan?.operation))}</strong><small>${escapeHtml(principalName(job.principal_id))}</small></span>${statusBadge(job.status)}<time>${escapeHtml(formatDate(job.requested_at, { short: true }))}</time></button>`).join('')}</div>` : renderEmpty('No provisioning jobs are recorded.')}</section>
-        <section class="open-section"><div class="section-heading"><h2>Proof posture</h2><button class="text-button" data-view-target="access-proofs">View all</button></div>${renderProofSummary()}</section>
+        <section class="open-section"><div class="section-heading"><h2>Operational proof posture</h2><button class="text-button" data-view-target="access-proofs">Open proof history</button></div>${renderProofSummary(principalIds)}</section>
       </div>
     </section>
   `;
@@ -499,9 +502,11 @@ function renderIdentityPlaneTable(principals = operationalPrincipals()) {
   `;
 }
 
-function renderProofSummary() {
+function renderProofSummary(principalIds = null) {
   const counts = new Map();
-  ui.state.proof_runs.forEach((proof) => counts.set(proof.status, (counts.get(proof.status) || 0) + 1));
+  ui.state.proof_runs
+    .filter((proof) => !principalIds || principalIds.has(proof.target_key))
+    .forEach((proof) => counts.set(proof.status, (counts.get(proof.status) || 0) + 1));
   return `<div class="proof-summary"><div>${statusBadge('passed')}<strong>${counts.get('passed') || 0}</strong></div><div>${statusBadge('failed')}<strong>${counts.get('failed') || 0}</strong></div><div>${statusBadge('inconclusive')}<strong>${counts.get('inconclusive') || 0}</strong></div><p>Values are derived from recorded proof runs. This console does not infer unrecorded checks.</p></div>`;
 }
 
@@ -510,23 +515,12 @@ function principalCell(principal) {
 }
 
 function filteredPrincipals() {
-  const search = ui.principalSearch.toLowerCase();
-  return ui.state.principals.filter((principal) => (
-    (ui.principalFilter === 'all'
-      || (ui.principalFilter === 'operational' && isOperationalPrincipal(principal))
-      || (ui.principalFilter === 'proof_fixtures' && isProofFixture(principal))
-      || ui.principalFilter === principal.principal_kind
-      || (ui.principalFilter === 'suspended' && principal.status === 'suspended'))
-    && (!search || `${principal.display_name} ${principal.principal_key}`.toLowerCase().includes(search))
-  ));
+  return filterPrincipals(ui.state.principals, ui.principalFilter, ui.principalSearch);
 }
 
 function renderPrincipals() {
   const principals = filteredPrincipals();
-  const humans = ui.state.principals.filter((item) => item.principal_kind === 'human').length;
-  const agents = ui.state.principals.filter((item) => item.principal_kind === 'agent').length;
-  const suspended = ui.state.principals.filter((item) => item.status === 'suspended').length;
-  const fixtures = ui.state.principals.filter(isProofFixture).length;
+  const counts = principalFilterCounts(ui.state.principals);
   const selected = principals.find((principal) => principal.id === ui.selectedPrincipalId) || principals[0] || null;
   if (selected) ui.selectedPrincipalId = selected.id;
   const selectedCanSuspend = selected
@@ -541,9 +535,8 @@ function renderPrincipals() {
           <label class="search-control">${icon('search', 16)}<input type="search" placeholder="Search principals" value="${escapeHtml(ui.principalSearch)}" data-principal-search /></label>
           <button class="icon-button bordered" type="button" title="Refresh principals" aria-label="Refresh principals" data-refresh>${icon('refresh', 17)}</button>
         </div>
-        <div class="view-tabs" role="tablist" aria-label="Principal filters">
-          ${[['operational', 'Operational', operationalPrincipals().length], ['all', 'All principals', ui.state.principals.length], ['human', 'Humans', humans], ['agent', 'Agents', agents], ['suspended', 'Suspended', suspended], ['proof_fixtures', 'Proof fixtures', fixtures]].map(([key, label, count]) => `<button type="button" role="tab" aria-selected="${ui.principalFilter === key}" data-principal-filter="${key}">${escapeHtml(label)} <span>${count}</span></button>`).join('')}
-        </div>
+        <div class="filter-bar"><div class="view-tabs" role="tablist" aria-label="Operational principal filters">${[['operational', 'Operational', counts.operational], ['human', 'Humans', counts.human], ['agent', 'Agents', counts.agent]].map(([key, label, count]) => `<button type="button" role="tab" aria-selected="${ui.principalFilter === key}" data-principal-filter="${key}">${escapeHtml(label)} <span>${count}</span></button>`).join('')}</div><button class="history-disclosure" type="button" data-principal-history-toggle aria-expanded="${ui.principalHistoryOpen}" aria-controls="principal-audit-history">${icon('list', 15)}Audit history${icon(ui.principalHistoryOpen ? 'chevron-down' : 'chevron-right', 13)}</button></div>
+        ${ui.principalHistoryOpen ? `<div class="audit-history-band" id="principal-audit-history"><span class="audit-history-context"><strong>Retained principal history</strong><small>Suspended identities and proof fixtures remain available for governance review.</small></span><div class="audit-history-tabs" role="tablist" aria-label="Principal audit-history filters">${[['all', 'All principals', counts.all], ['suspended', 'Suspended', counts.suspended], ['proof_fixtures', 'Proof fixtures', counts.proof_fixtures]].map(([key, label, count]) => `<button type="button" role="tab" aria-selected="${ui.principalFilter === key}" data-principal-filter="${key}">${escapeHtml(label)} <span>${count}</span></button>`).join('')}</div></div>` : ''}
         <div class="table-scroll principal-table-wrap">
           <table class="data-table principal-table"><thead><tr><th>Principal</th><th>Type</th><th>Role</th><th>Runtime bindings</th><th>Effective state</th><th>Proof status</th><th>Last activity</th></tr></thead><tbody>
             ${principals.map((principal) => {
@@ -554,7 +547,7 @@ function renderPrincipals() {
             }).join('') || `<tr><td colspan="7">${renderEmpty('No principals match this view.')}</td></tr>`}
           </tbody></table>
         </div>
-        <footer class="table-footer"><span>Showing ${principals.length} of ${ui.state.principals.length}</span><span>Rows per page: <strong>200</strong></span></footer>
+        <footer class="table-footer"><span>${ui.principalHistoryOpen && ['all', 'suspended', 'proof_fixtures'].includes(ui.principalFilter) ? `Showing ${principals.length} retained records` : `Showing ${principals.length} operational principals`}</span><span>Rows per page: <strong>200</strong></span></footer>
       </div>
       ${selected ? renderPrincipalInspector(selected) : ''}
     </section>
@@ -596,11 +589,8 @@ function renderProvisioning() {
   const allJobs = ui.state.provisioning_jobs;
   const operationalPrincipalIds = operationalPrincipals().map((principal) => principal.id);
   const jobs = filterProvisioningJobs(allJobs, operationalPrincipalIds, ui.provisioningFilter);
-  const filters = [
-    ['current', 'Current', filterProvisioningJobs(allJobs, operationalPrincipalIds, 'current').length],
-    ['failed', 'Failures', filterProvisioningJobs(allJobs, operationalPrincipalIds, 'failed').length],
-    ['all', 'All history', allJobs.length],
-  ];
+  const currentCount = filterProvisioningJobs(allJobs, operationalPrincipalIds, 'current').length;
+  const failureCount = filterProvisioningJobs(allJobs, operationalPrincipalIds, 'failed').length;
   const selected = ui.selectedJobId === '__closed__'
     ? null
     : jobs.find((job) => job.id === ui.selectedJobId) || jobs[0];
@@ -609,7 +599,7 @@ function renderProvisioning() {
     : ui.provisioningFilter === 'all'
       ? 'No provisioning jobs are recorded.'
       : 'No current provisioning jobs are recorded.';
-  return `<section class="page-surface provisioning-page">${pageHeader('Provisioning', 'Queue an immutable plan, inspect its hash and revision, then confirm it explicitly.', `<button class="primary-button" data-open-dialog="provision">${icon('plus', 15)}New plan</button>`)}<div class="view-tabs" role="tablist" aria-label="Provisioning job filters">${filters.map(([key, label, count]) => `<button type="button" role="tab" class="${key === 'failed' && count ? 'is-alert' : ''}" aria-selected="${ui.provisioningFilter === key}" data-provisioning-filter="${key}">${escapeHtml(label)} <span>${count}</span></button>`).join('')}</div><div class="table-scroll"><table class="data-table"><thead><tr><th>Requested</th><th>Principal</th><th>Operation</th><th>Status</th><th>Revision</th><th>Plan hash</th><th>Action</th></tr></thead><tbody>${jobs.map((job) => `<tr tabindex="0" data-job-id="${escapeHtml(job.id)}" aria-selected="${selected?.id === job.id}"><td>${escapeHtml(formatDate(job.requested_at, { short: true }))}</td><td>${escapeHtml(principalName(job.principal_id))}</td><td>${escapeHtml(humanize(job.plan?.operation || job.job_type))}</td><td>${statusBadge(job.status)}</td><td>${escapeHtml(String(job.revision ?? '—'))}</td><td><code title="${escapeHtml(job.plan_hash)}">${escapeHtml(compact(job.plan_hash, 20))}</code></td><td>${job.status === 'queued' ? `<button class="text-button" data-confirm-job="${escapeHtml(job.id)}">Confirm</button>` : '<span class="not-recorded">—</span>'}</td></tr>`).join('') || `<tr><td colspan="7">${renderEmpty(emptyMessage)}</td></tr>`}</tbody></table></div><footer class="table-footer"><span>Showing ${jobs.length} of ${allJobs.length}</span><span>Ledger limit: <strong>200</strong></span></footer>${selected ? renderProvisioningDrawer(selected) : ''}</section>`;
+  return `<section class="page-surface provisioning-page">${pageHeader('Provisioning', 'Queue an immutable plan, inspect its hash and revision, then confirm it explicitly.', `<button class="primary-button" data-open-dialog="provision">${icon('plus', 15)}New plan</button>`)}<div class="filter-bar"><div class="view-tabs" role="tablist" aria-label="Current provisioning filters"><button type="button" role="tab" aria-selected="${ui.provisioningFilter === 'current'}" data-provisioning-filter="current">Current <span>${currentCount}</span></button></div><button class="history-disclosure" type="button" data-provisioning-history-toggle aria-expanded="${ui.provisioningHistoryOpen}" aria-controls="provisioning-audit-history">${icon('list', 15)}Audit history${icon(ui.provisioningHistoryOpen ? 'chevron-down' : 'chevron-right', 13)}</button></div>${ui.provisioningHistoryOpen ? `<div class="audit-history-band" id="provisioning-audit-history"><span class="audit-history-context"><strong>Retained provisioning history</strong><small>Failed and superseded jobs remain immutable and reviewable.</small></span><div class="audit-history-tabs" role="tablist" aria-label="Provisioning audit-history filters">${[['failed', 'Failures', failureCount], ['all', 'All history', allJobs.length]].map(([key, label, count]) => `<button type="button" role="tab" class="${key === 'failed' && count ? 'is-alert' : ''}" aria-selected="${ui.provisioningFilter === key}" data-provisioning-filter="${key}">${escapeHtml(label)} <span>${count}</span></button>`).join('')}</div></div>` : ''}<div class="table-scroll"><table class="data-table"><thead><tr><th>Requested</th><th>Principal</th><th>Operation</th><th>Status</th><th>Revision</th><th>Plan hash</th><th>Action</th></tr></thead><tbody>${jobs.map((job) => `<tr tabindex="0" data-job-id="${escapeHtml(job.id)}" aria-selected="${selected?.id === job.id}"><td>${escapeHtml(formatDate(job.requested_at, { short: true }))}</td><td>${escapeHtml(principalName(job.principal_id))}</td><td>${escapeHtml(humanize(job.plan?.operation || job.job_type))}</td><td>${statusBadge(job.status)}</td><td>${escapeHtml(String(job.revision ?? '—'))}</td><td><code title="${escapeHtml(job.plan_hash)}">${escapeHtml(compact(job.plan_hash, 20))}</code></td><td>${job.status === 'queued' ? `<button class="text-button" data-confirm-job="${escapeHtml(job.id)}">Confirm</button>` : '<span class="not-recorded">—</span>'}</td></tr>`).join('') || `<tr><td colspan="7">${renderEmpty(emptyMessage)}</td></tr>`}</tbody></table></div><footer class="table-footer"><span>${ui.provisioningHistoryOpen && ['failed', 'all'].includes(ui.provisioningFilter) ? `Showing ${jobs.length} retained jobs` : `Showing ${jobs.length} current jobs`}</span><span>Ledger limit: <strong>200</strong></span></footer>${selected ? renderProvisioningDrawer(selected) : ''}</section>`;
 }
 
 function renderProvisioningDrawer(job) {
@@ -787,11 +777,27 @@ function bindShellEvents() {
     ui.selectedPrincipalId = '';
     renderShell();
   }));
+  app.querySelector('[data-principal-history-toggle]')?.addEventListener('click', () => {
+    ui.principalHistoryOpen = !ui.principalHistoryOpen;
+    if (!ui.principalHistoryOpen) {
+      ui.principalFilter = 'operational';
+      ui.selectedPrincipalId = '';
+    }
+    renderShell();
+  });
   app.querySelectorAll('[data-provisioning-filter]').forEach((button) => button.addEventListener('click', () => {
     ui.provisioningFilter = button.dataset.provisioningFilter;
     ui.selectedJobId = '';
     renderShell();
   }));
+  app.querySelector('[data-provisioning-history-toggle]')?.addEventListener('click', () => {
+    ui.provisioningHistoryOpen = !ui.provisioningHistoryOpen;
+    if (!ui.provisioningHistoryOpen) {
+      ui.provisioningFilter = 'current';
+      ui.selectedJobId = '';
+    }
+    renderShell();
+  });
   app.querySelector('[data-principal-search]')?.addEventListener('input', (event) => {
     ui.principalSearch = event.target.value;
     const caret = event.target.selectionStart;
@@ -1022,7 +1028,10 @@ async function handleDialogSubmit(event) {
     dialog.close();
     if (returned?.id && ['add-human', 'add-agent'].includes(action)) ui.selectedPrincipalId = returned.id;
     if (returned?.id && ['provision', 'confirm-job'].includes(action)) ui.selectedJobId = returned.id;
-    if (action === 'provision') ui.provisioningFilter = 'current';
+    if (action === 'provision') {
+      ui.provisioningFilter = 'current';
+      ui.provisioningHistoryOpen = false;
+    }
     if (returned?.id && action === 'create-candidate') ui.selectedCandidateId = returned.id;
     toast('The API accepted the operation and live state was reloaded.');
     renderShell();

@@ -14,16 +14,16 @@ const jobs = [
   { id: 'succeeded-fixture', principal_id: 'fixture', status: 'succeeded', requested_at: '2026-07-11T06:00:00Z' },
 ];
 
-test('current provisioning view keeps open work and only the latest terminal job per operational principal', () => {
+test('current provisioning view keeps operational work and only the latest terminal job per operational principal', () => {
   assert.equal(isOpenProvisioningJob(jobs[0]), true);
   assert.equal(isOpenProvisioningJob(jobs[1]), false);
   assert.deepEqual(
     [...currentProvisioningJobIds(jobs, ['operational'])],
-    ['open-fixture', 'latest-operational'],
+    ['latest-operational'],
   );
   assert.deepEqual(
     filterProvisioningJobs(jobs, ['operational'], 'current').map((job) => job.id),
-    ['open-fixture', 'latest-operational'],
+    ['latest-operational'],
   );
 });
 
@@ -34,7 +34,7 @@ test('a latest operational failure remains in the default current view', () => {
   ];
   assert.deepEqual(
     filterProvisioningJobs(failedLatest, ['operational'], 'current').map((job) => job.id),
-    ['failed-latest', 'open-fixture'],
+    ['failed-latest'],
   );
 });
 
@@ -49,6 +49,6 @@ test('failure and all-history views preserve historical evidence', () => {
 test('unknown filter values fail to the bounded current view', () => {
   assert.deepEqual(
     filterProvisioningJobs(jobs, ['operational'], 'unsupported').map((job) => job.id),
-    ['open-fixture', 'latest-operational'],
+    ['latest-operational'],
   );
 });

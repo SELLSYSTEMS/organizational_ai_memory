@@ -22,8 +22,8 @@ export function currentProvisioningJobIds(jobs = [], operationalPrincipalIds = [
   const latestByPrincipal = new Map();
 
   for (const job of jobs) {
-    if (isOpenProvisioningJob(job)) current.add(job.id);
     if (!operational.has(job.principal_id)) continue;
+    if (isOpenProvisioningJob(job)) current.add(job.id);
     const latest = latestByPrincipal.get(job.principal_id);
     if (!latest || isNewerJob(job, latest)) latestByPrincipal.set(job.principal_id, job);
   }

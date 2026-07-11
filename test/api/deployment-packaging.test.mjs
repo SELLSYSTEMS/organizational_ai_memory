@@ -95,17 +95,22 @@ test('operator onboarding result binds every close control', async () => {
 
 test('operator operational principal view excludes proof fixtures and suspended identities', async () => {
   const client = await read('app/operator-public/app.js');
-  assert.match(client, /function isOperationalPrincipal\(principal = \{\}\)/);
-  assert.match(client, /!isProofFixture\(principal\) && \['active', 'draft'\]\.includes\(principal\.status\)/);
-  assert.match(client, /ui\.principalFilter === 'operational' && isOperationalPrincipal\(principal\)/);
+  const filter = await read('app/operator-public/principal-filter.js');
+  assert.match(filter, /function isOperationalPrincipal\(principal = \{\}\)/);
+  assert.match(filter, /!isProofFixture\(principal\) && \['active', 'draft'\]\.includes\(principal\.status\)/);
+  assert.match(client, /data-principal-history-toggle/);
+  assert.match(client, /principalHistoryOpen: false/);
 });
 
-test('operator provisioning defaults to current work while exposing failures and full history', async () => {
+test('operator provisioning defaults to current work and gates retained totals behind audit history', async () => {
   const client = await read('app/operator-public/app.js');
   assert.match(client, /provisioningFilter: 'current'/);
+  assert.match(client, /provisioningHistoryOpen: false/);
   assert.match(client, /\['failed', 'Failures'/);
   assert.match(client, /\['all', 'All history'/);
   assert.match(client, /data-provisioning-filter=/);
+  assert.match(client, /data-provisioning-history-toggle/);
+  assert.doesNotMatch(client, /Showing \$\{jobs\.length\} of \$\{allJobs\.length\}/);
 });
 
 test('agent package proves installed application denial and Codex package includes its validator', async () => {
