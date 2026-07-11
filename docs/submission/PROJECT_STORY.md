@@ -260,6 +260,6 @@ ceiling.
 - [Architecture and authority method](https://memory.sellsystems.agency/method)
 - [Public evidence inspector](https://memory.sellsystems.agency/evidence)
 - [Sanitized 22-control proof](https://memory.sellsystems.agency/api/public/access-proof)
+- [Source repository](https://github.com/SELLSYSTEMS/organizational_ai_memory)
 
-The source-repository URL and public video URL
-should be added only after the operator publishes and verifies those artifacts.
+Add the public video URL only after upload and anonymous playback verification.

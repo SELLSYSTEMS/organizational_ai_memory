@@ -1,0 +1,48 @@
+name: Bug report
+description: Report reproducible behavior that conflicts with a current contract.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: Do not include credentials, cookies, workspace links, private topology, or customer data.
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected surface
+      options:
+        - Public capability and evidence routes
+        - Architect Console
+        - Employee workspace
+        - Agent runtime or broker
+        - PostgreSQL schema or permissions
+        - Deployment or release tooling
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current behavior
+      description: State what happened and include a sanitized, reproducible sequence.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected contract
+      description: Identify the API, schema, governance, or UI contract that should apply.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence
+      description: Include timestamps, status codes, test names, or public-safe screenshots.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: I removed secrets, credentials, private links, topology, and customer data.
+          required: true

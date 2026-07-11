@@ -1,0 +1,8 @@
+# Default ownership for this public hackathon repository.
+* @ryuriymega
+
+# Explicitly retain review ownership on high-risk surfaces.
+/app/ @ryuriymega
+/sql/ @ryuriymega
+/deploy/ @ryuriymega
+/.github/workflows/ @ryuriymega

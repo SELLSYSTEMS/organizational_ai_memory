@@ -1,5 +1,7 @@
 # Organizational AI Memory
 
+[![CI](https://github.com/SELLSYSTEMS/organizational_ai_memory/actions/workflows/ci.yml/badge.svg)](https://github.com/SELLSYSTEMS/organizational_ai_memory/actions/workflows/ci.yml)
+
 Built for AABW P5, Organizational AI Memory turns employee experience and
 reviewed work history into governed prompts, workflows, decisions, and agent
 patterns that people and linked agents can retrieve, inspect, and safely reuse.
@@ -318,6 +320,9 @@ See:
 - [Release media hash manifest](artifacts/submission/media/release-media-manifest.json)
 - [Judging alignment](docs/submission/JUDGING_ALIGNMENT.md)
 - [Safe publishing guide](docs/submission/PUBLISHING.md)
+- [Evidence-driven development model](docs/development/EVIDENCE_DRIVEN_DEVELOPMENT.md)
+- [Contributing guide](CONTRIBUTING.md)
+- [Security policy](SECURITY.md)
 - [Design contract](DESIGN.md)
 - [Design review](artifacts/design/DESIGN_REVIEW.md)
 

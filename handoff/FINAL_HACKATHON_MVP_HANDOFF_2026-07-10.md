@@ -1,8 +1,9 @@
 # Organizational AI Memory Release Handoff
 
-Status: final local release handoff for deployed code commit
-`525ff861b3580365839f487ca0dca10d0bf791cd`. GitHub publication, public video
-upload, and Builder Hub submission remain operator-only.
+Status: final release handoff for deployed code commit
+`525ff861b3580365839f487ca0dca10d0bf791cd`. The public source destination is
+`https://github.com/SELLSYSTEMS/organizational_ai_memory`. Public video upload
+and Builder Hub submission remain operator-only.
 
 Public product: `https://memory.sellsystems.agency/`
 
@@ -127,7 +128,7 @@ to substantiate the protected employee workflow.
 | Field | Required value |
 | --- | --- |
 | Deployed code commit | `525ff861b3580365839f487ca0dca10d0bf791cd` |
-| Published repository URL | Not configured; `git remote -v` is empty |
+| Published repository URL | `https://github.com/SELLSYSTEMS/organizational_ai_memory` |
 | Deployed source SHA-256 | `da4a85d2c50f0605f9bc43287c768edf2a113d00b69fe7ef0c8c36c62c0ce561` |
 | Install completed UTC | `2026-07-11T13:40:58Z` |
 | Public readiness URL/time/status | `/api/readyz`, `2026-07-11T13:52:47Z`, HTTP 200 `ready` |
@@ -277,12 +278,12 @@ See `docs/KNOWN_GAPS.md` for the complete register.
 
 ## Manual operator work remaining
 
-1. add an operator-provided GitHub remote and verify the push
-2. upload the existing hashed video and record its public URL
-3. create the Builder Hub entry, select P5, upload artifacts, and submit
+1. produce and upload the canonical P5 judge video, then verify anonymous playback
+2. create the Builder Hub entry, select P5, upload artifacts, and submit
 
-No portal, Builder Hub, remote push, or final submission action is performed by
-this handoff.
+No portal, Builder Hub, video upload, or final submission action is performed by
+this handoff. Source changes publish through the repository's reviewed PR and CI
+workflow.
 
 ## Preserved boundaries
 

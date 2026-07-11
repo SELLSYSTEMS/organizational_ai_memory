@@ -1,15 +1,17 @@
 # Publishing the Source Safely
 
-Status: the target project has a local Git repository on branch `main`, a
-non-personal local build identity, and no configured remote. No SSH key or SSH
-configuration was created or changed.
+Status: the operator-approved public destination is
+`https://github.com/SELLSYSTEMS/organizational_ai_memory`, configured locally as
+`origin`. Publication uses a focused branch, pull request, and required CI;
+`main` protection is applied after the first successful CI run establishes the
+required check names. No SSH key or SSH configuration was created or changed.
 
 The current Personal Memory Agent release is installed and freshly verified.
 Future changes must repeat that install/proof/capture sequence; a source commit
 alone is not live proof.
 
-These instructions preserve a reviewable public tree without inventing a
-repository destination or exposing target-only material.
+These instructions preserve a reviewable public tree without exposing
+target-only material.
 
 ## 1. Confirm the local repository
 
@@ -19,15 +21,18 @@ Run only from the project root:
 cd /home/admin/organizational-ai-memory
 test "$(pwd -P)" = "/home/admin/organizational-ai-memory"
 test -d .git
-test "$(git branch --show-current)" = "main"
+git branch --show-current
 git config --local --get user.name
 git config --local --get user.email
-git remote -v
+test "$(git remote get-url origin)" = \
+  "https://github.com/SELLSYSTEMS/organizational_ai_memory.git"
+gh repo view SELLSYSTEMS/organizational_ai_memory \
+  --json nameWithOwner,url,visibility,defaultBranchRef
 ```
 
-An empty `git remote -v` result is expected until an operator supplies a
-destination. Do not reinitialize the repository and do not replace the local
-identity with root authentication.
+The repository must resolve to the operator-approved public destination above.
+Do not reinitialize it, embed credentials in the remote URL, replace the local
+identity with root authentication, or alter SSH configuration for publishing.
 
 ## 2. Stage the public allowlist
 
@@ -44,7 +49,8 @@ Stage the public tree explicitly; do not use a blanket `git add .`:
 
 ```bash
 git add -- \
-  .gitignore LICENSE README.md DESIGN.md package.json package-lock.json \
+  .gitignore .github LICENSE README.md DESIGN.md CONTRIBUTING.md SECURITY.md \
+  package.json package-lock.json \
   app config deploy scripts sql test docs \
   artifacts/design/DESIGN_REVIEW.md \
   artifacts/evaluation/identity-plane-proof \
@@ -136,7 +142,7 @@ git grep --cached -n -E \
   -- . || true
 
 git grep --cached -n -E \
-  '(WireGuard|plink[0-9a-z]*|root@|BEGIN OPENSSH PRIVATE KEY)' \
+  '(Wire[G]uard|plin[k][0-9a-z]*|root[@]|BEGIN OPENSSH PRIVATE KEY)' \
   -- . || true
 
 git diff --cached --name-only | rg \
@@ -163,32 +169,30 @@ Record that commit, deploy that exact tree, and then record the installed source
 digest. If either value changes, rerun protected proof, browser capture, and
 media review; do not reuse evidence from the prior build.
 
-## 4. Add only an operator-provided remote
+## 4. Publish through the reviewed GitHub flow
 
-Do not guess an organization, repository name, visibility, or destination. Do
-not put a personal access token in a remote URL and do not create or modify SSH
-keys for this publish step.
+Verify the configured destination and its public visibility before sending any
+objects. Do not put a personal access token in the remote URL and do not create
+or modify SSH keys for this publish step.
 
 ```bash
-REMOTE_URL='<operator-provided remote URL>'
-test -n "$REMOTE_URL"
-git remote add origin "$REMOTE_URL"
-git remote -v
+test "$(git remote get-url origin)" = \
+  "https://github.com/SELLSYSTEMS/organizational_ai_memory.git"
+gh repo view SELLSYSTEMS/organizational_ai_memory --json url,visibility
 git ls-remote --heads origin
+branch="$(git branch --show-current)"
+test -n "$branch"
+test "$branch" != main
+git push --set-upstream origin "$branch"
+gh pr create --draft --base main --head "$branch" --fill
+gh pr checks --watch
 ```
 
-The operator must verify that `origin` is the intended repository and that its
-visibility is appropriate for the audited content. Then push through the
-operator's existing credential mechanism:
-
-```bash
-git push --set-upstream origin main
-git ls-remote --heads origin main
-```
-
-If authentication is unavailable, keep the local commits and record the exact
-remaining push command. Do not work around it with root credentials, copied
-auth state, embedded tokens, or SSH changes.
+After the diff and evidence are reviewed and required checks pass, mark the pull
+request ready and merge without bypassing branch protection. If authentication
+is unavailable, keep the local commits and record the exact remaining command.
+Do not work around it with root credentials, copied auth state, embedded tokens,
+or SSH changes.
 
 ## 5. Manual submission boundary
 
@@ -201,14 +205,12 @@ remain operator-only:
 4. uploading the repository, video, and screenshots
 5. reviewing declarations and completing final submission
 
-Record the final remote URL only after a push has been verified.
-
 Final operator fields:
 
 ```text
-repository URL:          not configured; operator must provide and verify remote
-published commit:        not published; local release prepared
-repository visibility:  not selected by operator
+repository URL:          https://github.com/SELLSYSTEMS/organizational_ai_memory
+published commit:        verify with git rev-parse origin/main after merge
+repository visibility:  public; reverify before each release
 video URL:               not uploaded; local hashed MP4 prepared
 submission timestamp:    [OPERATOR ONLY]
 ```
