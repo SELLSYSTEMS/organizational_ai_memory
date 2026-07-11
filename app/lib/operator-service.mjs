@@ -150,6 +150,7 @@ export function createOperatorService({
   now = () => new Date(),
   randomUUID = crypto.randomUUID,
   pendingCredentialTtlMs = 30 * 60_000,
+  workspaceCredentialTtlMs = 7 * 24 * 60 * 60_000,
   quarantineOwnerUid = 0,
 } = {}) {
   if (!identityPlane || !repository || !provisionerClient) {
@@ -157,6 +158,11 @@ export function createOperatorService({
   }
   if (!Number.isSafeInteger(quarantineOwnerUid) || quarantineOwnerUid < 0) {
     throw new TypeError('Quarantine owner UID must be a non-negative integer.');
+  }
+  if (!Number.isSafeInteger(workspaceCredentialTtlMs)
+      || workspaceCredentialTtlMs < 60 * 60_000
+      || workspaceCredentialTtlMs > 30 * 24 * 60 * 60_000) {
+    throw new TypeError('Workspace credential TTL must be between one hour and 30 days.');
   }
   const pendingCredentials = new Map();
 
@@ -219,6 +225,38 @@ export function createOperatorService({
       };
     },
 
+    async onboardEmployee(actor, input) {
+      await requireAccess(actor, PERMISSIONS.PROVISIONING_CONFIRM);
+      await requireAccess(actor, PERMISSIONS.PROVISIONING_QUEUE);
+      const workspaceToken = tokenSecret();
+      const humanPrincipalKey = `human:${randomUUID()}`;
+      const agentPrincipalKey = `agent:${randomUUID()}`;
+      const workspaceExpiresAt = new Date(now().valueOf() + workspaceCredentialTtlMs).toISOString();
+      const bundle = await identityPlane.onboardEmployeeBundle({
+        humanPrincipalKey,
+        displayName: input.display_name,
+        workEmail: input.work_email,
+        jobTitle: input.job_title,
+        agentPrincipalKey,
+        agentDisplayName: input.agent_display_name,
+        workspaceTokenSha256: tokenHash(workspaceToken),
+        workspaceExpiresAt,
+      });
+      return {
+        employee: bundle.employee || bundle.human,
+        personal_agent: bundle.personal_agent || bundle.agent,
+        pair: bundle.pair,
+        workspace: bundle.workspace,
+        profile: bundle.profile,
+        workspace_access: {
+          token: workspaceToken,
+          expires_at: workspaceExpiresAt,
+          one_time_display: true,
+          secret_persisted: false,
+        },
+      };
+    },
+
     async createHuman(actor, input) {
       await requireAccess(actor, PERMISSIONS.PROVISIONING_CONFIRM);
       return identityPlane.createHuman({
@@ -275,6 +313,13 @@ export function createOperatorService({
         actorPrincipalId: actor.principal_id,
         departmentId: actor.department_id,
       });
+      if (operation === 'resume_agent' && context.is_personal_agent) {
+        fail(
+          'personal_agent_resume_requires_workspace_reissue',
+          'Personal Memory Agent resume is unavailable until a new workspace credential can be issued explicitly.',
+          409,
+        );
+      }
       const token = operation === 'provision_agent' || operation === 'resume_agent'
         ? tokenSecret()
         : null;
@@ -452,17 +497,43 @@ export function createOperatorService({
 
     async suspendPrincipal(actor, principalId, input) {
       await requireAccess(actor, PERMISSIONS.PRINCIPAL_SUSPEND);
-      const context = await repository.provisioningContext({
+      const personalPair = await repository.personalPairForPrincipal({
         principalId,
+        departmentId: actor.department_id,
+      });
+      const runtimePrincipalId = personalPair?.human_principal_id === principalId
+        ? personalPair.agent_principal_id
+        : principalId;
+      const context = await repository.provisioningContext({
+        principalId: runtimePrincipalId,
         actorPrincipalId: actor.principal_id,
         departmentId: actor.department_id,
       });
-      const suspended = await identityPlane.suspendPrincipal({
-        principalId,
-        suspendedByPrincipalId: actor.principal_id,
-        departmentId: actor.department_id,
-        reason: input.reason,
-      });
+      const linkedAgentAlreadySuspended = personalPair?.human_principal_id === principalId
+        && personalPair.agent_status === 'suspended';
+      const suspendedAgent = linkedAgentAlreadySuspended
+        ? {
+            id: personalPair.agent_principal_id,
+            principal_key: personalPair.agent_principal_key,
+            principal_kind: 'agent',
+            status: 'suspended',
+            suspended_at: personalPair.agent_suspended_at || null,
+            already_suspended: true,
+          }
+        : await identityPlane.suspendPrincipal({
+            principalId: runtimePrincipalId,
+            suspendedByPrincipalId: actor.principal_id,
+            departmentId: actor.department_id,
+            reason: input.reason,
+          });
+      const suspended = runtimePrincipalId === principalId
+        ? suspendedAgent
+        : await identityPlane.suspendPrincipal({
+          principalId,
+          suspendedByPrincipalId: actor.principal_id,
+          departmentId: actor.department_id,
+          reason: input.reason,
+        });
       const plan = validateProvisioningPlan({
         operation: 'suspend_agent',
         plan_id: randomUUID(),
@@ -475,7 +546,11 @@ export function createOperatorService({
         if (!isEnforcedSuspensionRecord(result.record)) {
           fail('suspension_enforcement_failed', 'Identity was denied but host suspension failed.', 502);
         }
-        return { principal: suspended, enforcement: publicProvisionerResult(result) };
+        return {
+          principal: suspended,
+          personal_agent: personalPair ? suspendedAgent : null,
+          enforcement: publicProvisionerResult(result),
+        };
       } catch (error) {
         if (error instanceof OperatorServiceError) throw error;
         fail('suspension_enforcement_failed', 'Identity was denied but host suspension failed.', 502);

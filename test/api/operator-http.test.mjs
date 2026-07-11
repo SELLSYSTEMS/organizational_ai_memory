@@ -60,6 +60,13 @@ async function fixture(t, options = {}) {
   const service = {
     async state() { return { actor, principals: [] }; },
     async createHuman() { return { id: 'human-created' }; },
+    async onboardEmployee(_actor, input) {
+      return {
+        employee: { id: 'employee-created', display_name: input.display_name },
+        personal_agent: { id: 'agent-created', display_name: input.agent_display_name },
+        workspace_access: { token: 'C'.repeat(43), one_time_display: true, secret_persisted: false },
+      };
+    },
   };
   const handler = createOperatorRequestHandler({
     repository: {
@@ -218,6 +225,48 @@ test('cross-site requests are rejected and authenticated mutations require exact
   });
   assert.equal(extraField.status, 400);
   assert.equal(extraField.payload.error.code, 'invalid_request');
+});
+
+test('employee onboarding accepts only the bounded production form contract', async (t) => {
+  const app = await fixture(t);
+  const host = `127.0.0.1:${app.port}`;
+  const signedIn = await login(app.port, { host });
+  const headers = {
+    host,
+    cookie: cookieValue(signedIn.headers['set-cookie'][0]),
+    'content-type': 'application/json',
+    'x-oam-csrf-token': signedIn.payload.data.csrf_token,
+  };
+  const accepted = await request({
+    port: app.port,
+    method: 'POST',
+    requestPath: '/api/v1/employees',
+    headers,
+    body: {
+      display_name: 'Mai Nguyen',
+      work_email: 'mai@example.com',
+      job_title: 'Delivery Lead',
+      agent_display_name: "Mai's Memory Agent",
+    },
+  });
+  assert.equal(accepted.status, 201);
+  assert.equal(accepted.payload.data.workspace_access.secret_persisted, false);
+
+  const denied = await request({
+    port: app.port,
+    method: 'POST',
+    requestPath: '/api/v1/employees',
+    headers,
+    body: {
+      display_name: 'Mai Nguyen',
+      work_email: 'mai@example.com',
+      job_title: 'Delivery Lead',
+      agent_display_name: "Mai's Memory Agent",
+      membership_role: 'architect',
+    },
+  });
+  assert.equal(denied.status, 400);
+  assert.equal(denied.payload.error.code, 'invalid_request');
 });
 
 test('static serving rejects hidden, encoded-traversal, and unknown-extension paths', async (t) => {

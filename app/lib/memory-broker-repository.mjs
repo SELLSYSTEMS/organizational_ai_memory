@@ -1,5 +1,6 @@
 const SHA256 = /^[a-f0-9]{64}$/;
 const PRINCIPAL_KEY = /^agent:[a-z0-9][a-z0-9_.-]{1,118}$/;
+const CONTROL = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/;
 
 export class MemoryBrokerRepositoryError extends Error {
   constructor(code, message, status = 401) {
@@ -71,6 +72,46 @@ export function createMemoryBrokerRepository(pool) {
   requirePool(pool);
 
   return Object.freeze({
+    async personalAgentContext({
+      tokenSha256,
+      claimedPrincipalKey,
+      query,
+      limit = 8,
+    }) {
+      if (!SHA256.test(tokenSha256) || !PRINCIPAL_KEY.test(claimedPrincipalKey || '')) {
+        fail('authentication_failed', 'Broker credential is invalid.');
+      }
+      if (typeof query !== 'string' || CONTROL.test(query)) {
+        fail('invalid_personal_context_query', 'Personal context query is invalid.', 400);
+      }
+      const normalizedQuery = query.normalize('NFKC').replace(/\s+/g, ' ').trim();
+      if ([...normalizedQuery].length < 2 || [...normalizedQuery].length > 200) {
+        fail('invalid_personal_context_query', 'Personal context query must contain 2 to 200 characters.', 400);
+      }
+      if (!Number.isInteger(limit) || limit < 1 || limit > 10) {
+        fail('invalid_personal_context_limit', 'Personal context limit must be between 1 and 10.', 400);
+      }
+      try {
+        const result = await pool.query(
+          `/* broker:personal-agent-context */
+           SELECT personal.retrieve_agent_context_for_broker($1, $2, $3, $4) AS result`,
+          [tokenSha256, claimedPrincipalKey, normalizedQuery, limit],
+        );
+        const payload = result.rows[0]?.result;
+        if (!payload || payload.authorization !== 'allowed' || !Array.isArray(payload.items)
+            || !Array.isArray(payload.citations)) {
+          fail('authentication_failed', 'Broker credential is invalid or inactive.');
+        }
+        return payload;
+      } catch (error) {
+        if (error instanceof MemoryBrokerRepositoryError) throw error;
+        if (error?.code === '28000' || error?.code === '42501') {
+          fail('authentication_failed', 'Broker credential is invalid or inactive.');
+        }
+        throw error;
+      }
+    },
+
     async approvedWebsiteCapability({
       tokenSha256,
       claimedPrincipalKey = null,

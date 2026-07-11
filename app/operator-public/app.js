@@ -32,7 +32,7 @@ const ui = {
 
 const NAVIGATION = [
   ['overview', 'Overview', 'layout-dashboard'],
-  ['principals', 'Principals', 'users'],
+  ['principals', 'People & agents', 'users'],
   ['provisioning', 'Provisioning', 'clipboard-list'],
   ['effective-access', 'Effective access', 'shield-check'],
   ['access-proofs', 'Access proofs', 'list-checks'],
@@ -87,6 +87,7 @@ function emptyState() {
     runtime_bindings: [],
     broker_credentials: [],
     capability_grants: [],
+    employee_personal_agents: [],
     provisioning_jobs: [],
     proof_runs: [],
     uploads: [],
@@ -204,6 +205,12 @@ function principalById(id) {
   return ui.state.principals.find((principal) => principal.id === id) || null;
 }
 
+function personalPairFor(principalId) {
+  return asArray(ui.state.employee_personal_agents).find((pair) => (
+    pair.human_principal_id === principalId || pair.agent_principal_id === principalId
+  )) || null;
+}
+
 function isProofFixture(record = {}) {
   const value = [
     record.display_name,
@@ -215,8 +222,12 @@ function isProofFixture(record = {}) {
   return value.includes('identity proof') || value.includes('proofisolated');
 }
 
+function isOperationalPrincipal(principal = {}) {
+  return !isProofFixture(principal) && ['active', 'draft'].includes(principal.status);
+}
+
 function operationalPrincipals() {
-  return ui.state.principals.filter((principal) => !isProofFixture(principal));
+  return ui.state.principals.filter(isOperationalPrincipal);
 }
 
 function preferredOperationalPrincipal() {
@@ -499,7 +510,7 @@ function filteredPrincipals() {
   const search = ui.principalSearch.toLowerCase();
   return ui.state.principals.filter((principal) => (
     (ui.principalFilter === 'all'
-      || (ui.principalFilter === 'operational' && !isProofFixture(principal))
+      || (ui.principalFilter === 'operational' && isOperationalPrincipal(principal))
       || (ui.principalFilter === 'proof_fixtures' && isProofFixture(principal))
       || ui.principalFilter === principal.principal_kind
       || (ui.principalFilter === 'suspended' && principal.status === 'suspended'))
@@ -515,12 +526,15 @@ function renderPrincipals() {
   const fixtures = ui.state.principals.filter(isProofFixture).length;
   const selected = principals.find((principal) => principal.id === ui.selectedPrincipalId) || principals[0] || null;
   if (selected) ui.selectedPrincipalId = selected.id;
+  const selectedCanSuspend = selected
+    && selected.status !== 'suspended'
+    && (selected.principal_kind === 'agent' || personalPairFor(selected.id));
   return `
     <section class="page-surface principals-page ${selected ? 'has-inspector' : ''}">
       <div class="page-body">
-        ${pageHeader('Principals')}
+        ${pageHeader('People & personal agents', 'Onboarding creates one employee identity, one independently governed Personal Memory Agent, and one revocable workspace credential in a single transaction.')}
         <div class="command-bar">
-          <div class="command-group"><button class="secondary-button" type="button" data-open-dialog="add-human">${icon('user-plus', 16)}Add human</button><button class="secondary-button" type="button" data-open-dialog="add-agent">${icon('link', 16)}Link agent</button><button class="secondary-button" type="button" data-open-dialog="record-proof">${icon('play', 16)}Record proof</button><button class="secondary-button" type="button" data-open-dialog="suspend" ${selected && selected.status !== 'suspended' ? '' : 'disabled'}>${icon('pause', 16)}Suspend</button></div>
+          <div class="command-group"><button class="primary-button" type="button" data-open-dialog="onboard-employee">${icon('user-plus', 16)}Onboard employee</button><button class="secondary-button" type="button" data-open-dialog="record-proof">${icon('play', 16)}Record proof</button><button class="secondary-button" type="button" data-open-dialog="suspend" ${selectedCanSuspend ? '' : 'disabled'}>${icon('pause', 16)}Suspend</button></div>
           <label class="search-control">${icon('search', 16)}<input type="search" placeholder="Search principals" value="${escapeHtml(ui.principalSearch)}" data-principal-search /></label>
           <button class="icon-button bordered" type="button" title="Refresh principals" aria-label="Refresh principals" data-refresh>${icon('refresh', 17)}</button>
         </div>
@@ -532,7 +546,8 @@ function renderPrincipals() {
             ${principals.map((principal) => {
               const membership = membershipFor(principal.id);
               const proof = proofFor(principal.id);
-              return `<tr tabindex="0" data-principal-id="${escapeHtml(principal.id)}" aria-selected="${principal.id === selected?.id}"><td>${principalCell(principal)}</td><td>${escapeHtml(humanize(principal.principal_kind))}</td><td>${escapeHtml(humanize(membership?.membership_role || 'not recorded'))}</td><td><strong>${bindingsFor(principal.id).length}</strong></td><td>${statusBadge(principal.status)}</td><td>${proof ? statusBadge(proof.status) : '<span class="not-recorded">Not recorded</span>'}</td><td>${escapeHtml(formatDate(proof?.executed_at || principal.created_at, { short: true }))}</td></tr>`;
+              const pair = personalPairFor(principal.id);
+              return `<tr tabindex="0" data-principal-id="${escapeHtml(principal.id)}" aria-selected="${principal.id === selected?.id}"><td>${principalCell(principal)}</td><td>${escapeHtml(humanize(principal.principal_kind))}</td><td>${escapeHtml(humanize(membership?.membership_role || 'not recorded'))}${pair ? `<small>Personal pair · ${escapeHtml(humanize(pair.status))}</small>` : ''}</td><td><strong>${bindingsFor(principal.id).length}</strong></td><td>${statusBadge(principal.status)}</td><td>${proof ? statusBadge(proof.status) : '<span class="not-recorded">Not recorded</span>'}</td><td>${escapeHtml(formatDate(proof?.executed_at || principal.created_at, { short: true }))}</td></tr>`;
             }).join('') || `<tr><td colspan="7">${renderEmpty('No principals match this view.')}</td></tr>`}
           </tbody></table>
         </div>
@@ -547,13 +562,21 @@ function renderPrincipalInspector(principal) {
   const membership = membershipFor(principal.id);
   const bindings = bindingsFor(principal.id);
   const proof = proofFor(principal.id);
+  const personalPair = personalPairFor(principal.id);
+  const pairedPrincipal = personalPair
+    ? principalById(personalPair.human_principal_id === principal.id
+      ? personalPair.agent_principal_id
+      : personalPair.human_principal_id)
+    : null;
   const tabContent = {
     application: `<dl class="inspector-grid"><div><dt>Principal state</dt><dd>${statusBadge(principal.status)}</dd></div><div><dt>Policy source</dt><dd>${escapeHtml(humanize(membership?.membership_role || 'Not recorded'))}</dd></div><div><dt>Enforcement point</dt><dd>Application gateway</dd></div><div><dt>Last proof</dt><dd>${escapeHtml(formatDate(proof?.executed_at))}</dd></div><div><dt>Proof status</dt><dd>${proof ? statusBadge(proof.status) : '<span class="not-recorded">Not recorded</span>'}</dd></div></dl>`,
     os: renderBindingList(bindings.filter((item) => ['linux_user', 'systemd_unit', 'workspace'].includes(item.binding_kind)), 'No OS runtime identity is recorded.'),
     database: renderBindingList(bindings.filter((item) => item.binding_kind === 'postgres_role'), 'No direct PostgreSQL role is recorded. Brokered access does not require one.'),
     memory: renderGrantList(grantsFor(principal.id)),
   }[ui.principalTab];
-  return `<aside class="principal-inspector" aria-label="Selected principal detail"><header><span class="avatar is-${escapeHtml(principal.principal_kind)}">${escapeHtml(initials(principal.display_name || principal.principal_key))}</span><span><h2>${escapeHtml(principal.display_name || principal.principal_key)}</h2><p>${escapeHtml(humanize(principal.principal_kind))}</p></span><button class="icon-button" type="button" data-close-inspector aria-label="Close principal detail">${icon('x')}</button></header><div class="inspector-tabs" role="tablist">${['application', 'os', 'database', 'memory'].map((tab) => `<button type="button" role="tab" aria-selected="${ui.principalTab === tab}" data-principal-tab="${tab}">${escapeHtml(tab === 'os' ? 'OS' : humanize(tab))}</button>`).join('')}</div><div class="inspector-content">${tabContent}</div><section class="inspector-section"><h3>Identifiers</h3><dl class="key-values"><div><dt>Principal key</dt><dd>${escapeHtml(principal.principal_key)}</dd></div><div><dt>Principal ID</dt><dd>${escapeHtml(principal.id)}</dd></div></dl></section><section class="inspector-section"><h3>Actions</h3><button class="secondary-button" type="button" data-open-dialog="suspend" ${principal.status === 'suspended' ? 'disabled' : ''}>${icon('pause', 15)}Suspend</button></section></aside>`;
+  const canSuspend = principal.status !== 'suspended'
+    && (principal.principal_kind === 'agent' || personalPair);
+  return `<aside class="principal-inspector" aria-label="Selected principal detail"><header><span class="avatar is-${escapeHtml(principal.principal_kind)}">${escapeHtml(initials(principal.display_name || principal.principal_key))}</span><span><h2>${escapeHtml(principal.display_name || principal.principal_key)}</h2><p>${escapeHtml(humanize(principal.principal_kind))}</p></span><button class="icon-button" type="button" data-close-inspector aria-label="Close principal detail">${icon('x')}</button></header><div class="inspector-tabs" role="tablist">${['application', 'os', 'database', 'memory'].map((tab) => `<button type="button" role="tab" aria-selected="${ui.principalTab === tab}" data-principal-tab="${tab}">${escapeHtml(tab === 'os' ? 'OS' : humanize(tab))}</button>`).join('')}</div><div class="inspector-content">${tabContent}</div>${personalPair ? `<section class="inspector-section"><h3>Personal pairing</h3><dl class="key-values"><div><dt>Linked principal</dt><dd>${escapeHtml(pairedPrincipal?.display_name || pairedPrincipal?.principal_key || 'Recorded')}</dd></div><div><dt>Pair state</dt><dd>${statusBadge(personalPair.status)}</dd></div><div><dt>Cardinality</dt><dd>One human · one personal agent</dd></div></dl></section>` : ''}<section class="inspector-section"><h3>Identifiers</h3><dl class="key-values"><div><dt>Principal key</dt><dd>${escapeHtml(principal.principal_key)}</dd></div><div><dt>Principal ID</dt><dd>${escapeHtml(principal.id)}</dd></div></dl></section><section class="inspector-section"><h3>Actions</h3><button class="secondary-button" type="button" data-open-dialog="suspend" ${canSuspend ? '' : 'disabled'}>${icon('pause', 15)}Suspend</button></section></aside>`;
 }
 
 function renderBindingList(bindings, emptyMessage) {
@@ -831,6 +854,10 @@ function principalOptions({ agentsOnly = false } = {}) {
 
 function openDialog(kind, context = {}) {
   const selected = principalById(ui.selectedPrincipalId);
+  const selectedPersonalPair = selected ? personalPairFor(selected.id) : null;
+  const personalSuspensionDescription = selected?.principal_kind === 'human'
+    ? 'This permanently suspends the employee and their Personal Memory Agent, revokes the private workspace credential, and removes agent host access. There is no self-service or in-product resume.'
+    : 'This permanently suspends the Personal Memory Agent, revokes its private workspace credential, and removes agent host access. There is no self-service or in-product resume.';
   const candidate = ui.candidates.find((item) => item.id === ui.selectedCandidateId) || ui.candidates[0];
   const job = ui.state.provisioning_jobs.find((item) => item.id === context.jobId);
   const reviewableUploads = ui.state.uploads.filter((upload) => (
@@ -838,12 +865,13 @@ function openDialog(kind, context = {}) {
   ));
   const selectedUploadId = context.uploadId || ui.lastUpload?.id || reviewableUploads[0]?.id || '';
   const templates = {
+    'onboard-employee': `${dialogHeading('Onboard employee', 'Creates the employee, their one Personal Memory Agent, and a revocable private workspace credential atomically.')}<input type="hidden" name="action" value="onboard-employee" /><div class="form-grid"><label>Full name<input name="display_name" maxlength="200" autocomplete="name" required /></label><label>Work email<input name="work_email" type="email" maxlength="254" autocomplete="email" required /></label><label>Job title<input name="job_title" maxlength="160" required /></label><label>Personal agent name<input name="agent_display_name" maxlength="200" placeholder="e.g. Alex's Memory Agent" required /></label></div><div class="dialog-note">The agent has its own principal, policy, credential, and lifecycle. It receives only memories the employee explicitly shares and does not impersonate the employee.</div>${dialogActions('Create employee workspace')}`,
     'add-human': `${dialogHeading('Add human principal', 'Creates a logical application principal and department membership.')}<input type="hidden" name="action" value="add-human" /><div class="form-grid"><label>Principal key<input name="principal_key" placeholder="human:principal_key" pattern="human:[a-z0-9][a-z0-9_.-]{1,118}" maxlength="120" required /></label><label>Display name<input name="display_name" maxlength="200" required /></label><label>External issuer<input name="external_issuer" maxlength="200" required /></label><label>External subject<input name="external_subject" maxlength="300" required /></label><label>Membership role<select name="membership_role"><option value="member">Member</option><option value="reviewer">Reviewer</option><option value="architect">Architect</option></select></label></div>${dialogActions('Create human')}`,
     'add-agent': `${dialogHeading('Link agent', 'Creates a draft agent linked to the authenticated human. Permissions are not inherited.')}<input type="hidden" name="action" value="add-agent" /><div class="form-grid"><label class="full">Agent display name<input name="display_name" maxlength="200" required /></label></div><div class="dialog-note">The API stages a broker credential and governed capability grant. Runtime provisioning remains a separate confirmed plan.</div>${dialogActions('Create agent draft')}`,
-    provision: `${dialogHeading('Queue provisioning plan', 'The plan must be confirmed at its returned revision before the privileged provisioner can run.')}<input type="hidden" name="action" value="provision" /><div class="form-grid"><label>Agent<select name="principal_id" required>${principalOptions({ agentsOnly: true })}</select></label><label>Operation<select name="operation"><option value="provision_agent">Provision agent</option><option value="verify_agent">Verify agent</option><option value="resume_agent">Resume agent</option></select></label></div>${dialogActions('Queue plan')}`,
+    provision: `${dialogHeading('Queue provisioning plan', 'The plan must be confirmed at its returned revision before the privileged provisioner can run.')}<input type="hidden" name="action" value="provision" /><div class="form-grid"><label>Agent<select name="principal_id" required>${principalOptions({ agentsOnly: true })}</select></label><label>Operation<select name="operation"><option value="provision_agent">Provision agent</option><option value="verify_agent">Verify agent</option></select></label></div>${dialogActions('Queue plan')}`,
     'confirm-job': `${dialogHeading('Confirm provisioning plan', 'Confirmation is revision-bound. A stale plan is rejected by the API.')}<input type="hidden" name="action" value="confirm-job" /><input type="hidden" name="job_id" value="${escapeHtml(job?.id || '')}" /><div class="confirmation-ledger"><span>Principal<strong>${escapeHtml(principalName(job?.principal_id))}</strong></span><span>Operation<strong>${escapeHtml(humanize(job?.plan?.operation || job?.job_type))}</strong></span><span>Plan hash<code>${escapeHtml(job?.plan_hash || 'Not returned')}</code></span></div><label>Expected revision<input type="number" name="expected_revision" min="0" step="1" value="${escapeHtml(String(job?.revision ?? 0))}" required /></label>${dialogActions('Confirm plan')}`,
     'record-proof': `${dialogHeading('Record access proof', 'Record the outcome of commands that were executed outside this browser.')}<input type="hidden" name="action" value="record-proof" /><div class="form-grid"><label>Proof key<input name="proof_key" pattern="[a-z][a-z0-9_.:-]{1,119}" maxlength="120" required /></label><label>Target kind<select name="target_kind"><option value="principal">Principal</option><option value="runtime_binding">Runtime binding</option><option value="systemd_unit">systemd unit</option><option value="postgres_role">PostgreSQL role</option><option value="workspace">Workspace</option></select></label><label>Target principal<select name="target_key">${principalOptions()}</select></label><label>Status<select name="status"><option value="passed">Passed</option><option value="failed">Failed</option><option value="inconclusive">Inconclusive</option></select></label><label class="full">Commands, one per line<textarea name="commands" rows="4" required></textarea></label><label class="full">Evidence JSON<textarea name="evidence" rows="5">{}</textarea></label></div>${dialogActions('Record proof')}`,
-    suspend: `${dialogHeading('Suspend principal', 'Suspension closes active memberships, runtime bindings, grants, and queued work.')}<input type="hidden" name="action" value="suspend" /><div class="confirmation-ledger"><span>Principal<strong>${escapeHtml(selected?.display_name || selected?.principal_key || 'No principal selected')}</strong></span><span>Current state<strong>${escapeHtml(humanize(selected?.status || 'unknown'))}</strong></span></div><label>Reason<textarea name="reason" rows="3" maxlength="1000" required></textarea></label>${dialogActions('Suspend principal', { danger: true })}`,
+    suspend: `${dialogHeading(selectedPersonalPair ? 'Suspend personal identity' : 'Suspend principal', selectedPersonalPair ? personalSuspensionDescription : 'Suspension closes active memberships, runtime bindings, grants, and queued work.')}<input type="hidden" name="action" value="suspend" /><div class="confirmation-ledger"><span>Principal<strong>${escapeHtml(selected?.display_name || selected?.principal_key || 'No principal selected')}</strong></span><span>Current state<strong>${escapeHtml(humanize(selected?.status || 'unknown'))}</strong></span></div><label>Reason<textarea name="reason" rows="3" maxlength="1000" required></textarea></label>${dialogActions(selectedPersonalPair ? 'Suspend and revoke access' : 'Suspend principal', { danger: true })}`,
     upload: `${dialogHeading('Submit quarantined text', 'Only bounded text/plain and text/markdown content is accepted.')}<input type="hidden" name="action" value="upload" /><div class="form-grid"><label>Original name<input name="original_name" maxlength="255" required /></label><label>Media type<select name="media_type"><option value="text/plain">text/plain</option><option value="text/markdown">text/markdown</option></select></label><label class="full">Content<textarea name="content" rows="12" maxlength="1048576" required></textarea></label></div>${dialogActions('Submit to quarantine')}`,
     'create-candidate': `${dialogHeading('Create candidate', 'Creates a typed candidate bound to sealed bytes; evidence is derived by the server.')}<input type="hidden" name="action" value="create-candidate" /><div class="form-grid"><label class="full">Sealed upload<select name="upload_id" required>${reviewableUploads.map((upload) => `<option value="${escapeHtml(upload.id)}" ${upload.id === selectedUploadId ? 'selected' : ''}>${escapeHtml(upload.original_name)} · ${escapeHtml(compact(upload.sha256, 18))}</option>`).join('')}</select></label><label>Candidate type<select name="candidate_type"><option value="prompt">Prompt</option><option value="workflow">Workflow</option><option value="agent">Agent</option><option value="decision_pattern">Decision pattern</option><option value="best_practice">Best practice</option></select></label><label>Title<input name="title" maxlength="240" required /></label><label class="full">Candidate payload JSON<textarea name="payload" rows="8" required>{}</textarea></label></div>${dialogActions('Create candidate')}`,
     'review-candidate': `${dialogHeading(humanize(context.action), 'The review is applied only to the displayed candidate revision.')}<input type="hidden" name="action" value="review-candidate" /><input type="hidden" name="review_action" value="${escapeHtml(context.action)}" /><div class="confirmation-ledger"><span>Candidate<strong>${escapeHtml(candidate?.title || '')}</strong></span><span>Revision<strong>${escapeHtml(String(candidate?.revision ?? ''))}</strong></span></div><label>Reason<textarea name="reason" rows="4" maxlength="2000" required></textarea></label>${dialogActions(humanize(context.action), { danger: context.action === 'reject' })}`,
@@ -888,7 +916,14 @@ async function handleDialogSubmit(event) {
   confirm.textContent = 'Submitting…';
   try {
     let payload;
-    if (action === 'add-human') {
+    if (action === 'onboard-employee') {
+      payload = await api('/employees', { method: 'POST', body: {
+        display_name: dialogForm.elements.display_name.value,
+        work_email: dialogForm.elements.work_email.value,
+        job_title: dialogForm.elements.job_title.value,
+        agent_display_name: dialogForm.elements.agent_display_name.value,
+      } });
+    } else if (action === 'add-human') {
       payload = await api('/humans', { method: 'POST', body: {
         principal_key: dialogForm.elements.principal_key.value,
         display_name: dialogForm.elements.display_name.value,
@@ -942,9 +977,29 @@ async function handleDialogSubmit(event) {
     if (ui.loadErrors.state || (candidateAction && ui.loadErrors.candidates)) {
       throw new Error(`The operation was accepted, but live-state verification failed: ${ui.loadErrors.state || ui.loadErrors.candidates}`);
     }
-    dialog.close();
     const data = envelope(payload);
     const returned = data.principal || data.agent || data.job || data.proof || data.candidate || data.draft || data;
+    if (action === 'onboard-employee') {
+      const employee = data.employee || data.human || {};
+      const agent = data.personal_agent || data.agent || {};
+      const token = data.workspace_access?.token || data.workspace_token || '';
+      if (!token) throw new Error('The employee was created, but the workspace credential was not returned in the creation response. Rotate it before sharing access.');
+      const workspaceUrl = new URL('/workspace/', window.location.origin);
+      workspaceUrl.hash = `access_token=${encodeURIComponent(token)}`;
+      dialogForm.innerHTML = `${dialogHeading('Employee workspace created', 'Complete the agent provisioning plan, then share this private access link through an approved channel. The raw credential is returned only in this creation response and is masked on screen.')}<div class="confirmation-ledger"><span>Employee<strong>${escapeHtml(employee.display_name || employee.principal_key || 'Created')}</strong></span><span>Personal Memory Agent<strong>${escapeHtml(agent.display_name || agent.principal_key || 'Created')}</strong></span><span>Pairing<strong>Draft until physical provisioning passes</strong></span></div><label class="full">Private workspace link<input type="password" name="workspace_link" readonly value="${escapeHtml(workspaceUrl.href)}" aria-label="Masked private workspace link" /></label><div class="dialog-note">After provisioning, opening the link creates a secure HttpOnly session and every request revalidates the revocable workspace credential. The agent remains a distinct principal and sees only explicitly shared personal memory.</div><footer class="dialog-actions"><button class="secondary-button" type="button" data-close-dialog>Close</button><button class="primary-button" type="button" data-copy-workspace-link>${icon('link', 15)}Copy private link</button></footer>`;
+      dialogForm.querySelectorAll('[data-close-dialog]').forEach((button) => {
+        button.addEventListener('click', () => dialog.close());
+      });
+      dialogForm.querySelector('[data-copy-workspace-link]')?.addEventListener('click', async () => {
+        await navigator.clipboard.writeText(workspaceUrl.href);
+        toast('Private workspace link copied.');
+      });
+      ui.selectedPrincipalId = agent.id || employee.id || ui.selectedPrincipalId;
+      toast('Employee and Personal Memory Agent created.');
+      renderShell();
+      return;
+    }
+    dialog.close();
     if (returned?.id && ['add-human', 'add-agent'].includes(action)) ui.selectedPrincipalId = returned.id;
     if (returned?.id && ['provision', 'confirm-job'].includes(action)) ui.selectedJobId = returned.id;
     if (returned?.id && action === 'create-candidate') ui.selectedCandidateId = returned.id;

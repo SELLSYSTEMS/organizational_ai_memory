@@ -164,7 +164,7 @@ export function createOperatorRepository(pool) {
 
     async listState(departmentId, limit = 200) {
       const params = [departmentId, limit];
-      const [principals, departments, memberships, bindings, credentials, grants, jobs, proofs, uploads] = await Promise.all([
+      const [principals, departments, memberships, bindings, credentials, grants, pairs, jobs, proofs, uploads] = await Promise.all([
         pool.query(
           `SELECT DISTINCT principal.id, principal.principal_key, principal.principal_kind,
                   principal.display_name, principal.status, principal.created_at, principal.suspended_at
@@ -210,6 +210,21 @@ export function createOperatorRepository(pool) {
                   allowed_review_statuses, status, valid_from, valid_to, created_at, updated_at
            FROM governance.capability_grants WHERE department_id = $1
            ORDER BY principal_id, capability_task_key LIMIT $2`,
+          params,
+        ),
+        pool.query(
+          `SELECT pair.human_principal_id, pair.agent_principal_id, pair.department_id,
+                  pair.status, pair.created_at, pair.updated_at,
+                  human.display_name AS human_display_name,
+                  human.principal_key AS human_principal_key,
+                  agent.display_name AS agent_display_name,
+                  agent.principal_key AS agent_principal_key
+           FROM identity.employee_personal_agents pair
+           JOIN identity.principals human ON human.id = pair.human_principal_id
+           JOIN identity.principals agent ON agent.id = pair.agent_principal_id
+           WHERE pair.department_id = $1
+           ORDER BY human.display_name, human.principal_key
+           LIMIT $2`,
           params,
         ),
         pool.query(
@@ -265,10 +280,28 @@ export function createOperatorRepository(pool) {
         runtime_bindings: bindings.rows,
         broker_credentials: credentials.rows,
         capability_grants: grants.rows,
+        employee_personal_agents: pairs.rows,
         provisioning_jobs: jobs.rows,
         proof_runs: proofs.rows,
         uploads: uploads.rows,
       };
+    },
+
+    async personalPairForPrincipal({ principalId, departmentId }) {
+      const result = await pool.query(
+        `SELECT pair.human_principal_id, pair.agent_principal_id, pair.department_id,
+                pair.status, human.status AS human_status, agent.status AS agent_status,
+                agent.principal_key AS agent_principal_key,
+                agent.suspended_at AS agent_suspended_at
+         FROM identity.employee_personal_agents pair
+         JOIN identity.principals human ON human.id = pair.human_principal_id
+         JOIN identity.principals agent ON agent.id = pair.agent_principal_id
+         WHERE pair.department_id = $2
+           AND $1::uuid IN (pair.human_principal_id, pair.agent_principal_id)
+         LIMIT 1`,
+        [principalId, departmentId],
+      );
+      return result.rows[0] || null;
     },
 
     async readyUpload({ uploadId, departmentId }) {
@@ -440,7 +473,14 @@ export function createOperatorRepository(pool) {
         const membershipStatus = operation === 'resume_agent' ? 'suspended' : 'active';
         const stagedStatus = operation === 'resume_agent' ? 'suspended' : 'draft';
         const principalResult = await client.query(
-          `SELECT agent.id, agent.principal_key, agent.status
+          `SELECT agent.id, agent.principal_key, agent.status,
+                  EXISTS (
+                    SELECT 1
+                    FROM identity.employee_personal_agents personal_pair
+                    WHERE personal_pair.agent_principal_id = agent.id
+                      AND personal_pair.human_principal_id = link.source_principal_id
+                      AND personal_pair.department_id = $3
+                  ) AS is_personal_agent
            FROM identity.principals agent
            JOIN identity.department_memberships target_membership
              ON target_membership.principal_id = agent.id
@@ -455,6 +495,13 @@ export function createOperatorRepository(pool) {
            WHERE agent.id = $1
              AND agent.principal_kind = 'agent'
              AND agent.status = $5
+             AND NOT EXISTS (
+               SELECT 1
+               FROM identity.employee_personal_agents personal_pair
+               WHERE personal_pair.agent_principal_id = agent.id
+                 AND personal_pair.department_id = $3
+                 AND personal_pair.human_principal_id <> link.source_principal_id
+             )
              AND (
                link.source_principal_id = $2
                OR EXISTS (
@@ -522,6 +569,9 @@ export function createOperatorRepository(pool) {
         if (!bindingResult.rows[0]) {
           fail('principal_not_provisionable', 'Agent broker binding is unavailable.');
         }
+        const capabilityTaskKeys = principal.is_personal_agent
+          ? ['website_delivery_handoff', 'personal_context_retrieval']
+          : ['website_delivery_handoff'];
         const grantResult = await client.query(
           `UPDATE governance.capability_grants
            SET policy_template_id = $2,
@@ -530,12 +580,15 @@ export function createOperatorRepository(pool) {
                valid_to = CASE WHEN $4 = 'draft' THEN NULL ELSE valid_to END,
                updated_at = now()
            WHERE principal_id = $1 AND department_id = $3
-             AND capability_task_key = 'website_delivery_handoff'
+             AND capability_task_key = ANY($5::text[])
              AND status IN ('draft', 'suspended')
-           RETURNING id`,
-          [principalId, policy.id, departmentId, stagedStatus],
+           RETURNING id, capability_task_key`,
+          [principalId, policy.id, departmentId, stagedStatus, capabilityTaskKeys],
         );
-        if (!grantResult.rows[0]) {
+        const stagedCapabilityKeys = new Set(
+          grantResult.rows.map((row) => row.capability_task_key),
+        );
+        if (capabilityTaskKeys.some((key) => !stagedCapabilityKeys.has(key))) {
           fail('principal_not_provisionable', 'Agent capability grant is unavailable.');
         }
         await client.query(
@@ -610,13 +663,15 @@ export function createOperatorRepository(pool) {
         `/* operator:provisioning-context */
          SELECT agent.id AS principal_id, agent.principal_key, agent.status,
                 link.source_principal_id AS owner_principal_id,
+                personal_pair.agent_principal_id IS NOT NULL AS is_personal_agent,
                 credential.id AS credential_id,
                 credential.status AS credential_status,
                 credential.metadata->>'policy_hash' AS policy_hash,
                 template.id AS policy_template_id,
                 template.template_key, template.version,
                 capability_grant.id AS capability_grant_id,
-                capability_grant.status AS capability_grant_status
+                capability_grant.status AS capability_grant_status,
+                personal_context_grant.status AS personal_context_grant_status
          FROM identity.principals agent
          JOIN identity.principal_links link
            ON link.target_principal_id = agent.id
@@ -632,7 +687,26 @@ export function createOperatorRepository(pool) {
           AND capability_grant.department_id = $3
           AND capability_grant.policy_template_id = template.id
           AND capability_grant.capability_task_key = 'website_delivery_handoff'
+         LEFT JOIN identity.employee_personal_agents personal_pair
+           ON personal_pair.agent_principal_id = agent.id
+          AND personal_pair.department_id = $3
+         LEFT JOIN governance.capability_grants personal_context_grant
+           ON personal_context_grant.principal_id = agent.id
+          AND personal_context_grant.department_id = $3
+          AND personal_context_grant.policy_template_id = template.id
+          AND personal_context_grant.capability_task_key = 'personal_context_retrieval'
          WHERE agent.id = $1 AND agent.principal_kind = 'agent'
+           AND (
+             personal_pair.agent_principal_id IS NULL
+             OR personal_pair.human_principal_id = link.source_principal_id
+           )
+           AND (
+             personal_pair.agent_principal_id IS NULL
+             OR (
+               personal_context_grant.id IS NOT NULL
+               AND personal_context_grant.status = capability_grant.status
+             )
+           )
            AND (link.source_principal_id = $2 OR EXISTS (
              SELECT 1 FROM identity.department_memberships actor_membership
              WHERE actor_membership.principal_id = $2
@@ -653,6 +727,7 @@ export function createOperatorRepository(pool) {
       return transaction(pool, async (client) => {
         const result = await client.query(
           `SELECT job.id, job.status, job.plan,
+                  credential.policy_template_id,
                   credential.id AS credential_id,
                   capability_grant.id AS capability_grant_id
            FROM identity.provisioning_jobs job
@@ -695,6 +770,33 @@ export function createOperatorRepository(pool) {
         );
         const staged = result.rows[0];
         if (!staged) fail('provisioning_conflict', 'Confirmed provisioning state is not available.');
+        const pairResult = await client.query(
+          `SELECT human_principal_id, agent_principal_id
+           FROM identity.employee_personal_agents
+           WHERE agent_principal_id = $1 AND department_id = $2`,
+          [principalId, departmentId],
+        );
+        const personalPair = pairResult.rows[0] || null;
+        let personalContextGrantId = null;
+        if (personalPair) {
+          const expectedGrantStatus = staged.plan?.operation === 'resume_agent'
+            ? 'suspended'
+            : 'draft';
+          const personalGrantResult = await client.query(
+            `SELECT id
+             FROM governance.capability_grants
+             WHERE principal_id = $1 AND department_id = $2
+               AND policy_template_id = $3
+               AND capability_task_key = 'personal_context_retrieval'
+               AND status = $4
+             FOR UPDATE`,
+            [principalId, departmentId, staged.policy_template_id, expectedGrantStatus],
+          );
+          personalContextGrantId = personalGrantResult.rows[0]?.id || null;
+          if (!personalContextGrantId) {
+            fail('provisioning_conflict', 'Personal context grant is not staged.');
+          }
+        }
         await client.query(
           `UPDATE identity.principals
            SET status = 'active', suspended_at = NULL, updated_at = now()
@@ -728,12 +830,18 @@ export function createOperatorRepository(pool) {
            WHERE principal_id = $1 AND binding_kind = 'broker_client'`,
           [principalId],
         );
-        await client.query(
+        const grantIds = [staged.capability_grant_id];
+        if (personalContextGrantId) grantIds.push(personalContextGrantId);
+        const activatedGrants = await client.query(
           `UPDATE governance.capability_grants
            SET status = 'active', valid_from = now(), valid_to = NULL, updated_at = now()
-           WHERE id = $1 AND status IN ('draft', 'suspended')`,
-          [staged.capability_grant_id],
+           WHERE id = ANY($1::uuid[]) AND status IN ('draft', 'suspended')
+           RETURNING id`,
+          [grantIds],
         );
+        if (activatedGrants.rows.length !== grantIds.length) {
+          fail('provisioning_conflict', 'The staged capability grants could not be activated.');
+        }
         await client.query(
           `UPDATE identity.provisioning_jobs
            SET status = 'running', started_at = now(), revision = revision + 1
@@ -843,6 +951,27 @@ export function createOperatorRepository(pool) {
           [jobId, departmentId],
         );
         if (!jobResult.rows[0]) fail('provisioning_conflict', 'Running provisioning job is unavailable.');
+        const personalPairResult = await client.query(
+          `SELECT human_principal_id, agent_principal_id, department_id,
+                  status, activated_at
+           FROM identity.employee_personal_agents
+           WHERE agent_principal_id = $1 AND department_id = $2`,
+          [principalId, departmentId],
+        );
+        const personalPair = personalPairResult.rows[0] || null;
+        let personalAgentPair = personalPair;
+        if (personalPair && ['draft', 'suspended'].includes(personalPair.status)) {
+          const activationResult = await client.query(
+            `SELECT identity.activate_employee_personal_agent($1) AS pair`,
+            [principalId],
+          );
+          personalAgentPair = activationResult.rows[0]?.pair || null;
+          if (!personalAgentPair || personalAgentPair.status !== 'active') {
+            fail('personal_agent_activation_failed', 'Personal agent activation did not return an active pair.');
+          }
+        } else if (personalPair && personalPair.status !== 'active') {
+          fail('personal_agent_activation_failed', 'Personal agent pair is not activatable.');
+        }
         await client.query(
           `INSERT INTO identity.provisioning_events (
              job_id, event_type, actor_principal_id, from_status, to_status, payload
@@ -869,7 +998,10 @@ export function createOperatorRepository(pool) {
             ],
           );
         }
-        return jobResult.rows[0];
+        return {
+          ...jobResult.rows[0],
+          personal_agent_pair: personalAgentPair,
+        };
       });
     },
 

@@ -153,9 +153,12 @@ export function validateAgentProof(proof, {
   notBefore,
   now = Date.now(),
 } = {}) {
-  if (!exactKeys(proof, [
+  const baseKeys = [
     'schema_version', 'principal_key', 'runtime_user', 'checked_at', 'passed', 'checks', 'broker',
-  ]) || proof.schema_version !== 1 || proof.principal_key !== principalKey
+  ];
+  const exactRuntimeShape = exactKeys(proof, baseKeys)
+    || (exactKeys(proof, [...baseKeys, 'personal_broker']) && proof.personal_broker === null);
+  if (!exactRuntimeShape || proof.schema_version !== 1 || proof.principal_key !== principalKey
       || proof.runtime_user !== osUser || proof.passed !== true || !Array.isArray(proof.checks)
       || proof.checks.length !== 6) {
     throw new Error('agent_proof_contract_invalid');

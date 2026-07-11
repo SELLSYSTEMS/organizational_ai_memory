@@ -72,6 +72,67 @@ function authorizationHandler(principal, role, bindings = []) {
   };
 }
 
+test('onboardEmployeeBundle delegates one atomic hash-only database operation', async () => {
+  const workspaceHash = 'a'.repeat(64);
+  const expected = {
+    employee: { id: HUMAN_ID, principal_key: 'human:mai' },
+    personal_agent: { id: AGENT_ID, principal_key: 'agent:mai_memory' },
+    pair: { status: 'provisioning' },
+  };
+  const pool = fakePool((sql, parameters) => {
+    if (sql.includes('identity.onboard_employee_bundle')) {
+      assert.deepEqual(parameters, [
+        'human:mai',
+        'Mai Nguyen',
+        'mai@example.com',
+        'Delivery Lead',
+        'agent:mai_memory',
+        "Mai's Memory Agent",
+        workspaceHash,
+        '2026-07-18T10:00:00.000Z',
+      ]);
+      return { rows: [{ bundle: expected }] };
+    }
+    return { rows: [] };
+  });
+  const plane = createIdentityDataPlane({ pool });
+
+  const result = await plane.onboardEmployeeBundle({
+    humanPrincipalKey: 'human:mai',
+    displayName: 'Mai Nguyen',
+    workEmail: 'MAI@example.com',
+    jobTitle: 'Delivery Lead',
+    agentPrincipalKey: 'agent:mai_memory',
+    agentDisplayName: "Mai's Memory Agent",
+    workspaceTokenSha256: workspaceHash,
+    workspaceExpiresAt: '2026-07-18T10:00:00.000Z',
+  });
+
+  assert.deepEqual(result, expected);
+  assert.equal(pool.calls[0].sql, 'BEGIN');
+  assert.equal(pool.calls.at(-1).sql, 'COMMIT');
+  assert.equal(pool.calls.some((call) => call.parameters.includes?.('MAI@example.com')), false);
+});
+
+test('onboardEmployeeBundle rejects invalid work email before opening a transaction', async () => {
+  const pool = fakePool(() => ({ rows: [] }));
+  const plane = createIdentityDataPlane({ pool });
+  await assert.rejects(
+    plane.onboardEmployeeBundle({
+      humanPrincipalKey: 'human:mai',
+      displayName: 'Mai Nguyen',
+      workEmail: 'not-an-email',
+      jobTitle: 'Delivery Lead',
+      agentPrincipalKey: 'agent:mai_memory',
+      agentDisplayName: "Mai's Memory Agent",
+      workspaceTokenSha256: 'a'.repeat(64),
+      workspaceExpiresAt: '2026-07-18T10:00:00Z',
+    }),
+    (error) => error instanceof IdentityDataPlaneError && error.code === 'invalid_input',
+  );
+  assert.equal(pool.calls.length, 0);
+});
+
 test('createHuman creates a logical identity and no OS or database binding', async () => {
   const auth = authorizationHandler(activeHuman(ARCHITECT_ID, 'human:architect'), 'architect');
   const pool = fakePool((sql) => {

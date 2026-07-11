@@ -6,6 +6,7 @@ const DEPARTMENT_KEY = /^[a-z][a-z0-9_]{1,79}$/;
 const SAFE_KEY = /^[a-z][a-z0-9_.:-]{1,159}$/;
 const SHA256 = /^[a-f0-9]{64}$/;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const WORK_EMAIL = /^[^\s@]{1,64}@[^\s@]{1,189}$/;
 const MEMBERSHIP_ROLES = new Set(['member', 'reviewer', 'architect']);
 const PROVISIONING_JOB_TYPES = new Set([
   'logical_principal',
@@ -278,6 +279,46 @@ export function createIdentityDataPlane({
   requirePool(pool);
 
   return {
+    async onboardEmployeeBundle({
+      humanPrincipalKey,
+      displayName,
+      workEmail,
+      jobTitle,
+      agentPrincipalKey,
+      agentDisplayName,
+      workspaceTokenSha256,
+      workspaceExpiresAt,
+    }) {
+      const humanKey = text(humanPrincipalKey, 'humanPrincipalKey', { max: 120, pattern: PRINCIPAL_KEY });
+      if (!humanKey.startsWith('human:')) fail('invalid_input', 'Employee principal keys must start with human:.');
+      const name = text(displayName, 'displayName', { max: 200 });
+      const email = text(workEmail, 'workEmail', { max: 254, pattern: WORK_EMAIL }).toLowerCase();
+      const title = text(jobTitle, 'jobTitle', { max: 160 });
+      const agentKey = text(agentPrincipalKey, 'agentPrincipalKey', { max: 120, pattern: PRINCIPAL_KEY });
+      if (!agentKey.startsWith('agent:')) fail('invalid_input', 'Personal agent keys must start with agent:.');
+      const agentName = text(agentDisplayName, 'agentDisplayName', { max: 200 });
+      const tokenHash = text(workspaceTokenSha256, 'workspaceTokenSha256', {
+        min: 64,
+        max: 64,
+        pattern: SHA256,
+      });
+      const expiresAt = timestamp(workspaceExpiresAt, 'workspaceExpiresAt');
+
+      return transaction(pool, async (client) => {
+        const result = await client.query(
+          `SELECT identity.onboard_employee_bundle(
+             $1, $2, $3, $4, $5, $6, $7, $8::timestamptz
+           ) AS bundle`,
+          [humanKey, name, email, title, agentKey, agentName, tokenHash, expiresAt],
+        );
+        const bundle = result.rows[0]?.bundle;
+        if (!bundle || typeof bundle !== 'object') {
+          fail('employee_onboarding_failed', 'Employee onboarding did not return its authoritative bundle.');
+        }
+        return bundle;
+      });
+    },
+
     async createHuman({
       principalKey,
       displayName,

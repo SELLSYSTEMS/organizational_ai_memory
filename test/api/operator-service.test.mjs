@@ -94,6 +94,7 @@ test('every sensitive operator service action fails closed before its dependency
   });
   const uuid = '00000000-0000-4000-8000-000000000099';
   const actions = [
+    () => service.onboardEmployee(ACTOR, {}),
     () => service.createHuman(ACTOR, {}),
     () => service.createAgent(ACTOR, {}),
     () => service.queueProvisioning(ACTOR, {}),
@@ -111,6 +112,254 @@ test('every sensitive operator service action fails closed before its dependency
     await assert.rejects(invoke, (error) => error.code === 'permission_denied');
   }
   assert.equal(dependencyCalls, 0);
+});
+
+test('employee onboarding returns a workspace secret once and persists only its hash', async () => {
+  const now = new Date('2026-07-11T10:00:00.000Z');
+  const generated = [
+    '00000000-0000-4000-8000-000000000021',
+    '00000000-0000-4000-8000-000000000022',
+  ];
+  let captured;
+  const identityPlane = {
+    async computeEffectiveAccess() {
+      return {
+        can(permission) {
+          return [PERMISSIONS.PROVISIONING_CONFIRM, PERMISSIONS.PROVISIONING_QUEUE].includes(permission);
+        },
+        runtime_findings: [],
+      };
+    },
+    async onboardEmployeeBundle(input) {
+      captured = input;
+      return {
+        employee: { id: '00000000-0000-4000-8000-000000000021', display_name: 'Mai Nguyen' },
+        personal_agent: { id: '00000000-0000-4000-8000-000000000022', display_name: "Mai's Memory Agent" },
+        pair: { status: 'provisioning' },
+      };
+    },
+  };
+  const service = createOperatorService({
+    identityPlane,
+    repository: {},
+    provisionerClient: {},
+    now: () => now,
+    randomUUID: () => generated.shift(),
+  });
+
+  const result = await service.onboardEmployee(ACTOR, {
+    display_name: 'Mai Nguyen',
+    work_email: 'mai@example.com',
+    job_title: 'Delivery Lead',
+    agent_display_name: "Mai's Memory Agent",
+  });
+
+  assert.match(result.workspace_access.token, /^[A-Za-z0-9_-]{43}$/);
+  assert.equal(result.workspace_access.one_time_display, true);
+  assert.equal(result.workspace_access.secret_persisted, false);
+  assert.equal(
+    captured.workspaceTokenSha256,
+    (await import('node:crypto')).createHash('sha256').update(result.workspace_access.token).digest('hex'),
+  );
+  assert.equal(captured.humanPrincipalKey, 'human:00000000-0000-4000-8000-000000000021');
+  assert.equal(captured.agentPrincipalKey, 'agent:00000000-0000-4000-8000-000000000022');
+  assert.equal(captured.workspaceExpiresAt, '2026-07-18T10:00:00.000Z');
+  assert.doesNotMatch(JSON.stringify(captured), new RegExp(result.workspace_access.token));
+});
+
+test('suspending an employee fail-closes the linked agent identity and host runtime', async () => {
+  const humanId = '00000000-0000-4000-8000-000000000021';
+  const agentId = '00000000-0000-4000-8000-000000000022';
+  const suspendedIds = [];
+  const identityPlane = {
+    async computeEffectiveAccess() {
+      return {
+        can: (permission) => permission === PERMISSIONS.PRINCIPAL_SUSPEND,
+        runtime_findings: [],
+      };
+    },
+    async suspendPrincipal(input) {
+      suspendedIds.push(input.principalId);
+      return {
+        id: input.principalId,
+        principal_key: input.principalId === agentId ? `agent:${agentId}` : 'human:mai',
+        status: 'suspended',
+      };
+    },
+  };
+  const repository = {
+    async personalPairForPrincipal() {
+      return { human_principal_id: humanId, agent_principal_id: agentId, status: 'active' };
+    },
+    async provisioningContext(input) {
+      assert.equal(input.principalId, agentId);
+      return { principal_key: `agent:${agentId}`, policy_hash: 'a'.repeat(64) };
+    },
+  };
+  let executedPlan;
+  const provisionerClient = {
+    async execute(plan) {
+      executedPlan = plan;
+      return { record: {
+        status: 'succeeded',
+        suspension: 'enforced',
+        verified: true,
+        service_inactive: true,
+        unit_disabled: true,
+        processes_absent: true,
+        account_locked: true,
+        broker_group_removed: true,
+        credentials_absent: true,
+      } };
+    },
+  };
+  const service = createOperatorService({
+    identityPlane,
+    repository,
+    provisionerClient,
+    randomUUID: () => '00000000-0000-4000-8000-000000000099',
+  });
+
+  const result = await service.suspendPrincipal(ACTOR, humanId, { reason: 'Employee offboarding' });
+
+  assert.deepEqual(suspendedIds, [agentId, humanId]);
+  assert.equal(executedPlan.operation, 'suspend_agent');
+  assert.equal(executedPlan.principal_key, `agent:${agentId}`);
+  assert.equal(result.principal.id, humanId);
+  assert.equal(result.personal_agent.id, agentId);
+  assert.equal(result.enforcement.record.verified, true);
+});
+
+test('personal agent resume is rejected before provisioning state can mutate', async () => {
+  const agentId = '00000000-0000-4000-8000-000000000022';
+  let queueCalls = 0;
+  let provisionerCalls = 0;
+  let generatedIds = 0;
+  const identityPlane = {
+    async computeEffectiveAccess() {
+      return {
+        can: (permission) => permission === PERMISSIONS.PROVISIONING_QUEUE,
+        runtime_findings: [],
+      };
+    },
+  };
+  const repository = {
+    async activeAgentPolicy() {
+      return { id: '00000000-0000-4000-8000-000000000031', policy_hash: 'a'.repeat(64) };
+    },
+    async provisioningContext() {
+      return {
+        principal_key: `agent:${agentId}`,
+        status: 'suspended',
+        credential_status: 'suspended',
+        capability_grant_status: 'suspended',
+        policy_hash: 'a'.repeat(64),
+        is_personal_agent: true,
+      };
+    },
+    async queueProvisioningWithCredential() {
+      queueCalls += 1;
+      throw new Error('queue_must_not_be_called');
+    },
+  };
+  const provisionerClient = {
+    async execute() {
+      provisionerCalls += 1;
+      throw new Error('provisioner_must_not_be_called');
+    },
+  };
+  const service = createOperatorService({
+    identityPlane,
+    repository,
+    provisionerClient,
+    randomUUID: () => {
+      generatedIds += 1;
+      return '00000000-0000-4000-8000-000000000099';
+    },
+  });
+
+  await assert.rejects(
+    service.queueProvisioning(ACTOR, { principal_id: agentId, operation: 'resume_agent' }),
+    (error) => error.code === 'personal_agent_resume_requires_workspace_reissue'
+      && error.status === 409,
+  );
+  assert.equal(queueCalls, 0);
+  assert.equal(provisionerCalls, 0);
+  assert.equal(generatedIds, 0);
+});
+
+test('employee offboarding continues when the linked personal agent is already suspended', async () => {
+  const humanId = '00000000-0000-4000-8000-000000000021';
+  const agentId = '00000000-0000-4000-8000-000000000022';
+  const suspendedIds = [];
+  const identityPlane = {
+    async computeEffectiveAccess() {
+      return {
+        can: (permission) => permission === PERMISSIONS.PRINCIPAL_SUSPEND,
+        runtime_findings: [],
+      };
+    },
+    async suspendPrincipal(input) {
+      suspendedIds.push(input.principalId);
+      return {
+        id: input.principalId,
+        principal_key: `human:${humanId}`,
+        principal_kind: 'human',
+        status: 'suspended',
+      };
+    },
+  };
+  const repository = {
+    async personalPairForPrincipal() {
+      return {
+        human_principal_id: humanId,
+        agent_principal_id: agentId,
+        status: 'suspended',
+        agent_status: 'suspended',
+        agent_principal_key: `agent:${agentId}`,
+        agent_suspended_at: '2026-07-11T09:00:00.000Z',
+      };
+    },
+    async provisioningContext(input) {
+      assert.equal(input.principalId, agentId);
+      return { principal_key: `agent:${agentId}`, policy_hash: 'a'.repeat(64) };
+    },
+  };
+  let executedPlan;
+  const provisionerClient = {
+    async execute(plan) {
+      executedPlan = plan;
+      return { record: {
+        status: 'succeeded',
+        suspension: 'enforced',
+        verified: true,
+        service_inactive: true,
+        unit_disabled: true,
+        processes_absent: true,
+        account_locked: true,
+        broker_group_removed: true,
+        credentials_absent: true,
+      } };
+    },
+  };
+  const service = createOperatorService({
+    identityPlane,
+    repository,
+    provisionerClient,
+    randomUUID: () => '00000000-0000-4000-8000-000000000099',
+  });
+
+  const result = await service.suspendPrincipal(ACTOR, humanId, {
+    reason: 'Employee offboarding after failed provisioning',
+  });
+
+  assert.deepEqual(suspendedIds, [humanId]);
+  assert.equal(executedPlan.operation, 'suspend_agent');
+  assert.equal(executedPlan.principal_key, `agent:${agentId}`);
+  assert.equal(result.principal.id, humanId);
+  assert.equal(result.personal_agent.id, agentId);
+  assert.equal(result.personal_agent.already_suspended, true);
+  assert.equal(result.enforcement.record.verified, true);
 });
 
 test('upload is sealed by the root allowlist before clean scan evidence and readiness', async (t) => {

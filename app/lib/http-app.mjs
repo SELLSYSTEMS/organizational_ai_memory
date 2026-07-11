@@ -10,7 +10,7 @@ import { HttpError } from './errors.mjs';
 import { EVIDENCE_TYPES } from './public-memory-service.mjs';
 import { FixedWindowRateLimiter } from './rate-limiter.mjs';
 
-const SPA_ROUTES = new Set(['/', '/demo', '/assets', '/method', '/evidence']);
+const SPA_ROUTES = new Set(['/', '/demo', '/capabilities', '/assets', '/method', '/evidence']);
 const MIME_TYPES = new Map([
   ['.avif', 'image/avif'],
   ['.css', 'text/css; charset=utf-8'],

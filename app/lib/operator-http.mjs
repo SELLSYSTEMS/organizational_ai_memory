@@ -421,6 +421,24 @@ export function createOperatorRequestHandler({
         json(res, 200, { data: await service.state(session.actor) }, req.method);
         return;
       }
+      if (url.pathname === '/api/v1/employees' && req.method === 'POST') {
+        noQuery(url);
+        const input = exactObject(
+          await readJson(req),
+          ['display_name', 'work_email', 'job_title', 'agent_display_name'],
+        );
+        const workEmail = string(input.work_email, 'work_email', { max: 254 }).toLowerCase();
+        if (!/^[^\s@]{1,64}@[^\s@]{1,189}$/.test(workEmail)) {
+          throw new OperatorHttpError(400, 'invalid_request', 'work_email must be a valid email address.');
+        }
+        json(res, 201, { data: await service.onboardEmployee(session.actor, {
+          display_name: string(input.display_name, 'display_name', { max: 200 }),
+          work_email: workEmail,
+          job_title: string(input.job_title, 'job_title', { max: 160 }),
+          agent_display_name: string(input.agent_display_name, 'agent_display_name', { max: 200 }),
+        }) }, req.method);
+        return;
+      }
       const accessMatch = url.pathname.match(/^\/api\/v1\/access\/([0-9a-f-]{36})$/i);
       if (accessMatch && req.method === 'GET') {
         const allowed = new Set(['department_id']);

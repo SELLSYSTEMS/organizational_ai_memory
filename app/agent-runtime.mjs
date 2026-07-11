@@ -6,6 +6,8 @@ import { promisify } from 'node:util';
 import { pathToFileURL } from 'node:url';
 
 const execFileAsync = promisify(execFile);
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const SHA256 = /^[a-f0-9]{64}$/;
 
 const DEFAULT_PROBES = Object.freeze([
   ['repository_read', '/home/admin/organizational-ai-memory/README.md'],
@@ -138,6 +140,85 @@ export async function requestBrokerRecommendation({ socketPath, token, principal
   });
 }
 
+export async function requestBrokerPersonalContext({ socketPath, token, principalKey, query }) {
+  const body = JSON.stringify({ query });
+  return new Promise((resolve) => {
+    const request = http.request({
+      socketPath,
+      path: '/v1/agent/personal-context',
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${token}`,
+        'content-length': Buffer.byteLength(body),
+        'content-type': 'application/json',
+        'x-oam-principal': principalKey,
+      },
+      timeout: 4_000,
+    }, (response) => {
+      const chunks = [];
+      let size = 0;
+      response.on('data', (chunk) => {
+        size += chunk.length;
+        if (size <= 65_536) chunks.push(chunk);
+      });
+      response.on('end', () => {
+        if (size > 65_536) {
+          resolve({ passed: false, status: response.statusCode, reason: 'response_too_large' });
+          return;
+        }
+        try {
+          const payload = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+          const items = Array.isArray(payload?.items) ? payload.items : [];
+          const citations = Array.isArray(payload?.citations) ? payload.citations : [];
+          const citationsValid = items.length === citations.length && items.every((item, index) => {
+            const citation = item?.citation;
+            const projected = citations[index];
+            const sourceType = item?.source_type;
+            const typedIdField = sourceType === 'profile' ? 'profile_id' : 'memory_id';
+            return ['memory', 'profile'].includes(sourceType)
+              && UUID.test(item?.id || '')
+              && Number.isSafeInteger(item?.revision)
+              && item.revision >= 1
+              && SHA256.test(item?.content_sha256 || '')
+              && citation?.source_type === sourceType
+              && citation?.source_id === item.id
+              && citation?.[typedIdField] === item.id
+              && citation?.revision === item.revision
+              && citation?.content_sha256 === item.content_sha256
+              && projected?.source_type === citation.source_type
+              && projected?.source_id === citation.source_id
+              && projected?.[typedIdField] === citation[typedIdField]
+              && projected?.revision === citation.revision
+              && projected?.content_sha256 === citation.content_sha256;
+          });
+          resolve({
+            passed: response.statusCode === 200
+              && payload?.authorization === 'allowed'
+              && citationsValid
+              && UUID.test(payload?.audit_event_key || ''),
+            status: response.statusCode,
+            authorization: boundedText(payload?.authorization, 40),
+            matched_count: items.length,
+            citation_count: citations.length,
+            audit_event_key: boundedText(payload?.audit_event_key, 80),
+            citation_digests: citationsValid ? citations.map((citation) => ({
+              source_type: citation.source_type,
+              source_id: citation.source_id,
+              revision: citation.revision,
+              content_sha256: citation.content_sha256,
+            })) : [],
+          });
+        } catch {
+          resolve({ passed: false, status: response.statusCode, reason: 'invalid_json' });
+        }
+      });
+    });
+    request.on('timeout', () => request.destroy(new Error('broker_timeout')));
+    request.on('error', (error) => resolve({ passed: false, reason: boundedText(error?.message, 80) }));
+    request.end(body);
+  });
+}
+
 export async function runAgentProof(options = {}) {
   const stateDirectory = options.stateDirectory || process.env.OAM_AGENT_STATE_DIR;
   const tokenFile = options.tokenFile || process.env.OAM_AGENT_TOKEN_FILE;
@@ -159,8 +240,19 @@ export async function runAgentProof(options = {}) {
   const workspace = await ownWorkspaceProbe(stateDirectory);
   const postgres = await postgresProbe(osUser);
   const broker = await requestBrokerRecommendation({ socketPath, token, principalKey });
+  const personalQuery = options.personalQuery || process.env.OAM_AGENT_PERSONAL_CONTEXT_QUERY || '';
+  const personalBroker = personalQuery
+    ? await requestBrokerPersonalContext({
+      socketPath,
+      token,
+      principalKey,
+      query: personalQuery,
+    })
+    : null;
   const checks = [...access, workspace, postgres];
-  const passed = checks.every((check) => check.passed) && broker.passed;
+  const passed = checks.every((check) => check.passed)
+    && broker.passed
+    && (!personalBroker || personalBroker.passed);
   const result = {
     schema_version: 1,
     principal_key: principalKey,
@@ -169,6 +261,7 @@ export async function runAgentProof(options = {}) {
     passed,
     checks,
     broker,
+    personal_broker: personalBroker,
   };
   await atomicJson(path.join(stateDirectory, 'agent-proof.json'), result);
   return result;
@@ -191,7 +284,7 @@ async function main() {
     }
   };
   await run();
-  setInterval(() => {}, 60_000);
+  if (!process.argv.includes('--once')) setInterval(() => {}, 60_000);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {

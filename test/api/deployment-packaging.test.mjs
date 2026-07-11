@@ -10,9 +10,11 @@ test('identity-plane installer is confirmation-gated and installs isolated workl
   assert.match(script, /ensure_user oam-public oam-public/);
   assert.match(script, /ensure_user oam-operator oam-operator/);
   assert.match(script, /ensure_user oam-broker oam-broker/);
+  assert.match(script, /ensure_user oam-employee oam-employee/);
   assert.match(script, /write_db_env[^\n]+oam_public_api/);
   assert.match(script, /write_db_env[^\n]+oam_operator_api/);
   assert.match(script, /write_db_env[^\n]+oam_broker_api/);
+  assert.match(script, /write_db_env[^\n]+oam_employee_api/);
   assert.match(script, /Restricted public role unexpectedly read canonical memory/);
   assert.match(script, /identity_data_plane_v2_public_asset_eligibility\.sql/);
   assert.match(script, /identity_data_plane_v3_capture_integrity\.sql/);
@@ -20,6 +22,7 @@ test('identity-plane installer is confirmation-gated and installs isolated workl
   assert.match(script, /identity_data_plane_v5_audit_scope\.sql/);
   assert.match(script, /identity_data_plane_v6_security_review\.sql/);
   assert.match(script, /identity_data_plane_v7_operator_context\.sql/);
+  assert.match(script, /identity_data_plane_v8_personal_agents\.sql/);
   assert.match(script, /identity_operator_context_seed_v1\.sql/);
   assert.match(script, /organizational-ai-memory\.conf\.example/);
   assert.match(script, /trusted_proxy_cidr=\$\{OAM_TRUSTED_PROXY_CIDR:-\}/);
@@ -36,6 +39,10 @@ test('packaged nginx exposes one prefixed console and keeps root operator APIs p
   assert.match(nginx, /location \^~ \/api\/v1\s*\{\s*return 404;/s);
   assert.match(nginx, /proxy_pass http:\/\/127\.0\.0\.1:3010\//);
   assert.match(nginx, /proxy_set_header Host memory\.sellsystems\.agency/);
+  assert.equal((nginx.match(/location \^~ \/workspace\//g) || []).length, 1);
+  assert.match(nginx, /proxy_pass http:\/\/127\.0\.0\.1:3020\//);
+  assert.match(nginx, /client_max_body_size 128k/);
+  assert.match(nginx, /proxy_set_header X-Real-IP \$remote_addr/);
 });
 
 test('runtime login migration grants exactly one workload membership per login', async () => {
@@ -43,9 +50,54 @@ test('runtime login migration grants exactly one workload membership per login',
   assert.match(sql, /GRANT oam_public_runtime TO oam_public_api/);
   assert.match(sql, /GRANT oam_operator_runtime TO oam_operator_api/);
   assert.match(sql, /GRANT oam_broker_runtime TO oam_broker_api/);
+  assert.match(sql, /GRANT oam_employee_runtime TO oam_employee_api/);
   assert.match(sql, /REVOKE oam_operator_runtime, oam_broker_runtime FROM oam_public_api/);
   assert.match(sql, /REVOKE oam_public_runtime, oam_broker_runtime FROM oam_operator_api/);
   assert.match(sql, /REVOKE oam_public_runtime, oam_operator_runtime FROM oam_broker_api/);
+  assert.match(sql, /REVOKE oam_public_runtime, oam_operator_runtime, oam_broker_runtime FROM oam_employee_api/);
+  assert.match(sql, /REVOKE oam_employee_runtime FROM oam_public_api, oam_operator_api, oam_broker_api/);
+});
+
+test('employee workspace is packaged as an isolated Linux and PostgreSQL workload', async () => {
+  const [unit, installer] = await Promise.all([
+    read('deploy/systemd/organizational-ai-memory-employee.service'),
+    read('scripts/deploy/install_identity_plane.sh'),
+  ]);
+  assert.match(unit, /^User=oam-employee$/m);
+  assert.match(unit, /^Group=oam-employee$/m);
+  assert.match(unit, /EnvironmentFile=\/etc\/organizational-ai-memory\/employee-db\.env/);
+  assert.match(unit, /Environment=OAM_EMPLOYEE_PORT=3020/);
+  assert.match(unit, /InaccessiblePaths=.*operator-db\.env.*broker-db\.env/);
+  assert.match(unit, /ProtectSystem=strict/);
+  assert.match(installer, /sync_runtime \/opt\/organizational-ai-memory-employee oam-employee/);
+  assert.match(installer, /systemctl enable organizational-ai-memory-employee\.service/);
+});
+
+test('employee workspace navigation emits valid aria-current attributes', async () => {
+  const client = await read('app/employee-public/app.js');
+  assert.equal((client.match(/aria-current="\$\{/g) || []).length, 3);
+  assert.equal((client.match(/'false'\}">/g) || []).length, 3);
+  assert.doesNotMatch(client, /aria-current="\$\{[^\n]+?'false'\}>/);
+});
+
+test('operator UI presents personal suspension as terminal and does not offer resume', async () => {
+  const client = await read('app/operator-public/app.js');
+  assert.match(client, /There is no self-service or in-product resume\./);
+  assert.match(client, /Suspend and revoke access/);
+  assert.doesNotMatch(client, /<option value="resume_agent">/);
+});
+
+test('operator onboarding result binds every close control', async () => {
+  const client = await read('app/operator-public/app.js');
+  assert.match(client, /querySelectorAll\('\[data-close-dialog\]'\)\.forEach/);
+  assert.doesNotMatch(client, /querySelector\('\[data-close-dialog\]'\)\?\.addEventListener/);
+});
+
+test('operator operational principal view excludes proof fixtures and suspended identities', async () => {
+  const client = await read('app/operator-public/app.js');
+  assert.match(client, /function isOperationalPrincipal\(principal = \{\}\)/);
+  assert.match(client, /!isProofFixture\(principal\) && \['active', 'draft'\]\.includes\(principal\.status\)/);
+  assert.match(client, /ui\.principalFilter === 'operational' && isOperationalPrincipal\(principal\)/);
 });
 
 test('agent package proves installed application denial and Codex package includes its validator', async () => {

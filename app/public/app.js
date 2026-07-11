@@ -17,7 +17,7 @@ const TYPE_LABELS = {
 
 const PAGE_LABELS = {
   assets: 'Assets',
-  demo: 'Demo',
+  capabilities: 'Capabilities',
   method: 'Method',
   evidence: 'Evidence',
 };
@@ -364,7 +364,7 @@ function renderQueryResult(payload, { compact = false } = {}) {
       <div class="memory-ledger">
         ${facts.map((fact, index) => renderFactRow(fact, index)).join('')}
       </div>
-      ${compact ? '<a class="button-secondary full-result-link" href="/demo">Open the full result</a>' : `
+      ${compact ? '<a class="button-secondary full-result-link" href="/capabilities">Open the full result</a>' : `
         <details class="assembly-details">
           <summary>How this result was assembled</summary>
           <div class="assembly-grid">
@@ -385,7 +385,7 @@ function homePage() {
         <h1>Organizational AI Memory</h1>
         <p>A provenance-first capability layer that turns proven prompts, workflows, agent patterns, decisions, and practices into governed organizational memory. Start a task, get reusable prior work, and inspect the evidence behind it.</p>
         <div class="home-actions">
-          <a class="button" href="/demo">Start with prior work</a>
+          <a class="button" href="/capabilities">Start with prior work</a>
           <a class="button-secondary" href="/assets">Browse capability assets</a>
         </div>
       </div>
@@ -400,7 +400,30 @@ function homePage() {
           <span class="record-label">Deterministic record</span>
         </div>
         <div class="home-capability-proof" data-home-capability-proof>
-          <div class="loading-state">Loading the public-safe capability record...</div>
+          <div class="loading-state">Loading the approved capability record...</div>
+        </div>
+      </div>
+    </section>
+    <section class="personal-agent-band" aria-labelledby="personal-agent-title">
+      <div class="personal-agent-inner">
+        <div class="section-head">
+          <div>
+            <h2 id="personal-agent-title">One employee. One Personal Memory Agent.</h2>
+            <p>Private experience remains employee-owned. Only an explicitly shared version becomes retrievable by the linked agent; organizational promotion follows a separate review path.</p>
+          </div>
+          <a href="/workspace/">Open employee workspace</a>
+        </div>
+        <ol class="personal-agent-flow" aria-label="Personal memory governance flow">
+          <li><span>01</span><strong>Employee identity</strong><small>Authenticated human principal</small></li>
+          <li><span>02</span><strong>Private memory</strong><small>Append-only versions and hashes</small></li>
+          <li><span>03</span><strong>Explicit agent share</strong><small>Current version only</small></li>
+          <li><span>04</span><strong>Governed reuse</strong><small>Brokered retrieval with citations</small></li>
+        </ol>
+        <div class="personal-agent-proof">
+          <span>Distinct agent principal</span>
+          <span>Dedicated Linux runtime identity</span>
+          <span>No direct PostgreSQL login</span>
+          <span>Suspension fails closed</span>
         </div>
       </div>
     </section>
@@ -437,7 +460,7 @@ function homePage() {
   `;
 }
 
-function demoPage() {
+function capabilitiesPage() {
   return `
     <div class="judge-demo">
       <header class="judge-topbar">
@@ -451,18 +474,18 @@ function demoPage() {
           <kbd>⌘ K</kbd>
         </label>
         <a class="judge-help" href="/method" aria-label="Open method and architecture" title="Method and architecture">?</a>
-        <div class="judge-session" aria-label="Current public session">
-          <span class="judge-avatar" aria-hidden="true">PJ</span>
-          <span><strong>Public judge</strong><small>Public-safe session</small></span>
+        <div class="judge-session" aria-label="Current capability workspace">
+          <span class="judge-avatar" aria-hidden="true">CM</span>
+          <span><strong>Capability memory</strong><small>Reviewed public scope</small></span>
         </div>
       </header>
 
       <section class="judge-lifecycle" aria-label="Governed capability lifecycle">
-        <div class="lifecycle-step is-complete"><span class="lifecycle-icon">1</span><span><strong>Capture</strong><small>Synthetic evidence retained</small></span></div>
+        <div class="lifecycle-step is-complete"><span class="lifecycle-icon">1</span><span><strong>Capture</strong><small>Source evidence retained</small></span></div>
         <span class="lifecycle-connector" aria-hidden="true"></span>
         <div class="lifecycle-step is-complete"><span class="lifecycle-icon">2</span><span><strong>Review</strong><small>Governance recorded</small></span></div>
         <span class="lifecycle-connector is-dotted" aria-hidden="true"></span>
-        <div class="lifecycle-step is-current"><span class="lifecycle-icon">✓</span><span><strong>Reuse</strong><small>Public-safe capability</small></span></div>
+        <div class="lifecycle-step is-current"><span class="lifecycle-icon">✓</span><span><strong>Reuse</strong><small>Approved capability</small></span></div>
         <div class="lifecycle-policy"><strong>Content is governed.</strong><span>Only approved content is reusable.</span><a href="/method">Learn more</a></div>
       </section>
 
@@ -535,11 +558,11 @@ function assetsPage() {
       ${pageIntro(
         'Reusable capability assets',
         'Browse the prompts, workflows, agent patterns, decisions, and practices retained as governed organizational memory.',
-        'Public-safe source pack',
+        'Reviewed capability inventory',
       )}
       <section class="capability-analytics" aria-labelledby="capability-analytics-title">
         <div class="workspace-heading">
-          <div><h2 id="capability-analytics-title">Capability inventory</h2><p>Counts are derived from the current public-safe asset records.</p></div>
+          <div><h2 id="capability-analytics-title">Capability inventory</h2><p>Counts are derived from the current reviewed asset records.</p></div>
         </div>
         <div data-capability-analytics><div class="loading-state">Loading capability counts...</div></div>
       </section>
@@ -564,7 +587,7 @@ function methodPage() {
     ['Memory formation', '<ul class="method-object-list"><li>Fact</li><li>Summary</li><li>Reflection</li></ul>', 'Typed memory objects preserve what is true, what matters, and what the record implies.'],
     ['Canonical store', '<div class="store-symbol">Postgres<br />source of truth</div>', 'Transactions, validity intervals, and source references remain inspectable.'],
     ['Capability asset', '<ul class="method-object-list"><li>Prompt</li><li>Workflow</li><li>Agent</li><li>Decision</li></ul>', 'Proven work becomes a versioned asset with owner, roles, review state, and evidence.'],
-    ['Recommendation', '<div class="optional-lane">Website delivery handoff<br /><br />Prompt + workflow + decision<br />deterministic</div>', 'The canonical demo task selects a governed starting point before any generated prose is requested.'],
+    ['Recommendation', '<div class="optional-lane">Website delivery handoff<br /><br />Prompt + workflow + decision<br />deterministic</div>', 'The canonical task mapping selects a governed starting point before any generated prose is requested.'],
     ['Bounded adaptation', '<ul class="method-object-list"><li>Stored record</li><li>Optional Spark prose</li><li>Source path</li></ul>', 'Generated adaptation stays non-authoritative and the deterministic record remains visible.'],
   ];
 
@@ -589,7 +612,7 @@ function methodPage() {
             <h2 id="method-example-title">Canonical reuse example</h2>
             <p>The website delivery task retrieves three stored capability assets before optional adaptation.</p>
           </div>
-          <a class="text-link" href="/demo?task=website_delivery_handoff">Run this task</a>
+          <a class="text-link" href="/capabilities?task=website_delivery_handoff">Open this task</a>
         </div>
         <div class="method-example-path">
           <strong>website_delivery_handoff</strong>
@@ -612,7 +635,7 @@ function methodPage() {
             <div class="definition-row"><dt>Fact</dt><dd>Stores an atomic claim with confidence and a valid-time interval.</dd></div>
             <div class="definition-row"><dt>Capability asset</dt><dd>Retains proven work with lifecycle, role, lineage, and evidence metadata.</dd></div>
             <div class="definition-row"><dt>Recommendation</dt><dd>Maps a known task to stored assets through an authoritative deterministic record.</dd></div>
-            <div class="definition-row"><dt>Spark adaptation</dt><dd>Produces optional non-authoritative prose from the selected public-safe record.</dd></div>
+            <div class="definition-row"><dt>Spark adaptation</dt><dd>Produces optional non-authoritative prose from the selected reviewed record.</dd></div>
           </dl>
         </section>
         <section class="method-detail">
@@ -634,14 +657,14 @@ function safetyBand() {
     <section class="safety-band" aria-labelledby="safety-title">
       <div class="safety-band-inner">
         <h2 class="safety-title" id="safety-title">Safety boundary</h2>
-        <div class="safety-scope"><strong>public_demo + public_safe</strong><span>The public API is pinned to one reviewed synthetic corpus.</span></div>
-        <div class="safety-scope"><strong>internal_demo + isolated</strong><span>The richer regression corpus has a separate tenant and is not publicly routed.</span></div>
+        <div class="safety-scope"><strong>reviewed public scope</strong><span>The public API is pinned to a reviewed, non-confidential corpus.</span></div>
+        <div class="safety-scope"><strong>internal scope isolated</strong><span>Internal regression data has a separate tenant and is not publicly routed.</span></div>
       </div>
     </section>
   `;
 }
 
-function closingBand(title, description, label = 'Run the public demo', href = '/demo') {
+function closingBand(title, description, label = 'Open capability workspace', href = '/capabilities') {
   return `
     <section class="closing-band">
       <div class="closing-band-inner">
@@ -658,7 +681,7 @@ function evidencePage() {
       ${pageIntro(
         'Inspect the memory behind the result',
         'Every retrieved claim can be traced to the memory object and source turn that support it.',
-        'Public demo only',
+        'Reviewed public scope',
       )}
       <div class="evidence-toolbar">
         <strong>Corpus inventory</strong>
@@ -907,7 +930,7 @@ function renderRecommendationRecord(recommendation, { compact = false } = {}) {
       </div>
       <p class="recommendation-reason">${escapeHtml(recommendation.reason)}</p>
       <div class="recommended-assets" aria-label="Recommended capability assets">${assetRows}</div>
-      ${compact ? `<a class="text-link" href="/demo?task=${encodeURIComponent(recommendation.taskKey)}">Open this task in the demo</a>` : ''}
+      ${compact ? `<a class="text-link" href="/capabilities?task=${encodeURIComponent(recommendation.taskKey)}">Open this task</a>` : ''}
     </article>
   `;
 }
@@ -986,7 +1009,7 @@ function renderJudgeSearchResults() {
             const match = matches.get(asset.assetKey) || {};
             const source = asset.sourceTurns[0] || {};
             const sourceId = source.source_turn_id || source.turn_id || source.id || 'Evidence retained';
-            const scope = source.context_scope || 'public-safe source turn';
+            const scope = source.context_scope || 'reviewed source turn';
             return `
               <tr>
                 <td><span class="judge-type-code judge-type-${escapeHtml(asset.assetType)}">${escapeHtml(citationCode(asset, index).slice(0, 1))}</span><strong>${escapeHtml(ASSET_TYPE_LABELS[asset.assetType] || humanize(asset.assetType))}</strong></td>
@@ -1246,7 +1269,7 @@ function renderJudgeAnalytics(payload) {
         <div class="judge-metric"><span><strong>${escapeHtml(label)}</strong><b>${escapeHtml(String(value))}</b></span><i><em class="is-${color}" style="width:${Math.max(4, Math.round(ratio * 100))}%"></em></i></div>
       `).join('')}
     </div>
-    <p class="judge-analytics-note">${hasCoverage ? 'Computed from current Postgres records; outcome claims are not measured.' : 'Derived from the current public-safe capability inventory.'}</p>
+    <p class="judge-analytics-note">${hasCoverage ? 'Computed from current Postgres records; outcome claims are not measured.' : 'Derived from the current reviewed capability inventory.'}</p>
     <a class="judge-rail-link" href="/assets">View inventory details</a>
   `;
 }
@@ -1317,7 +1340,7 @@ async function runPublicAccessProofs() {
     target.innerHTML = proofs.map((proof) => `
       <article class="judge-proof ${proof.passed ? 'is-pass' : 'is-fail'}">
         <div class="judge-proof-title"><span>${proof.passed ? '✓' : '×'}</span><strong>${escapeHtml(proof.title)}</strong></div>
-        <dl><div><dt>Session</dt><dd>Public judge</dd></div><div><dt>Action</dt><dd>${escapeHtml(proof.action)}</dd></div><div><dt>Resource</dt><dd>${escapeHtml(proof.resource)}</dd></div><div><dt>Result</dt><dd>${escapeHtml(proof.result)}</dd></div><div><dt>Time</dt><dd>${escapeHtml(formatDate(proof.time))}</dd></div><div><dt>Policy</dt><dd>${escapeHtml(proof.policy)}</dd></div></dl>
+        <dl><div><dt>Scope</dt><dd>Reviewed public access</dd></div><div><dt>Action</dt><dd>${escapeHtml(proof.action)}</dd></div><div><dt>Resource</dt><dd>${escapeHtml(proof.resource)}</dd></div><div><dt>Result</dt><dd>${escapeHtml(proof.result)}</dd></div><div><dt>Time</dt><dd>${escapeHtml(formatDate(proof.time))}</dd></div><div><dt>Policy</dt><dd>${escapeHtml(proof.policy)}</dd></div></dl>
       </article>
     `).join('') + '<a class="judge-rail-link" href="/architect/">Open the protected Architect Console</a>';
   } catch (error) {
@@ -1558,7 +1581,7 @@ function renderAssetInspector(asset) {
         <div class="governance-wide"><dt>Consumer roles</dt><dd>${governance.consumerRoles.length ? governance.consumerRoles.map(humanize).map(escapeHtml).join(', ') : 'Not provided'}</dd></div>
         ${governance.riskNote ? `<div class="governance-wide"><dt>Risk note</dt><dd>${escapeHtml(governance.riskNote)}</dd></div>` : ''}
       </dl>
-      <p class="governance-note">This public-safe record preserves the simulated source organization’s governance visibility.</p>
+      <p class="governance-note">This reviewed record preserves its source organization governance visibility.</p>
     </section>
     <section class="asset-inspector-section">
       <h3>Asset -> observation -> source turn</h3>
@@ -1633,7 +1656,7 @@ async function applyAssetFilters() {
     const value = form.elements[field].value;
     if (value) params.set(field, value);
   }
-  status.textContent = 'Filtering the public-safe capability ledger...';
+  status.textContent = 'Filtering the reviewed capability ledger...';
   list.innerHTML = '<div class="loading-state">Applying governed asset filters...</div>';
   try {
     const payload = await fetchJson(`/api/public/assets${params.size ? `?${params}` : ''}`);
@@ -1798,8 +1821,8 @@ async function runAssist(form) {
   button.disabled = true;
   status.textContent = 'Requesting a bounded adaptation from Codex Spark...';
   target.innerHTML = document.querySelector('.judge-demo')
-    ? '<div class="judge-loading">Adapting only the selected public-safe record…</div>'
-    : '<div class="loading-state">Adapting only the selected public-safe record...</div>';
+    ? '<div class="judge-loading">Adapting only the selected reviewed record…</div>'
+    : '<div class="loading-state">Adapting only the selected reviewed record...</div>';
   try {
     const payload = await fetchJson('/api/public/capability-assist', {
       method: 'POST',
@@ -1876,7 +1899,7 @@ async function runQuery(form, { compact = false, timelineTarget = null, preserve
   const query = form.elements.query.value.trim();
   if (!query) return;
 
-  status.textContent = 'Retrieving public-safe memory...';
+  status.textContent = 'Retrieving reviewed memory...';
   button.disabled = true;
   resultTarget.innerHTML = '<div class="loading-state">Reading current facts and source paths from Postgres...</div>';
   try {
@@ -2060,11 +2083,15 @@ function bindAssistForm() {
 
 function renderRoute() {
   const path = window.location.pathname.replace(/\/$/, '') || '/';
-  document.body.classList.toggle('judge-demo-mode', path === '/demo');
+  if (path === '/demo') {
+    window.location.replace(`/capabilities${window.location.search}${window.location.hash}`);
+    return;
+  }
+  document.body.classList.toggle('judge-demo-mode', path === '/capabilities');
   const routes = {
     '/': homePage,
     '/assets': assetsPage,
-    '/demo': demoPage,
+    '/capabilities': capabilitiesPage,
     '/method': methodPage,
     '/evidence': evidencePage,
   };
@@ -2090,7 +2117,7 @@ function renderRoute() {
   if (path === '/assets') {
     initializeAssetsPage();
   }
-  if (path === '/demo') {
+  if (path === '/capabilities') {
     initializeJudgeDemo();
   }
   if (path === '/evidence') {

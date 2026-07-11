@@ -204,18 +204,21 @@ test('database errors are never included in public responses', async (t) => {
 
 test('static serving uses explicit SPA fallbacks and blocks dotfiles', async (t) => {
   const baseUrl = await startTestServer(t);
-  const demo = await fetch(`${baseUrl}/demo`);
+  const capabilities = await fetch(`${baseUrl}/capabilities`);
+  const demoCompatibility = await fetch(`${baseUrl}/demo`);
   const assetsPage = await fetch(`${baseUrl}/assets`);
   const asset = await fetch(`${baseUrl}/app.js`);
   const unknown = await fetch(`${baseUrl}/not-a-route`);
   const dotfile = await fetch(`${baseUrl}/.env`);
   const unknownApi = await fetch(`${baseUrl}/api/private/memory`);
 
-  assert.equal(demo.status, 200);
-  assert.match(await demo.text(), /OAM test/);
+  assert.equal(capabilities.status, 200);
+  assert.match(await capabilities.text(), /OAM test/);
+  assert.equal(demoCompatibility.status, 200);
+  assert.match(await demoCompatibility.text(), /OAM test/);
   assert.equal(assetsPage.status, 200);
   assert.match(await assetsPage.text(), /OAM test/);
-  assert.equal(demo.headers.get('x-frame-options'), 'DENY');
+  assert.equal(capabilities.headers.get('x-frame-options'), 'DENY');
   assert.equal(asset.status, 200);
   assert.match(asset.headers.get('content-type'), /text\/javascript/);
   assert.equal(unknown.status, 404);

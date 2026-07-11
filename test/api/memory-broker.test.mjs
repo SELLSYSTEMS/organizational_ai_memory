@@ -100,6 +100,116 @@ test('broker rejects write-shaped paths and non-exact bodies before repository a
   assert.equal(calls, 0);
 });
 
+test('broker personal-context route is exact, hash-only, and bound to the claimed agent', async (t) => {
+  let captured;
+  const port = await serverFixture(t, {
+    async personalAgentContext(input) {
+      captured = input;
+      return {
+        schema_version: 1,
+        authorization: 'allowed',
+        principal: { agent_key: AGENT_KEY, human_key: 'human:mai' },
+        query: { text: input.query, limit: input.limit, matched_count: 1 },
+        items: [{
+          id: '00000000-0000-4000-8000-000000000010',
+          revision: 1,
+          content_sha256: 'c'.repeat(64),
+          citation: {
+            memory_id: '00000000-0000-4000-8000-000000000010',
+            revision: 1,
+            content_sha256: 'c'.repeat(64),
+          },
+        }],
+        citations: [{
+          memory_id: '00000000-0000-4000-8000-000000000010',
+          revision: 1,
+          content_sha256: 'c'.repeat(64),
+        }],
+      };
+    },
+  });
+  const response = await request({
+    port,
+    requestPath: '/v1/agent/personal-context',
+    headers: { authorization: `Bearer ${TOKEN}`, 'x-oam-principal': AGENT_KEY },
+    body: { query: 'Which handoff practice worked?' },
+  });
+  assert.equal(response.status, 200);
+  assert.equal(response.payload.authorization, 'allowed');
+  assert.equal(response.payload.items.length, 1);
+  assert.equal(captured.tokenSha256, crypto.createHash('sha256').update(TOKEN).digest('hex'));
+  assert.equal(captured.claimedPrincipalKey, AGENT_KEY);
+  assert.equal(captured.limit, 8);
+
+  const missingPrincipal = await request({
+    port,
+    requestPath: '/v1/agent/personal-context',
+    headers: { authorization: `Bearer ${TOKEN}` },
+    body: { query: 'handoff' },
+  });
+  assert.equal(missingPrincipal.status, 400);
+  assert.equal(missingPrincipal.payload.error.code, 'invalid_personal_context_request');
+});
+
+test('personal agent repository calls only the broker security-definer function', async () => {
+  const calls = [];
+  const pool = {
+    async query(sql, parameters) {
+      calls.push({ sql: sql.replace(/\s+/g, ' ').trim(), parameters });
+      return { rows: [{ result: {
+        schema_version: 1,
+        authorization: 'allowed',
+        principal: { agent_key: AGENT_KEY },
+        query: { text: 'handoff', limit: 8, matched_count: 0 },
+        items: [],
+        citations: [],
+        audit_event_key: '00000000-0000-4000-8000-000000000011',
+      } }] };
+    },
+    async connect() { throw new Error('direct_table_transaction_not_allowed'); },
+  };
+  const repository = createMemoryBrokerRepository(pool);
+  const result = await repository.personalAgentContext({
+    tokenSha256: 'a'.repeat(64),
+    claimedPrincipalKey: AGENT_KEY,
+    query: '  handoff  ',
+    limit: 8,
+  });
+  assert.equal(result.authorization, 'allowed');
+  assert.equal(calls.length, 1);
+  assert.match(calls[0].sql, /personal\.retrieve_agent_context_for_broker/);
+  assert.deepEqual(calls[0].parameters, ['a'.repeat(64), AGENT_KEY, 'handoff', 8]);
+  assert.doesNotMatch(calls[0].sql, /FROM personal\.memory_/);
+});
+
+test('personal agent repository enforces the SQL query and result boundaries', async () => {
+  let calls = 0;
+  const repository = createMemoryBrokerRepository({
+    async query() {
+      calls += 1;
+      return { rows: [] };
+    },
+    async connect() { throw new Error('unexpected_connect'); },
+  });
+  const base = {
+    tokenSha256: 'a'.repeat(64),
+    claimedPrincipalKey: AGENT_KEY,
+  };
+  for (const query of ['x', 'x'.repeat(201)]) {
+    await assert.rejects(
+      repository.personalAgentContext({ ...base, query, limit: 8 }),
+      (error) => error.code === 'invalid_personal_context_query' && error.status === 400,
+    );
+  }
+  for (const limit of [0, 11]) {
+    await assert.rejects(
+      repository.personalAgentContext({ ...base, query: 'valid query', limit }),
+      (error) => error.code === 'invalid_personal_context_limit' && error.status === 400,
+    );
+  }
+  assert.equal(calls, 0);
+});
+
 function fakeBrokerPool({ authorized = true, capability = true } = {}) {
   const calls = [];
   const client = {

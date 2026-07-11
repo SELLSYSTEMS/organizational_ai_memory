@@ -1,0 +1,59 @@
+[Unit]
+Description=Organizational AI Memory employee workspace
+After=network.target postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=oam-employee
+Group=oam-employee
+WorkingDirectory=/opt/organizational-ai-memory-employee
+Environment=NODE_ENV=production
+Environment=OAM_EMPLOYEE_HOST=127.0.0.1
+Environment=OAM_EMPLOYEE_PORT=3020
+Environment=OAM_EMPLOYEE_ALLOWED_HOST=memory.sellsystems.agency
+Environment=OAM_EMPLOYEE_ALLOWED_ORIGIN=https://memory.sellsystems.agency
+Environment=OAM_EMPLOYEE_SESSION_TTL_MS=1800000
+EnvironmentFile=/etc/organizational-ai-memory/employee-db.env
+ExecStart=/usr/bin/node app/employee-server.mjs
+Restart=on-failure
+RestartSec=3s
+StateDirectory=organizational-ai-memory-employee
+StateDirectoryMode=0700
+TimeoutStartSec=20s
+TimeoutStopSec=10s
+UMask=0077
+
+AmbientCapabilities=
+CapabilityBoundingSet=
+IPAddressDeny=any
+IPAddressAllow=localhost
+LockPersonality=true
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateTmp=true
+ProtectClock=true
+ProtectControlGroups=true
+ProtectHome=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectProc=invisible
+ProtectSystem=strict
+ProcSubset=pid
+InaccessiblePaths=/etc/tg_ops /etc/organizational-ai-memory/public-db.env /etc/organizational-ai-memory/operator-db.env /etc/organizational-ai-memory/broker-db.env /etc/organizational-ai-memory/operator-credentials.json
+InaccessiblePaths=/var/lib/oam-codex /var/lib/oam-agents /etc/oam-agents /var/lib/organizational-ai-memory-operator /var/lib/organizational-ai-memory-quarantine
+ReadOnlyPaths=/opt/organizational-ai-memory-employee
+ReadWritePaths=/var/lib/organizational-ai-memory-employee
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+SystemCallArchitectures=native
+TasksMax=64
+MemoryMax=384M
+MemorySwapMax=0
+LimitNOFILE=512
+
+[Install]
+WantedBy=multi-user.target

@@ -11,6 +11,7 @@
   "scripts": {
     "app:start": "node app/server.mjs",
     "app:operator": "node app/operator-server.mjs",
+    "app:employee": "node app/employee-server.mjs",
     "app:broker": "node app/memory-broker.mjs",
     "app:codex-sidecar": "node app/codex-sidecar.mjs",
     "app:test": "node --test test/api/*.test.mjs",

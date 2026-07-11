@@ -90,7 +90,9 @@ export function createMemoryBrokerHandler({ repository, randomUUID = crypto.rand
 
   return async function memoryBrokerHandler(req, res) {
     try {
-      if (req.method !== 'POST' || req.url !== '/v1/agent/recommendation') {
+      const recommendationRoute = req.method === 'POST' && req.url === '/v1/agent/recommendation';
+      const personalContextRoute = req.method === 'POST' && req.url === '/v1/agent/personal-context';
+      if (!recommendationRoute && !personalContextRoute) {
         req.resume();
         throw new BrokerHttpError(
           404,
@@ -106,6 +108,24 @@ export function createMemoryBrokerHandler({ repository, randomUUID = crypto.rand
         throw new BrokerHttpError(401, 'authentication_failed', 'Broker credential is invalid or inactive.');
       }
       const body = await readBody(req);
+      if (personalContextRoute) {
+        if (claimedPrincipalKey === null || !exactObject(body, ['query'])
+            || typeof body.query !== 'string') {
+          throw new BrokerHttpError(
+            400,
+            'invalid_personal_context_request',
+            'Personal context requests require an agent principal header and only a string query.',
+          );
+        }
+        const result = await repository.personalAgentContext({
+          tokenSha256: crypto.createHash('sha256').update(token).digest('hex'),
+          claimedPrincipalKey,
+          query: body.query,
+          limit: 8,
+        });
+        json(res, 200, result);
+        return;
+      }
       if (!exactObject(body, ['task']) || body.task !== 'website delivery handoff') {
         throw new BrokerHttpError(
           400,

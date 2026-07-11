@@ -61,6 +61,7 @@ ensure_user() {
 ensure_user oam-public oam-public
 ensure_user oam-operator oam-operator
 ensure_user oam-broker oam-broker
+ensure_user oam-employee oam-employee
 ensure_group oam-agent-broker
 ensure_group oam-codex
 usermod --append --groups oam-agent-broker oam-broker
@@ -72,16 +73,18 @@ if [[ ! -f ${secret_state} ]]; then
   public_password=$(openssl rand -hex 32)
   operator_password=$(openssl rand -hex 32)
   broker_password=$(openssl rand -hex 32)
+  employee_password=$(openssl rand -hex 32)
   architect_token=$(openssl rand -base64 32 | tr '+/' '-_' | tr -d '=')
   reviewer_token=$(openssl rand -base64 32 | tr '+/' '-_' | tr -d '=')
   temporary_state=${secret_state}.tmp
   PUBLIC_DB_PASSWORD=${public_password} \
   OPERATOR_DB_PASSWORD=${operator_password} \
   BROKER_DB_PASSWORD=${broker_password} \
+  EMPLOYEE_DB_PASSWORD=${employee_password} \
   ARCHITECT_TOKEN=${architect_token} \
   REVIEWER_TOKEN=${reviewer_token} \
   jq -n \
-    '{schema_version:1,public_db_password:env.PUBLIC_DB_PASSWORD,operator_db_password:env.OPERATOR_DB_PASSWORD,broker_db_password:env.BROKER_DB_PASSWORD,architect_token:env.ARCHITECT_TOKEN,reviewer_token:env.REVIEWER_TOKEN}' \
+    '{schema_version:2,public_db_password:env.PUBLIC_DB_PASSWORD,operator_db_password:env.OPERATOR_DB_PASSWORD,broker_db_password:env.BROKER_DB_PASSWORD,employee_db_password:env.EMPLOYEE_DB_PASSWORD,architect_token:env.ARCHITECT_TOKEN,reviewer_token:env.REVIEWER_TOKEN}' \
     > "${temporary_state}"
   install -o root -g root -m 0600 "${temporary_state}" "${secret_state}"
   rm -f "${temporary_state}"
@@ -89,11 +92,21 @@ else
   public_password=$(jq -er '.public_db_password' "${secret_state}")
   operator_password=$(jq -er '.operator_db_password' "${secret_state}")
   broker_password=$(jq -er '.broker_db_password' "${secret_state}")
+  employee_password=$(jq -er '.employee_db_password // empty' "${secret_state}" || true)
+  if [[ -z ${employee_password} ]]; then
+    employee_password=$(openssl rand -hex 32)
+    temporary_state=${secret_state}.tmp
+    EMPLOYEE_DB_PASSWORD=${employee_password} jq \
+      '.schema_version = 2 | .employee_db_password = env.EMPLOYEE_DB_PASSWORD' \
+      "${secret_state}" > "${temporary_state}"
+    install -o root -g root -m 0600 "${temporary_state}" "${secret_state}"
+    rm -f "${temporary_state}"
+  fi
   architect_token=$(jq -er '.architect_token' "${secret_state}")
   reviewer_token=$(jq -er '.reviewer_token' "${secret_state}")
 fi
 
-for value in "${public_password}" "${operator_password}" "${broker_password}"; do
+for value in "${public_password}" "${operator_password}" "${broker_password}" "${employee_password}"; do
   [[ ${value} =~ ^[a-f0-9]{64}$ ]] || { printf 'Stored database secret is invalid.\n' >&2; exit 1; }
 done
 for value in "${architect_token}" "${reviewer_token}"; do
@@ -116,6 +129,7 @@ write_db_env() {
 write_db_env "${config_root}/public-db.env" oam-public oam_public_api "${public_password}"
 write_db_env "${config_root}/operator-db.env" oam-operator oam_operator_api "${operator_password}"
 write_db_env "${config_root}/broker-db.env" oam-broker oam_broker_api "${broker_password}"
+write_db_env "${config_root}/employee-db.env" oam-employee oam_employee_api "${employee_password}"
 
 architect_hash=$(printf %s "${architect_token}" | sha256sum | cut -d' ' -f1)
 reviewer_hash=$(printf %s "${reviewer_token}" | sha256sum | cut -d' ' -f1)
@@ -162,6 +176,7 @@ run_psql -f "${repo_root}/sql/identity_data_plane_v4_provisioning_scope.sql"
 run_psql -f "${repo_root}/sql/identity_data_plane_v5_audit_scope.sql"
 run_psql -f "${repo_root}/sql/identity_data_plane_v6_security_review.sql"
 run_psql -f "${repo_root}/sql/identity_data_plane_v7_operator_context.sql"
+run_psql -f "${repo_root}/sql/identity_data_plane_v8_personal_agents.sql"
 run_psql -f "${repo_root}/sql/identity_policy_plane_v1.sql"
 run_psql -f "${repo_root}/sql/identity_demo_seed_v1.sql"
 {
@@ -173,6 +188,7 @@ run_psql -f "${repo_root}/sql/identity_demo_seed_v1.sql"
   printf "\\set public_password '%s'\n" "${public_password}"
   printf "\\set operator_password '%s'\n" "${operator_password}"
   printf "\\set broker_password '%s'\n" "${broker_password}"
+  printf "\\set employee_password '%s'\n" "${employee_password}"
   cat "${repo_root}/sql/identity_runtime_logins_v1.sql"
 } | run_psql -f -
 
@@ -199,6 +215,7 @@ sync_runtime() {
 sync_runtime /opt/organizational-ai-memory oam-public
 sync_runtime /opt/organizational-ai-memory-operator oam-operator
 sync_runtime /opt/organizational-ai-memory-broker oam-broker
+sync_runtime /opt/organizational-ai-memory-employee oam-employee
 
 install -d -o root -g oam-operator -m 0750 /opt/organizational-ai-memory-security/app/lib
 install -o root -g oam-operator -m 0640 "${repo_root}/app/provisioner.mjs" \
@@ -230,6 +247,7 @@ for unit in \
   organizational-ai-memory.service \
   organizational-ai-memory-operator.service \
   organizational-ai-memory-broker.service \
+  organizational-ai-memory-employee.service \
   organizational-ai-memory-provisioner.service \
   organizational-ai-memory-agent@.service \
   organizational-ai-memory-agents.target; do
@@ -240,6 +258,7 @@ for dropin in \
   organizational-ai-memory.service.d \
   organizational-ai-memory-operator.service.d \
   organizational-ai-memory-broker.service.d \
+  organizational-ai-memory-employee.service.d \
   organizational-ai-memory-provisioner.service.d \
   organizational-ai-memory-agent@.service.d; do
   install -d -o root -g root -m 0755 "/etc/systemd/system/${dropin}"
@@ -253,6 +272,7 @@ systemd-analyze verify \
   /etc/systemd/system/organizational-ai-memory.service \
   /etc/systemd/system/organizational-ai-memory-operator.service \
   /etc/systemd/system/organizational-ai-memory-broker.service \
+  /etc/systemd/system/organizational-ai-memory-employee.service \
   /etc/systemd/system/organizational-ai-memory-provisioner.service \
   /etc/systemd/system/organizational-ai-memory-agent@.service
 
@@ -260,10 +280,12 @@ systemctl enable organizational-ai-memory-broker.service
 systemctl enable organizational-ai-memory-provisioner.service
 systemctl enable organizational-ai-memory-agents.target
 systemctl enable organizational-ai-memory-operator.service
+systemctl enable organizational-ai-memory-employee.service
 systemctl enable organizational-ai-memory.service
 systemctl restart organizational-ai-memory-broker.service
 systemctl restart organizational-ai-memory-provisioner.service
 systemctl restart organizational-ai-memory-operator.service
+systemctl restart organizational-ai-memory-employee.service
 systemctl restart organizational-ai-memory.service
 
 nginx_temporary=${secret_root}/organizational-ai-memory.nginx.tmp
@@ -283,7 +305,11 @@ systemctl reload nginx.service
 
 for _ in $(seq 1 30); do
   if curl --silent --show-error --fail --max-time 2 http://127.0.0.1:3000/api/readyz 2>/dev/null \
-    | jq -e '.status == "ready"' >/dev/null; then
+    | jq -e '.status == "ready"' >/dev/null \
+    && curl --silent --show-error --fail --max-time 2 \
+      -H 'Host: memory.sellsystems.agency' \
+      http://127.0.0.1:3020/api/readyz 2>/dev/null \
+      | jq -e '.status == "ready"' >/dev/null; then
     break
   fi
   sleep 1
@@ -292,6 +318,8 @@ curl --silent --show-error --fail --max-time 3 http://127.0.0.1:3000/api/readyz 
   | jq -e '.status == "ready"' >/dev/null
 curl --silent --show-error --fail --max-time 3 -H 'Host: memory.sellsystems.agency' \
   http://127.0.0.1:3010/ >/dev/null
+curl --silent --show-error --fail --max-time 3 -H 'Host: memory.sellsystems.agency' \
+  http://127.0.0.1:3020/api/readyz | jq -e '.status == "ready"' >/dev/null
 
 if id tgops >/dev/null 2>&1; then
   gpasswd --delete tgops oam-codex >/dev/null 2>&1 || true

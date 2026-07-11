@@ -60,6 +60,11 @@ test('agent activation proof is exact, fresh, principal-bound, and policy-bound'
     now: Date.parse('2026-07-11T05:00:01.000Z'),
   };
   assert.equal(validateAgentProof(validAgentProof(), contract).passed, true);
+  assert.equal(validateAgentProof(validAgentProof({ personal_broker: null }), contract).passed, true);
+  assert.throws(
+    () => validateAgentProof(validAgentProof({ personal_broker: { passed: true } }), contract),
+    /agent_proof_contract_invalid/,
+  );
   assert.throws(
     () => validateAgentProof(validAgentProof({ checked_at: '2026-07-12T05:00:00.000Z' }), contract),
     /agent_proof_freshness_invalid/,
