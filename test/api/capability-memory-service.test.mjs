@@ -26,6 +26,14 @@ function rawAsset() {
     last_validated_at: '2026-07-10',
     risk_note: null,
     used_successfully_in: ['workflow:external_reference_v1'],
+    search_text: 'public demo workflow governed reusable content',
+    asset_family_key: 'workflow:public_demo',
+    content_schema_version: 1,
+    content_type: 'application/json',
+    change_summary: 'Initial reusable workflow body.',
+    content_body: { trigger: 'A public demo is prepared.' },
+    body_text: 'trigger a public demo is prepared',
+    content_sha256: 'a'.repeat(64),
     source_evidence: [{
       asset_key: 'workflow:public_demo_v1',
       observation_id: '00000000-0000-4000-8000-000000000031',
@@ -52,6 +60,9 @@ test('capability asset exposes governance, lineage, roles, and canonical source 
   assert.equal(asset.governance.review_status, 'approved');
   assert.deepEqual(asset.governance.consumer_roles, ['operator', 'reviewer']);
   assert.equal(asset.lineage.supersedes, 'workflow:public_demo_v0');
+  assert.equal(asset.content.asset_family_key, 'workflow:public_demo');
+  assert.equal(asset.content.schema_version, 1);
+  assert.deepEqual(asset.content.body, { trigger: 'A public demo is prepared.' });
   assert.deepEqual(asset.used_successfully_in, ['workflow:external_reference_v1']);
   assert.equal(asset.evidence.source_turns[0].source_turn_id, 'st-001');
   assert.equal(
@@ -111,6 +122,32 @@ test('task recommendations contain real hydrated assets and a deterministic reas
   });
 });
 
+test('free-text service returns a deterministic task recommendation and honest retrieval metadata', async () => {
+  const task = {
+    task_key: 'public_demo_release',
+    task_title: 'Prepare a public demo',
+    reason: 'Keep public and internal scopes separated.',
+    recommendations: [{ rank: 1, reason: 'Pinned mapping.', asset: rawAsset() }],
+  };
+  const service = createCapabilityMemoryService({
+    async searchCatalog() {
+      return { assets: [rawAsset()], tasks: [task] };
+    },
+  });
+
+  const matched = await service.search('prepare a safe public demo release');
+  const negative = await service.search('weather in Hanoi');
+
+  assert.equal(matched.status, 'matched');
+  assert.equal(matched.resolution.selected_task_key, 'public_demo_release');
+  assert.equal(matched.recommendation.recommendations[0].asset_key, 'workflow:public_demo_v1');
+  assert.equal(matched.retrieval.strategy, 'bounded_catalog_deterministic_lexical_v1');
+  assert.equal(matched.retrieval.semantic.status, 'not_used');
+  assert.equal('consumer_role' in matched.query, false);
+  assert.equal(negative.status, 'no_match');
+  assert.equal(negative.recommendation, null);
+});
+
 test('analytics converts stored aggregate counts without manufacturing signals', async () => {
   const service = createCapabilityMemoryService({
     async readAnalytics() {
@@ -130,6 +167,18 @@ test('analytics converts stored aggregate counts without manufacturing signals',
           title: 'Feedback loop',
           signal: 'No outcome feedback yet.',
         }],
+        current_content_versions: '9',
+        assets_with_content: '9',
+        assets_without_evidence: '0',
+        total_tasks: '5',
+        tasks_without_recommendations: '0',
+        recommended_assets: '7',
+        reused_across_tasks: [{
+          asset_key: 'decision:source_first_before_generation_v1',
+          task_count: '2',
+          task_keys: ['new_b2b_lead_intake', 'website_delivery_handoff'],
+        }],
+        duplicate_content_groups: [],
       };
     },
   });
@@ -140,11 +189,31 @@ test('analytics converts stored aggregate counts without manufacturing signals',
   assert.equal(result.asset_counts_by_type[0].count, 4);
   assert.equal(result.duplicated_patterns[0].pattern_key, 'source_first');
   assert.equal(result.missing_capabilities[0].gap_key, 'feedback_loop');
+  assert.equal(result.coverage.content_coverage_percent, 100);
+  assert.equal(result.coverage.task_coverage_percent, 100);
+  assert.equal(result.reuse.recommendation_coverage_percent, 77.8);
+  assert.deepEqual(result.reuse.reused_across_tasks[0].task_keys, [
+    'new_b2b_lead_intake',
+    'website_delivery_handoff',
+  ]);
+  assert.equal(result.duplication.method, 'exact_current_content_sha256');
+  assert.ok(result.computed_gaps.some((gap) => gap.gap_key === 'unmapped_assets' && gap.count === 2));
 });
 
 test('an asset without canonical source evidence is not exposed', () => {
   assert.throws(
     () => buildCapabilityAsset({ ...rawAsset(), source_evidence: [] }),
     /has no public-safe source evidence/,
+  );
+});
+
+test('an asset without an exact typed content envelope is not exposed', () => {
+  assert.throws(
+    () => buildCapabilityAsset({ ...rawAsset(), content_body: null }),
+    /has invalid typed content/,
+  );
+  assert.throws(
+    () => buildCapabilityAsset({ ...rawAsset(), asset_family_key: 'workflow:wrong_family' }),
+    /has invalid typed content/,
   );
 });

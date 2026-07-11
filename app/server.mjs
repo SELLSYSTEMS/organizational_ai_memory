@@ -10,13 +10,23 @@ import { createRequestHandler } from './lib/http-app.mjs';
 import { createPostgresPool } from './lib/postgres.mjs';
 import { createPublicMemoryRepository } from './lib/public-memory-repository.mjs';
 import { createPublicMemoryService } from './lib/public-memory-service.mjs';
+import { createPublicIdentityProofLoader } from './lib/public-identity-proof.mjs';
+import { assertLeastPrivilegeWorkload } from './lib/workload-postgres.mjs';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
 
 export async function createOrganizationalMemoryServer(options = {}) {
   const config = { ...readServerConfig(options.env), ...options.config };
-  const pool = options.pool || await createPostgresPool(options.env);
+  const pool = options.pool || await createPostgresPool(options.env, {
+    applicationName: 'organizational-ai-memory-public',
+  });
   const ownsPool = !options.pool;
+  if (!options.skipDatabaseRoleCheck) {
+    await assertLeastPrivilegeWorkload(pool, {
+      requiredRole: 'oam_public_runtime',
+      forbiddenRoles: ['oam_operator_runtime', 'oam_broker_runtime'],
+    });
+  }
   const repository = options.repository || createPublicMemoryRepository(pool);
   const logger = options.logger || console;
   const memoryService = options.memoryService || createPublicMemoryService(repository, {
@@ -35,10 +45,22 @@ export async function createOrganizationalMemoryServer(options = {}) {
   });
   const capabilityAssistService = options.capabilityAssistService
     || createCapabilityAssistService({ capabilityService, codexClient });
+  const proofPath = options.identityProofPath
+    || (options.env || process.env).OAM_PUBLIC_IDENTITY_PROOF_PATH;
+  const expectedSourceSha256Path = options.expectedSourceSha256Path
+    || (options.env || process.env).OAM_PUBLIC_EXPECTED_SOURCE_SHA256_PATH;
+  const identityProofLoader = options.identityProofLoader
+    || (proofPath && expectedSourceSha256Path
+      ? createPublicIdentityProofLoader({
+        filePath: proofPath,
+        expectedSourceSha256Path,
+      })
+      : null);
   const handler = createRequestHandler({
     memoryService,
     capabilityService,
     capabilityAssistService,
+    identityProofLoader,
     publicDir: options.publicDir || path.join(appDir, 'public'),
     bodyBytes: config.bodyBytes,
     queryCharacters: config.queryCharacters,

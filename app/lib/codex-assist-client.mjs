@@ -1,14 +1,16 @@
 import http from 'node:http';
 import { CODEX_SPARK_MODEL } from './codex-spark-runner.mjs';
+import { formatStructuredPlan, validateStructuredPlan } from './structured-capability-plan.mjs';
 
 const DEFAULT_SOCKET_PATH = '/run/organizational-ai-memory-codex/assist.sock';
-const MAX_RESPONSE_BYTES = 8_192;
+const MAX_RESPONSE_BYTES = 16_384;
 
 function fallback(selectedAssetKeys, reason) {
   return {
     status: 'fallback',
     authoritative: false,
     model: CODEX_SPARK_MODEL,
+    plan: null,
     explanation: null,
     selected_asset_keys: selectedAssetKeys,
     fallback_reason: reason,
@@ -77,13 +79,13 @@ export function createCodexAssistClient({
           req.end(body);
         });
 
-        if (
-          result?.status !== 'generated'
-          || result?.model !== CODEX_SPARK_MODEL
-          || typeof result?.explanation !== 'string'
-          || !result.explanation.trim()
-          || [...result.explanation].length > 1_800
-        ) {
+        if (result?.status !== 'generated' || result?.model !== CODEX_SPARK_MODEL) {
+          return fallback(assetKeys, 'invalid_response');
+        }
+        let plan;
+        try {
+          plan = validateStructuredPlan(result.plan, recommendation);
+        } catch {
           return fallback(assetKeys, 'invalid_response');
         }
 
@@ -91,7 +93,8 @@ export function createCodexAssistClient({
           status: 'generated',
           authoritative: false,
           model: CODEX_SPARK_MODEL,
-          explanation: result.explanation.trim(),
+          plan,
+          explanation: formatStructuredPlan(plan),
           selected_asset_keys: assetKeys,
           fallback_reason: null,
         };

@@ -41,6 +41,9 @@ function capabilityService(overrides = {}) {
     async recommend(taskKey) {
       return { task: { task_key: taskKey }, count: 0, recommendations: [] };
     },
+    async search(query) {
+      return { query: { text: query }, status: 'no_match', resolution: { kind: 'none' } };
+    },
     async analytics() {
       return { total_assets: 9 };
     },
@@ -72,6 +75,11 @@ async function startServer(t, service = capabilityService()) {
         };
       },
     },
+    identityProofLoader: {
+      async read() {
+        return { schema_version: 1, proof_kind: 'four_plane_identity_enforcement', overall_status: 'PASS' };
+      },
+    },
     publicDir,
     bodyBytes: 512,
     taskKeyCharacters: 80,
@@ -86,6 +94,26 @@ async function startServer(t, service = capabilityService()) {
   });
   return `http://127.0.0.1:${server.address().port}`;
 }
+
+test('public access-proof endpoint is read-only, bounded, and returns the sanitized loader projection', async (t) => {
+  const baseUrl = await startServer(t);
+  const response = await fetch(`${baseUrl}/api/public/access-proof`);
+  const head = await fetch(`${baseUrl}/api/public/access-proof`, { method: 'HEAD' });
+  const query = await fetch(`${baseUrl}/api/public/access-proof?path=/etc/shadow`);
+  const mutation = await fetch(`${baseUrl}/api/public/access-proof`, { method: 'POST' });
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), {
+    schema_version: 1,
+    proof_kind: 'four_plane_identity_enforcement',
+    overall_status: 'PASS',
+  });
+  assert.equal(head.status, 200);
+  assert.equal(await head.text(), '');
+  assert.equal(query.status, 400);
+  assert.equal(mutation.status, 405);
+  assert.equal(mutation.headers.get('allow'), 'GET, HEAD');
+});
 
 test('asset catalog accepts only the three bounded public filters', async (t) => {
   let receivedFilters;
@@ -114,6 +142,42 @@ test('asset catalog accepts only the three bounded public filters', async (t) =>
   assert.equal(duplicate.status, 400);
   assert.equal(invalidType.status, 400);
   assert.equal((await invalidType.json()).error.code, 'invalid_asset_type');
+});
+
+test('capability search accepts exactly one bounded query and no client role or scope selectors', async (t) => {
+  const received = [];
+  const baseUrl = await startServer(t, capabilityService({
+    async search(query) {
+      received.push(query);
+      return { query: { text: query }, status: 'no_match', resolution: { kind: 'none' } };
+    },
+  }));
+  const post = (body) => fetch(`${baseUrl}/api/public/capability-search`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  const valid = await post({ query: '  Find   a website handoff workflow.  ' });
+  const clientRole = await post({ query: 'website handoff', consumer_role: 'architect' });
+  const clientScope = await post({ query: 'website handoff', corpus: 'internal_demo' });
+  const empty = await post({ query: '   ' });
+  const oversized = await post({ query: 'x'.repeat(321) });
+  const queryString = await fetch(`${baseUrl}/api/public/capability-search?tenant=private`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ query: 'website handoff' }),
+  });
+
+  assert.equal(valid.status, 200);
+  assert.equal((await valid.json()).query.text, 'Find a website handoff workflow.');
+  assert.equal(clientRole.status, 400);
+  assert.equal((await clientRole.json()).error.code, 'invalid_capability_search_request');
+  assert.equal(clientScope.status, 400);
+  assert.equal(empty.status, 400);
+  assert.equal(oversized.status, 400);
+  assert.equal(queryString.status, 400);
+  assert.deepEqual(received, ['Find a website handoff workflow.']);
 });
 
 test('asset detail decodes a bounded key and rejects path or scope injection', async (t) => {

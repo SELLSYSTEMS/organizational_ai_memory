@@ -2,47 +2,29 @@
 
 Target length: 2 minutes.
 
-## 1. Establish the product
+## 1. Establish the product (`0:00-0:15`)
 
-Open `https://memory.sellsystems.agency/`.
-
-Say:
-
-> Organizational AI Memory turns proven prompts, workflows, agent patterns,
-> decisions, and practices into governed capability memory. A task starts with
-> stored prior work, and every asset retains its evidence.
-
-Point to the live task-start record. Explain that this selection is read from
-Postgres, not generated.
-
-## 2. Inspect a capability asset
-
-Open `/assets`.
-
-Show the compact inventory: 9 assets across 5 types. Filter by `workflow`, then
-select an asset and show:
-
-1. review status and version
-2. owner and consumer roles
-3. problem solved and why it worked
-4. lineage and related assets
-5. `asset -> observation -> source turn`
+Open `https://memory.sellsystems.agency/demo`.
 
 Say:
 
-> The source pack is public-safe, while the asset's visibility field preserves
-> the simulated organization's internal governance state. Those are separate
-> controls.
+> Organizational AI Memory turns proven prompts, workflows, decisions, and
+> agent practices into searchable organizational capability. This one screen
+> shows the full loop: capture, review, reuse, adaptation, analytics, and
+> enforcement evidence.
 
-Point out that 7 assets are approved and 2 remain reviewed. A missing risk note
-is omitted rather than invented.
+Point to the lifecycle strip. Explain that the displayed source pack is
+synthetic and public-safe.
 
-## 3. Start a task deterministically
+## 2. Retrieve prior work (`0:15-0:38`)
 
-Open `/demo`. `Prepare a new website delivery handoff` is the canonical default;
-retrieve it again to make the stored selection action explicit.
+Keep the default query:
 
-Show the stored recommendation:
+```text
+Prepare a website delivery handoff
+```
+
+Select **Search**. Show the three stored results:
 
 ```text
 prompt:website_handoff_brief_v1
@@ -52,66 +34,98 @@ decision:source_first_before_generation_v1
 
 Say:
 
-> Five stored tasks provide thirteen ranked task-to-asset mappings. This
-> deterministic record remains authoritative through the whole interaction.
+> Deterministic free-text search resolved a stored task mapping in PostgreSQL.
+> The result includes type, version, review state, why it worked, and source
+> evidence before a model is asked to generate anything.
 
-## 4. Show the bounded Spark interaction
+Briefly choose the Prompt filter, then clear it. If time allows, enter
+`quantum payroll orchard` and show the explicit no-match before restoring the
+canonical query.
 
-Enter:
+## 3. Adapt without changing authority (`0:38-0:58`)
+
+Use:
 
 ```text
-Adapt this starting point for a small agency team preparing a client handoff.
+Adapt this grounded starting point for a small delivery team.
 ```
 
-Select `Generate adaptation`.
-
-Current expected result: concise prose labeled
-`Non-authoritative - gpt-5.3-codex-spark` below the unchanged deterministic
-record.
+Select **Adapt plan**. Point to the `AI-assisted` label, plan steps, and source
+citations.
 
 Say:
 
-> The isolated Codex account is authenticated, but the model receives only the
-> selected public-safe record. It cannot choose new assets, write memory, or
-> access the database, application environment, or repository. If generation
-> fails, the API returns HTTP 200 with the full deterministic recommendation.
+> Codex Spark receives only the already selected public-safe records. Every
+> asset and source-turn citation is validated. The generated plan is
+> non-authoritative; the stored result above remains unchanged. A model or
+> schema failure returns the deterministic fallback instead of an ungrounded
+> answer.
 
-## 5. Prove temporal truth
+## 4. Show analytics and proof (`0:58-1:20`)
 
-On the lower part of `/demo`, query:
+Point to the right rail:
 
-```text
-What is the current budget and deadline, and what changed?
-```
-
-Show:
-
-1. current budget: `4500 USD per month`
-2. previous budget: `3000 USD per month`, marked superseded
-3. current deadline: `August 29, 2026`
-4. previous deadline: `August 15, 2026`, marked superseded
-
-Open one provenance disclosure and follow:
-
-```text
-fact -> observation -> source turn
-```
+- reuse coverage
+- evidence coverage
+- task coverage
+- current capability gaps
+- `Four-plane proof passed - PASS 22/22`
+- the live allow/deny boundary result
 
 Say:
 
-> Postgres retrieval is deterministic. Semantic retrieval is optional and
-> currently unavailable, so the product states that directly.
+> The counts come from current PostgreSQL records and do not claim measured
+> business outcomes. The access result is a sanitized projection of 22 executed
+> controls across application identity, policy, Linux runtime, PostgreSQL data
+> authority, governance, broker access, and suspension.
 
-## 6. Close on authority and safety
+Select the rerun icon to refresh the public boundary check.
 
-Open `/method`, then `/evidence` if time permits.
+## 5. Inspect provenance (`1:20-1:35`)
 
-Point to the fixed `public_demo + public_safe` boundary and explain that the
-browser cannot select a tenant, pack, or thread. The internal regression corpus
-has no public route.
+Open **Website design-to-build handoff brief**. Show:
 
-Close with:
+1. exact typed content and version
+2. review state and intended consumers
+3. problem solved and why it worked
+4. `asset -> observation -> source turn`
 
-> This MVP proves one controlled reuse loop: evidence becomes governed
-> capability, a task retrieves prior work deterministically, optional prose can
-> adapt it, and the stored source record remains authoritative.
+Say:
+
+> We preserve the context that made a capability reusable, not just its final
+> text. Missing metadata is omitted rather than invented.
+
+## 6. Prove physical agent boundaries (`1:35-1:55`)
+
+Use the prepared authenticated Architect Console screenshot, or open
+`/architect/` only when a private operator token is available. Never expose the
+token on screen.
+
+Show **Effective access** for **AI Architect** and point to 12 allowed actions
+plus the explicit `memory.canonical.write` denial. Then show the four-plane
+overview.
+
+Say:
+
+> Humans are logical principals. A linked agent gets its own policy assignment,
+> locked Linux UID, sandboxed systemd service, broker credential, and bounded
+> data grant. It cannot read the project, installed app, environment, model
+> authentication, or PostgreSQL directly. Suspension revokes the runtime and
+> captured credential.
+
+## 7. Close (`1:55-2:00`)
+
+Say:
+
+> Individual AI learning becomes permanent organizational capability, while
+> provenance and real enforcement keep reuse governed.
+
+## Recovery lines
+
+- If Spark is unavailable: "The fallback is intentional; the same stored
+  selection remains authoritative and complete."
+- If the console is not available: use
+  `artifacts/submission/screenshots/08-architect-effective-access-1440.png` and
+  the public 22/22 proof rail.
+- Never log in, paste credentials, or show internal paths during a public
+  recording.

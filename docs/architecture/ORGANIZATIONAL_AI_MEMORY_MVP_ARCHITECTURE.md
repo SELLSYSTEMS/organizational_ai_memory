@@ -1,91 +1,170 @@
 # Organizational AI Memory MVP Architecture
 
-Status: deployed MVP, verified on `2026-07-10`.
+Status: deployed and verified on `2026-07-11`.
 
 ## Product boundary
 
-Organizational AI Memory turns reviewed, public-safe work history into two
-forms of reusable memory:
+Organizational AI Memory turns reviewed work history into two reusable forms:
 
 1. time-aware facts, observations, summaries, and reflections
-2. governed prompts, workflows, agent patterns, decision patterns, and best
+2. typed prompts, workflows, agent patterns, decision patterns, and best
    practices
 
-A known task retrieves a stored asset selection before any model is invoked.
-Postgres is the canonical source of truth; generated prose is optional and
-never authoritative.
+A task retrieves stored capability records before any model is invoked.
+PostgreSQL is canonical; generated plans are optional and non-authoritative.
 
 ## Deployed topology
 
 ```text
-Public browser
+public browser
     |
-    v
-Operator-managed TLS/domain boundary
+operator-managed TLS and domain boundary
     |
-    v
-nginx instance ingress :80
+nginx :80
     |
-    v
-organizational-ai-memory.service
-Node.js 22, 127.0.0.1:3000, user tgops
-    |                                      |
-    |                                      v
-    |                              Unix domain socket
-    |                                      |
-    v                                      v
-Postgres 17, 127.0.0.1:5432       organizational-ai-memory-codex.service
-canonical memory store             user/group oam-codex:oam-codex
-                                           |
-                                           v
-                                   local Codex CLI
-                                   gpt-5.3-codex-spark, optional
+    +-- /, /demo, /assets, /method, /evidence
+    |      -> public service 127.0.0.1:3000, oam-public
+    |      -> oam_public_api -> oam_public_runtime -> fixed oam_public views
+    |
+    +-- /architect/
+           -> operator service 127.0.0.1:3010, oam-operator
+           -> authenticated app human + root-provisioned context hash
+           -> shared oam_operator_api -> oam_operator_runtime -> FORCE RLS
+
+operator service -> root-owned provisioner Unix socket
+                 -> explicit plan + revision confirmation
+                 -> allowlisted Linux/systemd/quarantine operations
+
+linked agent UID -> agent service -> broker Unix socket
+                                  -> broker service, oam-broker
+                                  -> oam_broker_api -> oam_broker_runtime + FORCE RLS
+
+public service -> Codex Unix socket -> oam-codex sidecar
+                                      -> gpt-5.3-codex-spark
+
+all canonical records -> PostgreSQL 17
 ```
 
-The main application runs as `tgops:tgops` and has `oam-codex` as a
-supplementary group so it can call the protected sidecar socket. The sidecar
-runs as `oam-codex:oam-codex`, with `HOME=/var/lib/oam-codex` and
-`CODEX_HOME=/var/lib/oam-codex/.codex`. It does not receive database
-credentials or the application environment and it does not run from the
-project source tree.
+The public, operator, and broker services use distinct non-login Linux
+identities and distinct PostgreSQL logins. Each database login has exactly one
+runtime-role membership and is rejected at startup if it is superuser,
+`BYPASSRLS`, missing its required membership, or has a cross-workload
+membership.
 
-The instance terminates neither public TLS nor the outer domain link. Those
-remain an operator-managed boundary outside this repository.
+The provisioner runs as root because it creates Linux users, changes ownership,
+seals quarantine files, and starts units. It accepts a small exact JSON contract
+over a protected Unix socket, derives identifiers from principal keys, uses
+fixed binary paths and argument arrays, serializes operations, and requires an
+operator-created plan plus exact revision confirmation.
 
-## Canonical data model
+These controls constrain application and workload paths. Host root and the
+PostgreSQL superuser remain trusted administrative boundaries and are not
+subjects the 22-control proof claims to defeat.
 
-The continuity memory path stores ordered source turns, extracted
-observations, atomic facts with validity intervals, summaries, and
-reflections. Superseded facts remain available for audit.
+## Four-plane identity model
+
+Every effective decision aligns four independent planes:
+
+| Plane | Canonical record | Enforcement point |
+| --- | --- | --- |
+| Application identity | human, agent, or service principal | authenticated operator session or broker credential |
+| Policy | department membership, immutable template assignment, explicit denial | effective-permission evaluator and broker authorization query |
+| Runtime identity | Linux UID, systemd unit, private workspace, broker binding | kernel ownership and systemd sandbox |
+| Data authority | public view, DB-bound operator context, or brokered capability grant | PostgreSQL grants, FORCE RLS, and security-barrier views |
+
+Humans are logical application principals. The architect and reviewer do not
+receive per-human Linux accounts or PostgreSQL logins. Both use the shared,
+least-privileged `oam-operator` Linux workload and `oam_operator_api` database
+login. Their root-provisioned application secrets map to one active human and
+one department in PostgreSQL. Each authenticated service operation establishes
+that mapping as a transaction-local database context through a SECURITY DEFINER
+function; FORCE RLS then applies it to identity, policy, provisioning,
+quarantine, governance, proof, and audit records. A caller-supplied UUID or
+custom GUC value is not sufficient authority.
+
+A linked agent is independent from its human sponsor: it needs its own active
+membership, policy assignment, broker binding, and capability grant. Its
+permission set is intersected with the sponsor's ceiling and always explicitly
+denies `memory.canonical.write`.
+
+Provisioned agents run as locked system users named from a bounded runtime key.
+Their systemd units expose only a private workspace and broker socket. Project
+source, installed application source, platform environment, Codex credentials,
+and direct PostgreSQL access are denied.
+
+## Canonical memory
+
+The continuity path stores ordered source turns, observations, atomic facts
+with validity intervals, summaries, and reflections. Superseded facts remain
+auditable.
 
 ```text
 fact -> observation -> source turn
 ```
 
-The capability path stores a pinned public-safe pack, typed assets, task
-definitions, ranked task-to-asset mappings, lifecycle metadata, analytics
-signals, and evidence edges.
+The capability path stores a pinned public-safe pack, exact typed/versioned
+asset bodies, task definitions, deterministic mappings, lifecycle metadata,
+analytics signals, and evidence edges.
 
 ```text
-task key -> deterministic ranked asset mapping
+free-text task -> deterministic task mapping -> ranked assets
 asset -> observation -> source turn
 ```
 
-These are independent provenance paths over the same canonical Postgres
-memory foundation. The first explains an answer about current and historical
-truth. The second explains why a reusable capability is present and where its
-supporting narrative came from.
+The capture path is deliberately separate from canonical memory:
 
-## Public request flows
+```text
+bounded text upload
+-> root-owned read-only quarantine seal
+-> service-produced candidate
+-> independent human review
+-> architect promotion
+-> draft only
+```
 
-### Deterministic task start
+No public, agent, reviewer, architect, operator service, or provisioner path in
+this MVP writes a promoted candidate directly into `memory.capability_assets`.
 
-1. The browser posts exactly a `task_key` to the recommendation endpoint.
-2. The server applies its fixed public pack scope.
-3. Postgres returns the stored task reason and ranked asset mappings.
-4. The UI shows the selected assets and their governance and evidence.
+Capture decisions are bound to bytes, not caller assertions. The operator
+service reopens the sealed regular file without following symlinks, verifies
+root ownership, mode, link count, size, and SHA-256, and derives candidate
+evidence from those bytes. Review and promotion bind the source upload hash,
+current candidate content hash, reviewer-observed hash, and approved content
+hash. The newest scan result must be clean and current; a later adverse rescan
+revokes approval eligibility. Scan findings and candidate evidence are
+append-only at both the privilege and trigger layers: operator UPDATE is revoked,
+and UPDATE or DELETE is rejected by PostgreSQL.
 
-For `website_delivery_handoff`, the canonical stored selection is:
+## Ordered identity migrations
+
+The current identity plane is an ordered, idempotent v1-v7 chain:
+
+1. **v1:** principals, department policy, runtime bindings, broker grants,
+   quarantine, independent review, draft promotion, audit, RLS, and public
+   projections
+2. **v2:** exact `approved` plus explicit public-eligibility gating
+3. **v3:** sealed upload provenance and candidate/review content-hash integrity
+4. **v4:** department-bound provisioning jobs, activation leases, and
+   fail-closed host suspension after uncertain execution
+5. **v5:** department-scoped operator security events and audit reads
+6. **v6:** activated-policy immutability, append-only scan/candidate evidence,
+   and non-null department scope on proof runs
+7. **v7:** root-provisioned operator context mappings, transaction-bound human
+   and department resolution, and FORCE RLS across operator-visible identity,
+   quarantine, governance, proof, and audit tables
+
+## Public task flow
+
+1. The browser submits exactly one bounded free-text query.
+2. The server applies its fixed public pack and review-state scope.
+3. Deterministic lexical search returns a stable task or asset resolution, an
+   ambiguity result, or an explicit no-match.
+4. A resolved task hydrates stored ranked assets and their provenance.
+5. Optional Spark generation receives only the selected public-safe projection.
+6. The returned structured plan is accepted only if every asset and source-turn
+   citation belongs to that projection.
+
+The canonical `website_delivery_handoff` task selects:
 
 ```text
 prompt:website_handoff_brief_v1
@@ -93,78 +172,67 @@ workflow:portfolio_site_delivery_v1
 decision:source_first_before_generation_v1
 ```
 
-### Optional Spark adaptation
+Search normalization covers punctuation, diacritics, aliases, and bounded
+Vietnamese phrases. Unrelated, underspecified, stop-word-only, and
+instruction-injection-shaped queries do not fall through to unrelated facts or
+assets.
 
-1. The application first retrieves the same deterministic recommendation.
-2. It sends only a bounded projection of those selected public-safe assets and
-   the short user request to the Unix-socket sidecar.
-3. The sidecar invokes the local Codex CLI with the model fixed to
-   `gpt-5.3-codex-spark`, a read-only empty workspace, disabled interactive
-   tools, a strict output schema, and a short deadline.
-4. A valid response is labeled non-authoritative and cannot change the stored
-   asset selection or write to memory.
+## Spark boundary
 
-If authentication, model execution, schema validation, the socket, or the
-deadline fails, the endpoint returns HTTP `200` with the complete
-deterministic recommendation and an explicit fallback interaction. Application
-readiness does not depend on optional generation.
+The `oam-codex` sidecar has a private home and Codex state but no database
+credential, application environment, or repository access. It runs one
+generation at a time with a global attempt budget, a fixed model, disabled
+interactive approval, a read-only empty workspace, and a strict structured
+output schema.
 
-As verified on `2026-07-10`, the isolated `oam-codex` account is authenticated
-and the live assist path returns bounded generated prose. The fallback contract
-remains active for any authentication, model, schema, socket, or deadline
-failure.
+The validator requires bounded summary, steps, missing context, limitations,
+and citations. Unsupported, omitted, cross-step, duplicate, or citation-shaped
+identifiers hidden in prose cause deterministic fallback. A model, socket,
+authentication, deadline, or schema failure returns HTTP `200` with the complete
+stored recommendation and an explicit fallback state. Readiness does not depend
+on model availability.
 
-### Continuity query
+## Public safety
 
-1. The browser posts exactly a bounded public query.
-2. The server pins the public thread and classification.
-3. Deterministic Postgres retrieval returns current and relevant superseded
-   facts.
-4. The response includes observation and source-turn references for each
-   claim.
+Public clients cannot choose a tenant, brand, thread, corpus, capability pack,
+publication status, or visibility. Public reads use fixed security-barrier
+views. The internal regression corpus has no public route. Raw policy tables,
+canonical memory tables, operator APIs, credentials, and provisioner sockets are
+not exposed by nginx.
 
-Semantic retrieval is reported as unavailable. It is not required for the
-working exact and lexical Postgres path.
-
-## Safety and authority
-
-The public continuity corpus and public capability pack are fixed on the
-server. Browser clients cannot select another tenant, corpus, thread, pack,
-publication state, or visibility. The richer regression corpus is isolated
-and has no public route.
-
-Capability records expose `visibility`, `review_status`, `version`, owner
-role, consumer roles, validation date, lineage, and evidence. These are
-descriptive governance metadata retained from the simulated source
-organization. They are not an enforced RBAC or approval system. The MVP has no
-authenticated user roles, role-based route authorization, or approval-action
-UI.
-
-The public-safe source classification and an asset's simulated `internal`
-governance visibility describe different concerns. Public routes expose only
-the sanitized demonstration records while preserving the source metadata
-truthfully.
+The public access-proof endpoint reads only a root-published, schema-validated,
+sanitized projection. The installer records a root-owned SHA-256 over every
+deployed security and runtime source. The loader accepts a proof only when its
+`source_sha256` matches that expected digest, the expected/projection paths
+are securely owned and not symlinks, and the proof is no more than 24 hours
+old. The current projection reports 22 required controls and contains no
+principal IDs, OS usernames, paths, credentials, PostgreSQL names, cookies, or
+free-form internal errors.
 
 ## Analytics contract
 
-The analytics endpoint derives current inventory counts from canonical asset
-rows and returns stored duplication and missing-capability signals. The live
-seed contains 9 assets across 5 types, with 7 approved and 2 reviewed records.
+The live UI derives inventory and coverage from current canonical rows. It
+shows reuse, evidence, and task coverage plus stored duplication and gap
+signals. The seed contains 9 assets across 5 types, 5 tasks, 13 mappings, and
+all 9 assets are approved for the explicit public-safe projection.
 
-Historical growth analytics are not implemented. There is no time-series
-inventory, recommendation-success metric, or automatic trend calculation.
-Duplication and gap entries are authored pack signals, not live inference over
-all organizational work.
+Recommendation outcome measurement, historical growth series, and continuous
+automated duplicate/gap inference are not yet implemented and are not claimed.
 
-## Failure properties
+## Verified failure properties
 
-- Postgres availability gates readiness because it holds the authoritative
-  memory.
-- Sidecar or Codex authentication failure does not gate readiness.
-- Generation cannot replace, reorder, or persist the deterministic selection.
-- Public APIs do not accept scope selectors.
-- Internal memory has no public UI or API route.
-- The system has no autonomous writeback path.
-
-Operational commands and recovery steps are maintained in the operator
-runbook. The judge path is maintained in the demo script and video plan.
+- Canonical PostgreSQL availability gates readiness; Spark does not.
+- Generated output cannot replace, reorder, approve, or persist selected assets.
+- An agent without its own assignment, sponsor allow, broker binding, active
+  grant, or credential fails closed.
+- An operator query without a valid DB-bound human/department context has no
+  cross-department authority; caller-selected IDs or an arbitrary custom GUC do
+  not substitute for the root-provisioned mapping.
+- Direct canonical reads and writes are denied to public and broker logins.
+- Activated policy content and captured scan/evidence history cannot be edited
+  in place by the operator workload.
+- Quarantine remains absent from public search before review and after
+  draft-only promotion.
+- Suspension locks the account, stops the unit, removes credentials and broker
+  group membership, closes policy records, and makes the captured broker token
+  fail authentication.

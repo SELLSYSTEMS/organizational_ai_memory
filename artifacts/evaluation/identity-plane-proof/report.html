@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Organizational AI Memory identity proof</title>
+<style>body{font:14px/1.45 system-ui,sans-serif;margin:32px;color:#17211e;background:#fff}h1{font-size:26px}dl{display:grid;grid-template-columns:160px 1fr;max-width:840px}dt,dd{padding:5px 0;margin:0;border-bottom:1px solid #d8dfdc}table{border-collapse:collapse;width:100%;margin-top:24px}th,td{border:1px solid #d8dfdc;padding:8px;text-align:left;vertical-align:top}th{background:#f4f7f6}code{overflow-wrap:anywhere}.PASS{color:#06735f}.FAIL{color:#b42318}</style></head>
+<body><h1>Organizational AI Memory identity proof</h1>
+<dl><dt>Overall</dt><dd class="PASS">PASS</dd><dt>Environment</dt><dd>target-instance</dd><dt>Generated</dt><dd>2026-07-11T04:11:17.654Z</dd><dt>Source commit</dt><dd><code>860db5e15c6c556ed456d8263aed4f4732cd2363</code></dd><dt>Source digest</dt><dd><code>d71ae5e50ce880e5e2be436ffbe0d96d017420d16c003897ea83c160cfea5687</code></dd><dt>Migration hash</dt><dd><code>eacf65e878e14530efd243d40b25c8e06212da745f30fac0a6d673ad38fdc003</code></dd></dl>
+<table><thead><tr><th>ID</th><th>Category</th><th>Requirement</th><th>Status</th><th>Expected</th><th>Observed</th><th>Enforcement</th></tr></thead><tbody>
+    <tr>
+      <td><code>APP-01</code></td>
+      <td>application</td>
+      <td>Public application readiness</td>
+      <td><strong>PASS</strong></td>
+      <td>The public application and bounded capability pack are ready.</td>
+      <td>Public readiness completed with all required checks available.</td>
+      <td>Application readiness gate</td>
+    </tr>
+    <tr>
+      <td><code>APP-02</code></td>
+      <td>application</td>
+      <td>Architect application identity</td>
+      <td><strong>PASS</strong></td>
+      <td>The operator session resolves to an active architect identity.</td>
+      <td>An active architect identity was authenticated through the application plane.</td>
+      <td>Application session authorization</td>
+    </tr>
+    <tr>
+      <td><code>APP-03</code></td>
+      <td>application</td>
+      <td>Independent reviewer identity</td>
+      <td><strong>PASS</strong></td>
+      <td>A distinct active reviewer identity is available.</td>
+      <td>A distinct reviewer identity was authenticated and separated from the architect.</td>
+      <td>Application session authorization</td>
+    </tr>
+    <tr>
+      <td><code>APP-04</code></td>
+      <td>application</td>
+      <td>Logical human boundary</td>
+      <td><strong>PASS</strong></td>
+      <td>A normal human is created without host or database bindings.</td>
+      <td>The human identity remained logical-only with no runtime binding.</td>
+      <td>Identity data plane</td>
+    </tr>
+    <tr>
+      <td><code>BRK-01</code></td>
+      <td>broker</td>
+      <td>Brokered capability reuse</td>
+      <td><strong>PASS</strong></td>
+      <td>The agent receives only an approved capability with provenance through the broker.</td>
+      <td>The broker allowed one governed capability and returned source provenance.</td>
+      <td>Broker credential and grant</td>
+    </tr>
+    <tr>
+      <td><code>DB-01</code></td>
+      <td>data</td>
+      <td>Direct database connection denial</td>
+      <td><strong>PASS</strong></td>
+      <td>The agent process cannot connect directly to the database.</td>
+      <td>The agent direct-connection probe was denied.</td>
+      <td>Database authentication boundary</td>
+    </tr>
+    <tr>
+      <td><code>DB-02</code></td>
+      <td>data</td>
+      <td>Canonical data mutation denial</td>
+      <td><strong>PASS</strong></td>
+      <td>The restricted public data client cannot mutate canonical memory.</td>
+      <td>A real canonical mutation probe was rejected.</td>
+      <td>Database privilege boundary</td>
+    </tr>
+    <tr>
+      <td><code>DB-03</code></td>
+      <td>data</td>
+      <td>Restricted data and row-policy boundary</td>
+      <td><strong>PASS</strong></td>
+      <td>The public data client is least-privileged and sensitive identity tables force row policy.</td>
+      <td>Least privilege and forced row-policy controls were verified.</td>
+      <td>Database privilege and row policy</td>
+    </tr>
+    <tr>
+      <td><code>GOV-01</code></td>
+      <td>governance</td>
+      <td>Independent candidate review</td>
+      <td><strong>PASS</strong></td>
+      <td>A reviewer distinct from the architect approves the candidate for draft promotion.</td>
+      <td>The independent reviewer approved the candidate for draft promotion.</td>
+      <td>Independent review gate</td>
+    </tr>
+    <tr>
+      <td><code>GOV-02</code></td>
+      <td>governance</td>
+      <td>Architect draft promotion</td>
+      <td><strong>PASS</strong></td>
+      <td>Only an architect can promote the reviewed candidate, and only as a draft.</td>
+      <td>The architect promotion produced a governed draft, not canonical memory.</td>
+      <td>Architect promotion gate</td>
+    </tr>
+    <tr>
+      <td><code>GOV-03</code></td>
+      <td>governance</td>
+      <td>Draft public isolation</td>
+      <td><strong>PASS</strong></td>
+      <td>The promoted draft remains absent from public canonical retrieval.</td>
+      <td>The draft-specific public search still returned no match.</td>
+      <td>Canonical publication boundary</td>
+    </tr>
+    <tr>
+      <td><code>OS-01</code></td>
+      <td>host</td>
+      <td>Dedicated Linux UID boundary</td>
+      <td><strong>PASS</strong></td>
+      <td>The agent runs as a dedicated locked system identity with owned private state.</td>
+      <td>A dedicated locked system identity and private ownership boundary were verified.</td>
+      <td>Linux identity and ownership</td>
+    </tr>
+    <tr>
+      <td><code>OS-02</code></td>
+      <td>host</td>
+      <td>Protected resource read denial</td>
+      <td><strong>PASS</strong></td>
+      <td>The agent cannot read application, source, or model-authentication resources.</td>
+      <td>All protected read probes were denied by the host boundary.</td>
+      <td>Filesystem and service sandbox</td>
+    </tr>
+    <tr>
+      <td><code>OS-03</code></td>
+      <td>host</td>
+      <td>Private workspace write allowance</td>
+      <td><strong>PASS</strong></td>
+      <td>The agent can write only its private workspace.</td>
+      <td>The private workspace write probe succeeded.</td>
+      <td>Filesystem ownership</td>
+    </tr>
+    <tr>
+      <td><code>POL-01</code></td>
+      <td>policy</td>
+      <td>Agent effective policy</td>
+      <td><strong>PASS</strong></td>
+      <td>The agent may read approved department memory but may not write canonical memory.</td>
+      <td>Effective policy allowed bounded reuse and explicitly denied canonical writes.</td>
+      <td>Policy decision engine</td>
+    </tr>
+    <tr>
+      <td><code>PRO-01</code></td>
+      <td>policy</td>
+      <td>Confirmed provisioning gate</td>
+      <td><strong>PASS</strong></td>
+      <td>Agent provisioning requires a queued plan and explicit revision confirmation.</td>
+      <td>A revision-gated plan completed through the bounded provisioner.</td>
+      <td>Provisioning confirmation gate</td>
+    </tr>
+    <tr>
+      <td><code>QUA-01</code></td>
+      <td>governance</td>
+      <td>Quarantined upload boundary</td>
+      <td><strong>PASS</strong></td>
+      <td>Uploaded material remains quarantined before independent review.</td>
+      <td>The upload hash was verified, sealed read-only, and produced a review-pending candidate.</td>
+      <td>Quarantine workflow</td>
+    </tr>
+    <tr>
+      <td><code>QUA-02</code></td>
+      <td>governance</td>
+      <td>Candidate public isolation</td>
+      <td><strong>PASS</strong></td>
+      <td>A quarantined candidate is absent from public capability retrieval.</td>
+      <td>The candidate-specific public search returned no match.</td>
+      <td>Public projection boundary</td>
+    </tr>
+    <tr>
+      <td><code>SUS-01</code></td>
+      <td>suspension</td>
+      <td>Application and policy revocation</td>
+      <td><strong>PASS</strong></td>
+      <td>Suspension removes all effective agent permissions.</td>
+      <td>The suspended identity had no effective permissions.</td>
+      <td>Identity and policy revocation</td>
+    </tr>
+    <tr>
+      <td><code>SUS-02</code></td>
+      <td>suspension</td>
+      <td>Host runtime revocation</td>
+      <td><strong>PASS</strong></td>
+      <td>Suspension stops the service and removes its broker credential files and group access.</td>
+      <td>The service stopped and host credential access was removed.</td>
+      <td>Host suspension enforcement</td>
+    </tr>
+    <tr>
+      <td><code>SUS-03</code></td>
+      <td>suspension</td>
+      <td>Broker credential revocation</td>
+      <td><strong>PASS</strong></td>
+      <td>A credential captured before suspension is rejected afterward.</td>
+      <td>The broker rejected the pre-suspension credential.</td>
+      <td>Broker authorization revocation</td>
+    </tr>
+    <tr>
+      <td><code>SYS-01</code></td>
+      <td>host</td>
+      <td>Bounded agent service</td>
+      <td><strong>PASS</strong></td>
+      <td>The dedicated agent service is active under the expected identity and sandbox.</td>
+      <td>The bounded agent service was active under the dedicated identity.</td>
+      <td>Service manager sandbox</td>
+    </tr></tbody></table></body></html>

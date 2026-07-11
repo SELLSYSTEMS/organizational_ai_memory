@@ -37,6 +37,9 @@ Accepted product additions:
   asset row
 - an optional Spark adaptation area below the deterministic recommendation
 - a clear fallback that leaves the stored result intact
+- Architect Console copy that distinguishes logical human principals from
+  dedicated agent runtimes and does not imply per-human Linux or PostgreSQL
+  accounts
 
 The visual authority hierarchy is:
 
@@ -54,10 +57,11 @@ labels carry the meaning.
 
 ## Source-fidelity review
 
-The implementation must show the pack as supplied:
+The implementation must show the governed public-safe pack as imported:
 
 1. 9 assets, 5 tasks, and 13 task-to-asset mappings
-2. 7 approved assets and 2 reviewed assets
+2. all 9 assets approved, with public views requiring exact `approved` state
+   plus explicit public-eligibility metadata
 3. no invented `risk_note` where the source provides none
 4. source-pack `public_safe` classification kept distinct from asset governance
    visibility `internal`
@@ -69,7 +73,7 @@ The implementation must show the pack as supplied:
 8. handoff Markdown excluded from ingestion and public output
 
 These are data-quality qualifications, not copy opportunities. The interface
-must not hide reviewed status, convert external references into local records,
+must not blur approval state, convert external references into local records,
 or imply that a missing risk note means no risk.
 
 ## Spark boundary review
@@ -151,6 +155,7 @@ permitted in the first viewport.
 | Product hierarchy | Capability promise, five nav routes, stored task action | Accepted contract |
 | Asset catalog | Filterable 9-record ledger plus inspector | Accepted contract |
 | Governance truth | Review, version, owner, roles, visibility, missing-data handling | Accepted contract |
+| Identity truth | Human is an app principal with DB-bound department context; only linked agents receive dedicated Linux runtime identity | Accepted contract |
 | Recommendation authority | Stored task and assets remain above adaptation | Accepted contract |
 | Spark separation | Generated label, non-authoritative state, deterministic fallback | Accepted contract |
 | Capability provenance | Exact asset to observation to source-turn path | Accepted contract |
@@ -159,7 +164,7 @@ permitted in the first viewport.
 | Accessibility | Keyboard filters/rows/disclosures, focus, labels, live status | Browser interaction checks passed |
 | Runtime copy | Live generation state matches isolated authentication | Live generated path verified; deterministic fallback contract-tested |
 
-Raw browser QA output remains local and ignored. Five curated, public-safe
+Raw browser QA output remains local and ignored. Eight curated, public-safe
 captures plus a machine-readable report are stored under
 `artifacts/submission/screenshots/`. The final browser suite exercises 35
 route, viewport, interaction, fallback, and provenance checks against the live

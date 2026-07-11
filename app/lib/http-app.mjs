@@ -208,6 +208,36 @@ function validateQueryPayload(payload, maxCharacters) {
   return query;
 }
 
+function validateCapabilitySearchPayload(payload) {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+    throw new HttpError(
+      400,
+      'invalid_capability_search_request',
+      'Request body must contain only query.',
+    );
+  }
+  const keys = Object.keys(payload).sort();
+  if (
+    keys.join(',') !== 'query'
+    || typeof payload.query !== 'string'
+  ) {
+    throw new HttpError(
+      400,
+      'invalid_capability_search_request',
+      'Request body must contain a string query field only.',
+    );
+  }
+  if (/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/.test(payload.query)) {
+    throw new HttpError(400, 'invalid_capability_search_query', 'Search query contains invalid characters.');
+  }
+  const query = payload.query.normalize('NFKC').replace(/\s+/g, ' ').trim();
+  if (!query) throw new HttpError(400, 'invalid_capability_search_query', 'Search query must not be empty.');
+  if ([...query].length > 320) {
+    throw new HttpError(400, 'capability_search_query_too_long', 'Search query must be 320 characters or fewer.');
+  }
+  return query;
+}
+
 function validateTaskRecommendationPayload(payload, maxCharacters) {
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
     throw new HttpError(400, 'invalid_recommendation_request', 'Request body must be an object containing only task_key.');
@@ -436,6 +466,7 @@ export function createRequestHandler({
   memoryService,
   capabilityService,
   capabilityAssistService,
+  identityProofLoader = null,
   publicDir,
   bodyBytes = 4_096,
   queryCharacters = 500,
@@ -531,6 +562,17 @@ export function createRequestHandler({
         return;
       }
 
+      if (url.pathname === '/api/public/capability-search') {
+        if (req.method !== 'POST') throw methodNotAllowed(['POST']);
+        assertNoQueryParameters(url);
+        const headers = enforceRateLimit(req, res, rateLimiter, 'public-query', publicQueriesPerMinute);
+        if (!headers) return;
+        const payload = await readJsonBody(req, bodyBytes);
+        const query = validateCapabilitySearchPayload(payload);
+        sendJson(res, 200, await capabilityService.search(query), req.method, headers);
+        return;
+      }
+
       if (url.pathname === '/api/public/assets') {
         if (!['GET', 'HEAD'].includes(req.method)) throw methodNotAllowed(['GET', 'HEAD']);
         const filters = capabilityAssetFilters(url);
@@ -602,6 +644,33 @@ export function createRequestHandler({
         const headers = enforceRateLimit(req, res, rateLimiter, 'public-read', publicReadsPerMinute);
         if (!headers) return;
         sendJson(res, 200, await capabilityService.analytics(), req.method, headers);
+        return;
+      }
+
+      if (url.pathname === '/api/public/access-proof') {
+        if (!['GET', 'HEAD'].includes(req.method)) throw methodNotAllowed(['GET', 'HEAD']);
+        assertNoQueryParameters(url);
+        const headers = enforceRateLimit(req, res, rateLimiter, 'public-read', publicReadsPerMinute);
+        if (!headers) return;
+        if (!identityProofLoader || typeof identityProofLoader.read !== 'function') {
+          throw new HttpError(
+            503,
+            'access_proof_unavailable',
+            'The four-plane access proof is not available.',
+          );
+        }
+        try {
+          sendJson(res, 200, await identityProofLoader.read(), req.method, headers);
+        } catch (error) {
+          logger.error?.('Public identity proof read failed.', {
+            error_name: error?.name || 'Error',
+          });
+          throw new HttpError(
+            503,
+            'access_proof_unavailable',
+            'The four-plane access proof is not available.',
+          );
+        }
         return;
       }
 

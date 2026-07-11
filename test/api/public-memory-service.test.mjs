@@ -265,6 +265,51 @@ test('unknown query returns no grounded memory and no unrelated context', () => 
   assert.equal(result.retrieved_context.assembled_text, '');
 });
 
+test('capability intent never falls through to unrelated temporal facts', () => {
+  const queries = [
+    'What prompt should I use before contacting a new B2B lead?',
+    'Show me the candidate onboarding workflow',
+    'Which reusable agent playbook should I start with?',
+  ];
+
+  for (const query of queries) {
+    const result = retrievePublicMemory(buildPublicSnapshot(rawFixture()), query);
+    assert.equal(result.status, 'no_grounded_memory', query);
+    assert.equal(result.retrieval.reason, 'capability_intent', query);
+    assert.equal(result.retrieval.suggested_endpoint, '/api/public/capability-search');
+    assert.deepEqual(result.retrieved_context.facts, []);
+    assert.deepEqual(result.retrieved_context.observations, []);
+  }
+});
+
+test('history language without a recognized fact concept returns no temporal fallback', () => {
+  const queries = [
+    'What changed before?',
+    'Show previous information about zyzzyva',
+    'What was the old process?',
+  ];
+
+  for (const query of queries) {
+    const result = retrievePublicMemory(buildPublicSnapshot(rawFixture()), query);
+    assert.equal(result.status, 'no_grounded_memory', query);
+    assert.deepEqual(result.retrieved_context.facts, [], query);
+    assert.deepEqual(result.retrieved_context.observations, [], query);
+  }
+});
+
+test('current fact queries do not include superseded facts or their observations', () => {
+  const result = retrievePublicMemory(buildPublicSnapshot(rawFixture()), 'What is the current budget?');
+
+  assert.equal(result.status, 'grounded');
+  assert.deepEqual(result.retrieved_context.facts.map((fact) => fact.object_value), [
+    '4500 USD per month',
+  ]);
+  assert.deepEqual(result.retrieved_context.observations.map((observation) => observation.observation_key), [
+    'observation:budget:new',
+  ]);
+  assert.doesNotMatch(result.retrieved_context.assembled_text, /3000/);
+});
+
 test('default demo query returns only budget and deadline with both histories', () => {
   const result = retrievePublicMemory(
     buildPublicSnapshot(rawFixture()),

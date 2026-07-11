@@ -37,18 +37,25 @@ Stage the public tree explicitly; do not use a blanket `git add .`:
 git add -- \
   .gitignore LICENSE README.md DESIGN.md package.json package-lock.json \
   app config deploy scripts sql test docs \
-  artifacts/design/DESIGN_REVIEW.md artifacts/submission \
+  artifacts/design/DESIGN_REVIEW.md \
+  artifacts/design/JUDGE_DEMO_CONCEPT_2026-07-11.png \
+  artifacts/design/ARCHITECT_CONSOLE_CONCEPT_2026-07-11.png \
+  artifacts/evaluation/identity-plane-proof \
+  artifacts/evaluation/gpt-5.3-codex-spark-xhigh-release-review.md \
+  artifacts/qa/browser/report.json \
+  artifacts/submission \
   handoff/FINAL_HACKATHON_MVP_HANDOFF_2026-07-10.md \
   handoff/aihackathon_public_safe_asset_pack_2026-07-10/assets.json \
+  handoff/aihackathon_public_safe_asset_pack_2026-07-10/asset_bodies_v2.json \
   handoff/aihackathon_public_safe_asset_pack_2026-07-10/recommendations.json \
   handoff/aihackathon_public_safe_asset_pack_2026-07-10/analytics.json \
   handoff/aihackathon_public_safe_asset_pack_2026-07-10/source_turns.json
 ```
 
-The four capability-pack JSON files intentionally remain at that fixed path.
-The strict importer and its regression tests depend on it. No Markdown from the
-handoff directory is part of the product or publish set, apart from the factual
-final handoff.
+The five capability-pack JSON files intentionally remain at that fixed path.
+The strict importer and its regression tests depend on them. No Markdown from
+the handoff directory is part of the product or publish set, apart from the
+factual final handoff.
 
 ## 3. Audit the staged tree
 
@@ -75,9 +82,13 @@ git grep --cached -n -E \
   -- . || true
 
 git grep --cached -n -E \
-  '(WireGuard|plink[0-9a-z]*|root@|/root/\.codex|auth\.json)' \
+  '(WireGuard|plink[0-9a-z]*|root@|BEGIN OPENSSH PRIVATE KEY)' \
   -- . || true
 ```
+
+References to protected paths such as a model-authentication filename can be
+intentional denial-probe fixtures. The file content and any credential value
+must still be absent.
 
 Remove an unsafe staged path with `git restore --staged -- <path>`, then repeat
 the audit. That command does not delete the working file.

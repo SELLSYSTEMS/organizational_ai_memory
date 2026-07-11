@@ -5,23 +5,14 @@ const ELIGIBLE_PACK_CTE = `
     p.id,
     p.evidence_thread_id,
     p.generated_at
-  FROM memory.capability_packs p
-  JOIN memory.threads evidence_thread
-    ON evidence_thread.id = p.evidence_thread_id
-   AND evidence_thread.thread_key = $6
-   AND evidence_thread.brand_key = $2
-   AND evidence_thread.status = $5
-   AND evidence_thread.metadata @> jsonb_build_object(
-     'corpus', $3::text,
-     'visibility', $4::text,
-     'source_classification', $4::text,
-     'review_status', 'approved_for_public_demo'::text
-   )
+  FROM oam_public.capability_packs p
   WHERE p.pack_key = $1
     AND p.brand_key = $2
     AND p.corpus = $3
     AND p.source_classification = $4
     AND p.publication_status = $5
+    AND p.evidence_thread_id IS NOT NULL
+    AND $6::text = 'oam_public_capability_assets_v1'
 `;
 
 const ASSET_COLUMNS = `
@@ -42,13 +33,79 @@ const ASSET_COLUMNS = `
   a.superseded_by_asset_key,
   a.last_validated_at,
   a.risk_note,
-  a.used_successfully_in
+  a.used_successfully_in,
+  a.search_text,
+  v.asset_family_key,
+  v.content_schema_version,
+  v.content_type,
+  v.change_summary,
+  v.body AS content_body,
+  v.body_text,
+  v.content_sha256
 `;
 
 const READINESS_SQL = `
   /* capability:readiness */
   SELECT EXISTS (
-    ${ELIGIBLE_PACK_CTE}
+    SELECT 1
+    FROM (${ELIGIBLE_PACK_CTE}) eligible_pack
+    WHERE EXISTS (
+      SELECT 1 FROM oam_public.capability_assets a WHERE a.pack_id = eligible_pack.id
+    )
+      AND NOT EXISTS (
+        SELECT 1
+        FROM oam_public.capability_assets a
+        WHERE a.pack_id = eligible_pack.id
+          AND NOT EXISTS (
+            SELECT 1
+            FROM oam_public.capability_asset_versions v
+            WHERE v.pack_id = eligible_pack.id
+              AND v.asset_id = a.id
+          )
+      )
+      AND NOT EXISTS (
+        SELECT 1
+        FROM oam_public.capability_asset_versions v
+        WHERE v.pack_id = eligible_pack.id
+        GROUP BY v.asset_family_key
+        HAVING count(*) FILTER (WHERE v.is_current) <> 1
+      )
+      AND NOT EXISTS (
+        SELECT 1
+        FROM oam_public.capability_assets a
+        WHERE a.pack_id = eligible_pack.id
+          AND NOT EXISTS (
+            SELECT 1
+            FROM oam_public.capability_source_evidence evidence
+            WHERE evidence.pack_id = eligible_pack.id
+              AND evidence.asset_id = a.id
+          )
+      )
+      AND (
+        SELECT count(DISTINCT a.asset_type)
+        FROM oam_public.capability_assets a
+        WHERE a.pack_id = eligible_pack.id
+      ) = 5
+      AND EXISTS (
+        SELECT 1
+        FROM oam_public.capability_tasks task
+        JOIN oam_public.capability_task_recommendations recommendation
+          ON recommendation.pack_id = task.pack_id
+         AND recommendation.task_id = task.id
+        WHERE task.pack_id = eligible_pack.id
+          AND task.task_key = 'website_delivery_handoff'
+      )
+      AND NOT EXISTS (
+        SELECT 1
+        FROM oam_public.capability_tasks task
+        WHERE task.pack_id = eligible_pack.id
+          AND NOT EXISTS (
+            SELECT 1
+            FROM oam_public.capability_task_recommendations recommendation
+            WHERE recommendation.pack_id = eligible_pack.id
+              AND recommendation.task_id = task.id
+          )
+      )
   ) AS public_capability_pack_available
 `;
 
@@ -57,7 +114,11 @@ const LIST_ASSETS_SQL = `
   WITH eligible_pack AS (${ELIGIBLE_PACK_CTE})
   SELECT ${ASSET_COLUMNS}
   FROM eligible_pack p
-  JOIN memory.capability_assets a ON a.pack_id = p.id
+  JOIN oam_public.capability_assets a ON a.pack_id = p.id
+  JOIN oam_public.capability_asset_versions v
+    ON v.pack_id = p.id
+   AND v.asset_id = a.id
+   AND v.is_current = true
   WHERE ($7::text IS NULL OR a.asset_type = $7)
     AND ($8::text IS NULL OR a.capability_area = $8)
     AND ($9::text IS NULL OR a.review_status = $9)
@@ -80,7 +141,11 @@ const FIND_ASSET_SQL = `
   WITH eligible_pack AS (${ELIGIBLE_PACK_CTE})
   SELECT ${ASSET_COLUMNS}
   FROM eligible_pack p
-  JOIN memory.capability_assets a ON a.pack_id = p.id
+  JOIN oam_public.capability_assets a ON a.pack_id = p.id
+  JOIN oam_public.capability_asset_versions v
+    ON v.pack_id = p.id
+   AND v.asset_id = a.id
+   AND v.is_current = true
   WHERE a.asset_key = $7
   LIMIT 1
 `;
@@ -90,28 +155,19 @@ const SOURCE_EVIDENCE_SQL = `
   WITH eligible_pack AS (${ELIGIBLE_PACK_CTE})
   SELECT
     a.asset_key,
-    o.id AS observation_id,
-    tt.source_turn_id,
-    tt.actor_role,
-    COALESCE(o.metadata->>'context_scope', o.subject_key) AS context_scope,
-    COALESCE(tt.sent_at, o.observed_at) AS occurred_at,
-    left(o.observation_text, 1600) AS text
+    evidence.observation_id,
+    evidence.source_turn_id,
+    evidence.actor_role,
+    evidence.context_scope,
+    evidence.occurred_at,
+    evidence.evidence_text AS text
   FROM eligible_pack p
-  JOIN memory.capability_assets a ON a.pack_id = p.id
-  JOIN memory.capability_asset_evidence ae
-    ON ae.pack_id = p.id
-   AND ae.asset_id = a.id
-  JOIN memory.observations o
-    ON o.id = ae.observation_id
-   AND o.thread_id = p.evidence_thread_id
-   AND o.observation_kind = 'capability_source_narrative'
-   AND o.is_active = true
-  JOIN memory.thread_turns tt
-    ON tt.id = ae.turn_id
-   AND tt.id = o.turn_id
-   AND tt.thread_id = p.evidence_thread_id
+  JOIN oam_public.capability_assets a ON a.pack_id = p.id
+  JOIN oam_public.capability_source_evidence evidence
+    ON evidence.pack_id = p.id
+   AND evidence.asset_id = a.id
   WHERE a.asset_key = ANY($7::text[])
-  ORDER BY a.asset_key, COALESCE(tt.sent_at, o.observed_at), tt.source_turn_id
+  ORDER BY a.asset_key, evidence.occurred_at, evidence.source_turn_id
   LIMIT 500
 `;
 
@@ -124,13 +180,13 @@ const RELATED_ASSETS_SQL = `
     target_asset.asset_type,
     target_asset.title
   FROM eligible_pack p
-  JOIN memory.capability_asset_relations relation
+  JOIN oam_public.capability_asset_relations relation
     ON relation.pack_id = p.id
    AND relation.relation_kind = 'linked_evidence'
-  JOIN memory.capability_assets source_asset
+  JOIN oam_public.capability_assets source_asset
     ON source_asset.id = relation.source_asset_id
    AND source_asset.pack_id = p.id
-  JOIN memory.capability_assets target_asset
+  JOIN oam_public.capability_assets target_asset
     ON target_asset.id = relation.target_asset_id
    AND target_asset.pack_id = p.id
   WHERE source_asset.asset_key = ANY($7::text[])
@@ -150,13 +206,17 @@ const RECOMMENDATIONS_SQL = `
     recommendation.recommendation_reason,
     ${ASSET_COLUMNS}
   FROM eligible_pack p
-  JOIN memory.capability_tasks task ON task.pack_id = p.id
-  JOIN memory.capability_task_recommendations recommendation
+  JOIN oam_public.capability_tasks task ON task.pack_id = p.id
+  JOIN oam_public.capability_task_recommendations recommendation
     ON recommendation.pack_id = p.id
    AND recommendation.task_id = task.id
-  JOIN memory.capability_assets a
+  JOIN oam_public.capability_assets a
     ON a.pack_id = p.id
    AND a.id = recommendation.asset_id
+  JOIN oam_public.capability_asset_versions v
+    ON v.pack_id = p.id
+   AND v.asset_id = a.id
+   AND v.is_current = true
   WHERE ($7::text IS NULL OR task.task_key = $7)
   ORDER BY task.sort_order, task.task_key, recommendation.recommendation_rank
   LIMIT 200
@@ -167,7 +227,7 @@ const ANALYTICS_SQL = `
   WITH eligible_pack AS (${ELIGIBLE_PACK_CTE})
   SELECT
     p.generated_at,
-    (SELECT count(*) FROM memory.capability_assets a WHERE a.pack_id = p.id) AS total_assets,
+    (SELECT count(*) FROM oam_public.capability_assets a WHERE a.pack_id = p.id) AS total_assets,
     COALESCE((
       SELECT jsonb_agg(
         jsonb_build_object('asset_type', grouped.asset_type, 'count', grouped.asset_count)
@@ -185,7 +245,7 @@ const ANALYTICS_SQL = `
             WHEN 'best_practice' THEN 5
             ELSE 6
           END AS sort_order
-        FROM memory.capability_assets a
+        FROM oam_public.capability_assets a
         WHERE a.pack_id = p.id
         GROUP BY a.asset_type
       ) grouped
@@ -206,7 +266,7 @@ const ANALYTICS_SQL = `
             WHEN 'deprecated' THEN 4
             ELSE 5
           END AS sort_order
-        FROM memory.capability_assets a
+        FROM oam_public.capability_assets a
         WHERE a.pack_id = p.id
         GROUP BY a.review_status
       ) grouped
@@ -218,7 +278,7 @@ const ANALYTICS_SQL = `
       )
       FROM (
         SELECT a.capability_area, count(*) AS asset_count
-        FROM memory.capability_assets a
+        FROM oam_public.capability_assets a
         WHERE a.pack_id = p.id
         GROUP BY a.capability_area
       ) grouped
@@ -232,7 +292,7 @@ const ANALYTICS_SQL = `
         )
         ORDER BY signal.sort_order, signal.signal_key
       )
-      FROM memory.capability_analytics_signals signal
+      FROM oam_public.capability_analytics_signals signal
       WHERE signal.pack_id = p.id
         AND signal.signal_type = 'duplicated_pattern'
     ), '[]'::jsonb) AS duplicated_patterns,
@@ -245,10 +305,108 @@ const ANALYTICS_SQL = `
         )
         ORDER BY signal.sort_order, signal.signal_key
       )
-      FROM memory.capability_analytics_signals signal
+      FROM oam_public.capability_analytics_signals signal
       WHERE signal.pack_id = p.id
         AND signal.signal_type = 'missing_capability'
-    ), '[]'::jsonb) AS missing_capabilities
+    ), '[]'::jsonb) AS missing_capabilities,
+    (
+      SELECT count(*)
+      FROM oam_public.capability_asset_versions version
+      WHERE version.pack_id = p.id
+        AND version.is_current = true
+    ) AS current_content_versions,
+    (
+      SELECT count(*)
+      FROM oam_public.capability_assets asset
+      WHERE asset.pack_id = p.id
+        AND EXISTS (
+          SELECT 1
+          FROM oam_public.capability_asset_versions version
+          WHERE version.pack_id = p.id
+            AND version.asset_id = asset.id
+            AND char_length(version.body_text) > 0
+        )
+    ) AS assets_with_content,
+    (
+      SELECT count(*)
+      FROM oam_public.capability_assets asset
+      WHERE asset.pack_id = p.id
+        AND NOT EXISTS (
+          SELECT 1
+          FROM oam_public.capability_asset_evidence evidence
+          WHERE evidence.pack_id = p.id
+            AND evidence.asset_id = asset.id
+        )
+    ) AS assets_without_evidence,
+    (
+      SELECT count(*) FROM oam_public.capability_tasks task WHERE task.pack_id = p.id
+    ) AS total_tasks,
+    (
+      SELECT count(*)
+      FROM oam_public.capability_tasks task
+      WHERE task.pack_id = p.id
+        AND NOT EXISTS (
+          SELECT 1
+          FROM oam_public.capability_task_recommendations recommendation
+          WHERE recommendation.pack_id = p.id
+            AND recommendation.task_id = task.id
+        )
+    ) AS tasks_without_recommendations,
+    (
+      SELECT count(DISTINCT recommendation.asset_id)
+      FROM oam_public.capability_task_recommendations recommendation
+      WHERE recommendation.pack_id = p.id
+    ) AS recommended_assets,
+    COALESCE((
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'asset_key', reused.asset_key,
+          'task_count', reused.task_count,
+          'task_keys', reused.task_keys
+        )
+        ORDER BY reused.task_count DESC, reused.asset_key
+      )
+      FROM (
+        SELECT
+          asset.asset_key,
+          count(DISTINCT recommendation.task_id) AS task_count,
+          array_agg(DISTINCT task.task_key ORDER BY task.task_key) AS task_keys
+        FROM oam_public.capability_task_recommendations recommendation
+        JOIN oam_public.capability_assets asset
+          ON asset.pack_id = p.id
+         AND asset.id = recommendation.asset_id
+        JOIN oam_public.capability_tasks task
+          ON task.pack_id = p.id
+         AND task.id = recommendation.task_id
+        WHERE recommendation.pack_id = p.id
+        GROUP BY asset.asset_key
+        HAVING count(DISTINCT recommendation.task_id) > 1
+      ) reused
+    ), '[]'::jsonb) AS reused_across_tasks,
+    COALESCE((
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'content_sha256', duplicate.content_sha256,
+          'asset_keys', duplicate.asset_keys,
+          'count', duplicate.asset_count
+        )
+        ORDER BY duplicate.content_sha256
+      )
+      FROM (
+        SELECT
+          version.content_sha256,
+          array_agg(asset.asset_key ORDER BY asset.asset_key) AS asset_keys,
+          count(*) AS asset_count
+        FROM oam_public.capability_asset_versions version
+        JOIN oam_public.capability_assets asset
+          ON asset.pack_id = p.id
+         AND asset.id = version.asset_id
+        WHERE version.pack_id = p.id
+          AND version.is_current = true
+        GROUP BY version.content_sha256
+        HAVING count(*) > 1
+      ) duplicate
+    ), '[]'::jsonb) AS duplicate_content_groups
   FROM eligible_pack p
   LIMIT 1
 `;
@@ -272,6 +430,14 @@ const ASSET_FIELD_NAMES = Object.freeze([
   'last_validated_at',
   'risk_note',
   'used_successfully_in',
+  'search_text',
+  'asset_family_key',
+  'content_schema_version',
+  'content_type',
+  'change_summary',
+  'content_body',
+  'body_text',
+  'content_sha256',
 ]);
 
 function rows(result) {
@@ -339,6 +505,16 @@ export function createCapabilityMemoryRepository(pool) {
     return [...tasks.values()];
   }
 
+  async function readAssets(filters = {}) {
+    const result = await pool.query(LIST_ASSETS_SQL, [
+      ...scopeParameters(),
+      filters.type || null,
+      filters.capability_area || null,
+      filters.review_status || null,
+    ]);
+    return hydrateAssets(rows(result));
+  }
+
   return {
     async readiness() {
       const result = await pool.query(READINESS_SQL, scopeParameters());
@@ -346,13 +522,7 @@ export function createCapabilityMemoryRepository(pool) {
     },
 
     async listAssets(filters = {}) {
-      const result = await pool.query(LIST_ASSETS_SQL, [
-        ...scopeParameters(),
-        filters.type || null,
-        filters.capability_area || null,
-        filters.review_status || null,
-      ]);
-      return hydrateAssets(rows(result));
+      return readAssets(filters);
     },
 
     async findAsset(assetKey) {
@@ -368,6 +538,14 @@ export function createCapabilityMemoryRepository(pool) {
 
     async findRecommendationTask(taskKey) {
       return (await readRecommendations(taskKey))[0] || null;
+    },
+
+    async searchCatalog() {
+      const [assets, tasks] = await Promise.all([
+        readAssets(),
+        readRecommendations(null),
+      ]);
+      return { assets, tasks };
     },
 
     async readAnalytics() {

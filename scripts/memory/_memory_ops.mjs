@@ -565,9 +565,27 @@ async function upsertTemporalFact(client, thread, candidate, observationId, jobI
     return updateRes.rows[0];
   }
 
+  const newFactId = stableUuidFromKey(`fact_id:${factKey}`);
+  if (current && current.object_value !== fact.object_value) {
+    // Retire the prior row before inserting its replacement so the partial
+    // unique index never observes two current facts in the transaction.
+    await client.query(
+      `
+        UPDATE memory.facts
+        SET
+          is_current = false,
+          valid_to = $2,
+          updated_at = now()
+        WHERE id = $1
+      `,
+      [current.id, fact.valid_from],
+    );
+  }
+
   const insertRes = await client.query(
     `
       INSERT INTO memory.facts (
+        id,
         fact_key,
         thread_id,
         subject_key,
@@ -583,12 +601,13 @@ async function upsertTemporalFact(client, thread, candidate, observationId, jobI
         metadata
       )
       VALUES (
-        $1, $2, $3, $4, $5, $6::jsonb, $7, $8,
-        $9::jsonb, $10::jsonb, $11, $12, $13::jsonb
+        $1, $2, $3, $4, $5, $6, $7::jsonb, $8, $9,
+        $10::jsonb, $11::jsonb, $12, $13, $14::jsonb
       )
       RETURNING id
     `,
     [
+      newFactId,
       factKey,
       thread.id,
       fact.subject_key,
@@ -607,20 +626,16 @@ async function upsertTemporalFact(client, thread, candidate, observationId, jobI
     ],
   );
 
-  const newFactId = insertRes.rows[0].id;
-
   if (current && current.object_value !== fact.object_value) {
     await client.query(
       `
         UPDATE memory.facts
         SET
-          is_current = false,
-          valid_to = $2,
-          superseded_by_fact_id = $3,
+          superseded_by_fact_id = $2,
           updated_at = now()
         WHERE id = $1
       `,
-      [current.id, fact.valid_from, newFactId],
+      [current.id, newFactId],
     );
 
     await client.query(

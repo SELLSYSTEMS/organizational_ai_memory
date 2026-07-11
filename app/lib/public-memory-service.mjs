@@ -89,9 +89,10 @@ const BROAD_QUERY_PATTERNS = [
   /\b(?:show|list) (?:the )?(?:memory|evidence|provenance|sources)\b/,
 ];
 
-const HISTORY_QUERY_PATTERN = /\b(chang(?:e|ed|es)|history|historical|original|previous|prior|supersed(?:e|ed)|before|then|old)\b/;
+const HISTORY_QUERY_PATTERN = /\b(chang(?:e|ed|es)|history|historical|original|previous|prior|supersed(?:e|ed)|old|used to)\b/;
 const REFLECTION_QUERY_PATTERN = /\b(reflection|lesson|insight|pattern|why)\b/;
 const SUMMARY_QUERY_PATTERN = /\b(summary|summarize|overview|context)\b/;
+const CAPABILITY_QUERY_PATTERN = /\b(prompt|workflow|agent|playbook|checklist|template|outreach|lead research|onboard(?:ing)?|handoff|reuse|reusable capability)\b/;
 
 function asArray(value) {
   return Array.isArray(value) ? value : [];
@@ -122,6 +123,20 @@ function asObject(value) {
 
 function compactText(value) {
   return String(value || '').replace(/\s+/g, ' ').trim();
+}
+
+function lexicalText(value) {
+  return compactText(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function containsQueryTerm(query, term) {
+  const normalizedQuery = lexicalText(query);
+  const normalizedTerm = lexicalText(term);
+  return normalizedTerm.length > 0
+    && (` ${normalizedQuery} `).includes(` ${normalizedTerm} `);
 }
 
 function truncate(value, maxCharacters) {
@@ -318,7 +333,7 @@ function recordText(record) {
 
 function detectedConcepts(normalizedQuery) {
   const concepts = CONCEPTS.filter((concept) =>
-    concept.queryTerms.some((term) => normalizedQuery.includes(term)),
+    concept.queryTerms.some((term) => containsQueryTerm(normalizedQuery, term)),
   );
   const hasDeadline = concepts.some((concept) => concept.key === 'deadline');
   const deliveryIsOnlyModifier = hasDeadline
@@ -373,25 +388,54 @@ function buildAnswer(facts, observations, summaries, reflections) {
   return 'No grounded public memory matched that query.';
 }
 
+function noGroundedMemoryResult(query, reason = 'below_threshold') {
+  return {
+    scope: publicScopeResponse(),
+    query,
+    status: 'no_grounded_memory',
+    answer: 'No grounded public memory matched that query.',
+    retrieval: {
+      strategy: 'postgres_deterministic_lexical',
+      matched_terms: [],
+      semantic: { status: 'unavailable' },
+      reason,
+      ...(reason === 'capability_intent'
+        ? { suggested_endpoint: '/api/public/capability-search' }
+        : {}),
+    },
+    retrieved_context: {
+      facts: [],
+      observations: [],
+      summaries: [],
+      reflections: [],
+      assembled_text: '',
+    },
+  };
+}
+
 export function retrievePublicMemory(snapshot, queryText) {
   const normalizedQuery = compactText(queryText);
   const normalizedLower = normalizedQuery.toLowerCase();
   const queryTokens = tokenize(normalizedLower);
   const concepts = detectedConcepts(normalizedLower);
+  const explicitTemporalConcepts = concepts.filter((concept) =>
+    !['workflow', 'delivery'].includes(concept.key),
+  );
+  const explicitDeliveryFact = /\b(remote|onsite|on-site|hardware|shipping|delivery model)\b/.test(normalizedLower);
+  if (
+    CAPABILITY_QUERY_PATTERN.test(normalizedLower)
+    && explicitTemporalConcepts.length === 0
+    && !explicitDeliveryFact
+  ) {
+    return noGroundedMemoryResult(normalizedQuery, 'capability_intent');
+  }
   const broadQuery = BROAD_QUERY_PATTERNS.some((pattern) => pattern.test(normalizedLower));
   const wantsHistory = HISTORY_QUERY_PATTERN.test(normalizedLower);
 
   const rankedFacts = snapshot.facts
     .map((record) => ({ record, ...scoreRecord(record, queryTokens, concepts) }))
-    .filter((item) =>
-      item.score > 0
-      || (broadQuery && item.record.is_current)
-      || (
-        wantsHistory
-        && concepts.length === 0
-        && (item.record.supersession.superseded_by || item.record.supersession.supersedes.length)
-      )
-    )
+    .filter((item) => (item.record.is_current || wantsHistory)
+      && (item.score > 0 || (broadQuery && item.record.is_current)))
     .map((item) => ({ ...item, score: item.score || 1 }))
     .sort(compareRanked);
 
@@ -399,7 +443,7 @@ export function retrievePublicMemory(snapshot, queryText) {
   const factCandidates = new Map(rankedFacts.map((item) => [item.record.fact_key, item]));
 
   for (const fact of snapshot.facts) {
-    if (directlyMatchedPredicates.has(fact.predicate) && !factCandidates.has(fact.fact_key)) {
+    if (wantsHistory && directlyMatchedPredicates.has(fact.predicate) && !factCandidates.has(fact.fact_key)) {
       factCandidates.set(fact.fact_key, { record: fact, score: 1, matchedTerms: [] });
     }
   }
@@ -418,9 +462,11 @@ export function retrievePublicMemory(snapshot, queryText) {
       observationCandidates.set(observation.observation_key, observation);
     }
   }
-  for (const item of rankedObservations) {
-    if (observationCandidates.size >= 8) break;
-    observationCandidates.set(item.record.observation_key, item.record);
+  if (facts.length === 0) {
+    for (const item of rankedObservations) {
+      if (observationCandidates.size >= 8) break;
+      observationCandidates.set(item.record.observation_key, item.record);
+    }
   }
   const observations = [...observationCandidates.values()].slice(0, 8);
 

@@ -1,0 +1,67 @@
+[Unit]
+Description=Organizational AI Memory Architect Console backend
+After=network.target postgresql.service organizational-ai-memory-provisioner.service
+Requires=organizational-ai-memory-provisioner.service
+
+[Service]
+Type=simple
+User=oam-operator
+Group=oam-operator
+WorkingDirectory=/opt/organizational-ai-memory-operator
+Environment=NODE_ENV=production
+Environment=OAM_OPERATOR_HOST=127.0.0.1
+Environment=OAM_OPERATOR_PORT=3010
+Environment=OAM_OPERATOR_ALLOWED_HOST=memory.sellsystems.agency
+Environment=OAM_OPERATOR_ALLOWED_ORIGIN=https://memory.sellsystems.agency
+Environment=OAM_OPERATOR_SECURE_COOKIES=true
+Environment=OAM_OPERATOR_COOKIE_PATH=/architect
+Environment=OAM_PROVISIONER_SOCKET=/run/oam-provisioner/provisioner.sock
+Environment=OAM_QUARANTINE_ROOT=/var/lib/organizational-ai-memory-quarantine
+Environment=OAM_INGESTION_PRINCIPAL_KEY=service:governed_ingestion
+Environment=OAM_OPERATOR_CREDENTIAL_MAP=/etc/organizational-ai-memory/operator-credentials.json
+EnvironmentFile=/etc/organizational-ai-memory/operator-db.env
+ExecStart=/usr/bin/node app/operator-server.mjs
+Restart=on-failure
+RestartSec=3s
+StateDirectory=organizational-ai-memory-operator
+StateDirectoryMode=0700
+TimeoutStartSec=20s
+TimeoutStopSec=10s
+UMask=0077
+
+AmbientCapabilities=
+CapabilityBoundingSet=
+IPAddressDeny=any
+IPAddressAllow=localhost
+LockPersonality=true
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateTmp=true
+ProtectClock=true
+ProtectControlGroups=true
+ProtectHome=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectProc=invisible
+ProtectSystem=strict
+ProcSubset=pid
+InaccessiblePaths=/etc/tg_ops /etc/organizational-ai-memory/public-db.env /etc/organizational-ai-memory/broker-db.env
+InaccessiblePaths=/var/lib/oam-codex /var/lib/oam-agents /etc/oam-agents
+ReadOnlyPaths=/opt/organizational-ai-memory-operator
+ReadWritePaths=/var/lib/organizational-ai-memory-operator
+ReadWritePaths=/var/lib/organizational-ai-memory-quarantine
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+IPAddressDeny=any
+IPAddressAllow=localhost
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+SystemCallArchitectures=native
+TasksMax=64
+MemoryMax=384M
+MemorySwapMax=0
+LimitNOFILE=512
+
+[Install]
+WantedBy=multi-user.target

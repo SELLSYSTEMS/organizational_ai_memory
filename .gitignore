@@ -7,6 +7,7 @@ playwright-report/
 test-results/
 .cache/
 .state/
+.local-secrets/
 
 .env
 .env.*
@@ -29,7 +30,10 @@ storage-state*.json
 *.sock
 *.har
 
-artifacts/qa/
+artifacts/qa/*
+!artifacts/qa/browser/
+artifacts/qa/browser/*
+!artifacts/qa/browser/report.json
 artifacts/design/concepts/
 artifacts/design/stitch/
 artifacts/design/implementation-*.png
@@ -48,6 +52,7 @@ handoff/*
 !handoff/aihackathon_public_safe_asset_pack_2026-07-10/
 handoff/aihackathon_public_safe_asset_pack_2026-07-10/*
 !handoff/aihackathon_public_safe_asset_pack_2026-07-10/assets.json
+!handoff/aihackathon_public_safe_asset_pack_2026-07-10/asset_bodies_v2.json
 !handoff/aihackathon_public_safe_asset_pack_2026-07-10/recommendations.json
 !handoff/aihackathon_public_safe_asset_pack_2026-07-10/analytics.json
 !handoff/aihackathon_public_safe_asset_pack_2026-07-10/source_turns.json

@@ -13,7 +13,7 @@ const ELIGIBLE_THREAD_CTE = `
     metadata,
     created_at,
     updated_at
-  FROM memory.threads
+  FROM oam_public.continuity_threads
   WHERE brand_key = $1
     AND thread_key = $2
     AND metadata @> jsonb_build_object('corpus', $3::text, 'visibility', $4::text)
@@ -56,7 +56,7 @@ const TURNS_SQL = `
     tt.turn_kind,
     tt.sent_at,
     left(tt.text_raw, 1000) AS text
-  FROM memory.thread_turns tt
+  FROM oam_public.continuity_turns tt
   JOIN eligible_thread t ON t.id = tt.thread_id
   ORDER BY COALESCE(tt.sent_at, tt.created_at), tt.created_at, tt.source_turn_id
   LIMIT 200
@@ -78,7 +78,7 @@ const OBSERVATIONS_SQL = `
     o.review_status,
     o.created_at,
     o.updated_at
-  FROM memory.observations o
+  FROM oam_public.continuity_observations o
   JOIN eligible_thread t ON t.id = o.thread_id
   WHERE o.is_active = true
   ORDER BY o.observed_at DESC, o.observation_key
@@ -105,7 +105,7 @@ const FACTS_SQL = `
     f.is_current,
     f.created_at,
     f.updated_at
-  FROM memory.facts f
+  FROM oam_public.continuity_facts f
   JOIN eligible_thread t ON t.id = f.thread_id
   ORDER BY f.predicate, f.valid_from DESC, f.fact_key
   LIMIT 100
@@ -118,9 +118,9 @@ const SUPERSESSIONS_SQL = `
     fs.new_fact_id,
     left(fs.reason, 500) AS reason,
     fs.created_at
-  FROM memory.fact_supersessions fs
-  JOIN memory.facts previous_fact ON previous_fact.id = fs.previous_fact_id
-  JOIN memory.facts new_fact ON new_fact.id = fs.new_fact_id
+  FROM oam_public.continuity_fact_supersessions fs
+  JOIN oam_public.continuity_facts previous_fact ON previous_fact.id = fs.previous_fact_id
+  JOIN oam_public.continuity_facts new_fact ON new_fact.id = fs.new_fact_id
   JOIN eligible_thread t
     ON t.id = previous_fact.thread_id
    AND t.id = new_fact.thread_id
@@ -141,7 +141,7 @@ const SUMMARIES_SQL = `
     s.review_status,
     s.created_at,
     s.updated_at
-  FROM memory.thread_summaries s
+  FROM oam_public.continuity_summaries s
   JOIN eligible_thread t ON t.id = s.thread_id
   WHERE s.is_active = true
   ORDER BY s.updated_at DESC, s.summary_key
@@ -161,7 +161,7 @@ const REFLECTIONS_SQL = `
     r.review_status,
     r.created_at,
     r.updated_at
-  FROM memory.reflections r
+  FROM oam_public.continuity_reflections r
   JOIN eligible_thread t ON t.id = r.thread_id
   WHERE r.is_active = true
   ORDER BY r.updated_at DESC, r.reflection_key
@@ -169,23 +169,14 @@ const REFLECTIONS_SQL = `
 `;
 
 const RECORD_RETRIEVAL_SQL = `
-  WITH eligible_thread AS (${ELIGIBLE_THREAD_CTE})
-  INSERT INTO memory.retrieval_events (
-    thread_id,
-    query_key,
-    query_text,
-    requested_memory_types,
-    retrieved_payload,
-    metadata
-  )
-  SELECT
-    id,
-    NULL,
-    $6,
-    $7::jsonb,
-    $8::jsonb,
-    $9::jsonb
-  FROM eligible_thread
+  SELECT audit.record_public_interaction(
+    $1,
+    $2,
+    $3,
+    $4,
+    $5,
+    $6::jsonb
+  ) AS event_key
 `;
 
 function rows(result) {
@@ -232,11 +223,15 @@ export function createPublicMemoryRepository(pool) {
 
     async recordRetrieval(queryText, retrievalSummary) {
       await pool.query(RECORD_RETRIEVAL_SQL, [
-        ...publicScopeSqlParameters(),
-        queryText,
-        JSON.stringify(['facts', 'observations', 'summaries', 'reflections', 'provenance']),
-        JSON.stringify(retrievalSummary),
+        'public_retrieval',
+        'continuity_query',
+        publicScopeSqlParameters()[1],
+        'recorded',
+        null,
         JSON.stringify({
+          query_text: queryText,
+          requested_memory_types: ['facts', 'observations', 'summaries', 'reflections', 'provenance'],
+          retrieval_summary: retrievalSummary,
           surface: 'public_api',
           retrieval_strategy: 'postgres_deterministic_lexical',
           semantic_status: 'unavailable',

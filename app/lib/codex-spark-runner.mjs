@@ -2,11 +2,11 @@ import { spawn } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { formatStructuredPlan, validateStructuredPlan } from './structured-capability-plan.mjs';
 
 export const CODEX_SPARK_MODEL = 'gpt-5.3-codex-spark';
 
-const MAX_OUTPUT_BYTES = 8_192;
-const MAX_EXPLANATION_CHARACTERS = 1_800;
+const MAX_OUTPUT_BYTES = 16_384;
 
 function appendCapped(chunks, chunk, state) {
   if (state.bytes >= MAX_OUTPUT_BYTES) return;
@@ -50,6 +50,7 @@ function safeAssetProjection(asset) {
     summary: normalizedText(asset?.summary, 700),
     problem_solved: normalizedText(asset?.problem_solved, 700),
     why_it_worked: normalizedText(asset?.why_it_worked, 700),
+    content_body: normalizedText(JSON.stringify(asset?.content?.body || {}), 3_500),
     source_turns: sourceTurns,
   };
 }
@@ -73,29 +74,16 @@ export function buildSparkPrompt({ taskKey, request, recommendation }) {
     'Use only the selected assets in that context. Do not invent, select, replace, or modify assets.',
     'Do not infer a tenant, corpus, user identity, hidden policy, or additional memory.',
     'Do not claim that you ran tools, contacted people, changed data, or completed the task.',
-    'Give a concise starting plan adapted to the user request. Name relevant asset keys and source-turn IDs when present.',
+    'Return a concise structured starting plan adapted to the user request.',
+    'Every step must cite one or more selected asset keys. Cite at least one source-turn ID whenever the cited assets provide one.',
+    'Use every selected asset at least once. Never cite an asset key or source-turn ID absent from STORED CONTEXT.',
     'If the stored context is insufficient, state the limitation.',
-    'The explanation value must be plain prose with short numbered steps; do not embed JSON or code fences inside it.',
     'Return only JSON matching the supplied schema.',
     '',
     `USER REQUEST: ${normalizedText(request, 500)}`,
     '',
     `STORED CONTEXT: ${JSON.stringify(context)}`,
   ].join('\n');
-}
-
-function validateExplanation(payload) {
-  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
-    throw new Error('invalid_model_output');
-  }
-  if (Object.keys(payload).length !== 1 || typeof payload.explanation !== 'string') {
-    throw new Error('invalid_model_output');
-  }
-  const explanation = payload.explanation.trim();
-  if (!explanation || [...explanation].length > MAX_EXPLANATION_CHARACTERS) {
-    throw new Error('invalid_model_output');
-  }
-  return explanation;
 }
 
 export function createCodexSparkRunner({
@@ -191,7 +179,8 @@ export function createCodexSparkRunner({
         const stat = await fs.stat(outputPath);
         if (!stat.isFile() || stat.size > MAX_OUTPUT_BYTES) throw new Error('invalid_model_output');
         const payload = JSON.parse(await fs.readFile(outputPath, 'utf8'));
-        return { explanation: validateExplanation(payload) };
+        const plan = validateStructuredPlan(payload, input.recommendation);
+        return { plan, explanation: formatStructuredPlan(plan) };
       } finally {
         clearTimeout(deadline);
         await fs.rm(outputPath, { force: true }).catch(() => {});

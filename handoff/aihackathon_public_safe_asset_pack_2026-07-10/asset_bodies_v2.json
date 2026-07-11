@@ -1,0 +1,819 @@
+[
+  {
+    "asset_key": "prompt:lead_research_brief_v2",
+    "asset_family_key": "prompt:lead_research_brief",
+    "content_schema_version": 1,
+    "change_summary": "Reusable pre-outreach prompt that enforces source inspection, context capture, and offer-fit reasoning before drafting a message.",
+    "body": {
+      "template": "Create a pre-outreach lead research brief before writing any outreach message. Use these inputs: {{lead_name}}, {{company_name}}, {{lead_role}}, {{source_urls}}, {{recent_signals}}, {{offer_category}}, {{outreach_goal}}, and {{communication_channel}}. Validate each source in {{source_urls}}, capture only supported facts, summarize business and role context, map {{offer_category}} to concrete opportunities with confidence, and produce a brief with open questions only where evidence is missing.",
+      "variables": [
+        {
+          "name": "lead_name",
+          "label": "Lead Name",
+          "description": "Person to receive outreach.",
+          "required": true,
+          "example": "Example Lead"
+        },
+        {
+          "name": "company_name",
+          "label": "Company Name",
+          "description": "Target organization for context capture.",
+          "required": true,
+          "example": "Example Organization"
+        },
+        {
+          "name": "lead_role",
+          "label": "Lead Role",
+          "description": "Likely decision maker context, if known.",
+          "required": true,
+          "example": "Head of Operations"
+        },
+        {
+          "name": "source_urls",
+          "label": "Source URLs",
+          "description": "One or more reviewed public or approved sources.",
+          "required": true,
+          "example": "source-page-01, source-page-02"
+        },
+        {
+          "name": "recent_signals",
+          "label": "Recent Signals",
+          "description": "Recent updates that may affect priorities.",
+          "required": false,
+          "example": "Recent hiring expansion and operations automation initiative"
+        },
+        {
+          "name": "offer_category",
+          "label": "Offer Category",
+          "description": "The solution category to test against the lead.",
+          "required": true,
+          "example": "Workflow automation for field operations"
+        },
+        {
+          "name": "outreach_goal",
+          "label": "Outreach Goal",
+          "description": "Desired outcome of the first message.",
+          "required": true,
+          "example": "Schedule a 15-minute diagnostic call"
+        },
+        {
+          "name": "communication_channel",
+          "label": "Communication Channel",
+          "description": "Channel to deliver outreach through.",
+          "required": true,
+          "example": "Professional networking message"
+        }
+      ],
+      "expected_output": {
+        "format": "sections",
+        "sections": [
+          "Source evidence",
+          "Lead snapshot",
+          "Business context",
+          "Role context",
+          "Pain point hypotheses",
+          "Offer fit",
+          "Outreach angles",
+          "Open questions"
+        ]
+      },
+      "guardrails": [
+        "Use only confirmed evidence from source_urls.",
+        "Do not invent company facts, contacts, or outcomes.",
+        "Do not generate the outreach copy in this step.",
+        "If a key fact is missing, explicitly flag it as unknown.",
+        "Do not include private contact data or credentials.",
+        "Do not infer internal metrics or financial results.",
+        "Tie each claim to a source reference.",
+        "Keep output concise and copy-ready."
+      ]
+    }
+  },
+  {
+    "asset_key": "prompt:website_handoff_brief_v1",
+    "asset_family_key": "prompt:website_handoff_brief",
+    "content_schema_version": 1,
+    "change_summary": "Reusable website handoff prompt that captures proof, hierarchy, and anti-template constraints before implementation begins.",
+    "body": {
+      "template": "Generate a website design-to-build handoff brief for implementation teams before any page construction starts. Use {{project_name}}, {{audience_profile}}, {{positioning_statement}}, {{proof_items}}, {{required_sections}}, {{anti_template_rules}}, {{visual_style_constraints}}, and {{conversion_goal}}. Produce a structured brief with content hierarchy, proof mapping, and implementation constraints that preserves meaning and limits template drift.",
+      "variables": [
+        {
+          "name": "project_name",
+          "label": "Project Name",
+          "description": "Name of website delivery project.",
+          "required": true,
+          "example": "Example Portfolio Initiative"
+        },
+        {
+          "name": "audience_profile",
+          "label": "Audience Profile",
+          "description": "Primary audience segments and needs.",
+          "required": true,
+          "example": "Operations leaders evaluating practical automation support"
+        },
+        {
+          "name": "positioning_statement",
+          "label": "Positioning Statement",
+          "description": "Single sentence positioning and value promise.",
+          "required": true,
+          "example": "Practical AI delivery that improves execution discipline without overengineering"
+        },
+        {
+          "name": "proof_items",
+          "label": "Proof Items",
+          "description": "Verified proof assets to be surfaced.",
+          "required": true,
+          "example": "Case summary, architecture diagram, workflow list"
+        },
+        {
+          "name": "required_sections",
+          "label": "Required Sections",
+          "description": "Mandatory page sections and priority order.",
+          "required": true,
+          "example": "Hero, architecture, proof, services, process, contact"
+        },
+        {
+          "name": "anti_template_rules",
+          "label": "Anti-Template Rules",
+          "description": "Patterns to avoid for style and tone.",
+          "required": true,
+          "example": "No generic startup landing phrases, no abstract service-only language"
+        },
+        {
+          "name": "visual_style_constraints",
+          "label": "Visual Style Constraints",
+          "description": "Brand-safe visual direction.",
+          "required": true,
+          "example": "Deep charcoal with warm accents, bold headings, and broad negative space"
+        },
+        {
+          "name": "conversion_goal",
+          "label": "Conversion Goal",
+          "description": "Target action for page visitors.",
+          "required": true,
+          "example": "Book a discovery call"
+        }
+      ],
+      "expected_output": {
+        "format": "sections",
+        "sections": [
+          "Project context",
+          "Audience and journey",
+          "Information architecture",
+          "Proof and evidence mapping",
+          "Content hierarchy",
+          "Visual and interaction direction",
+          "Anti-template constraints",
+          "Acceptance criteria"
+        ]
+      },
+      "guardrails": [
+        "Do not include claims without proof_items.",
+        "Do not output HTML or implementation code.",
+        "Do not add private or non-reviewed data.",
+        "Keep section hierarchy stable and avoid placeholder text.",
+        "Preserve the conversion_goal in the final structure.",
+        "Avoid generic or cliché marketing phrasing.",
+        "Flag any missing source or proof before implementation.",
+        "Use language that is copy-safe and externally shareable."
+      ]
+    }
+  },
+  {
+    "asset_key": "workflow:linkedin_comment_research_v2",
+    "asset_family_key": "workflow:linkedin_comment_research",
+    "content_schema_version": 1,
+    "change_summary": "LinkedIn comment workflow requiring source context validation before draft generation, with evidence and handoff outputs for publishing.",
+    "body": {
+      "trigger": "New LinkedIn comment request with a post reference and requested response objective.",
+      "inputs": [
+        {
+          "name": "post_reference",
+          "description": "Stable identifier or URL for the LinkedIn post to respond to.",
+          "required": true
+        },
+        {
+          "name": "post_text",
+          "description": "Optional post copy if platform capture is incomplete.",
+          "required": false
+        },
+        {
+          "name": "outreach_intent",
+          "description": "Desired purpose of the comment.",
+          "required": true
+        },
+        {
+          "name": "tone_preference",
+          "description": "Tone and persona constraints for drafting.",
+          "required": false
+        },
+        {
+          "name": "reviewer",
+          "description": "Operator identity for escalation and approval routing.",
+          "required": true
+        },
+        {
+          "name": "audience_context",
+          "description": "Target audience framing for the comment.",
+          "required": false
+        }
+      ],
+      "steps": [
+        {
+          "step_id": "s1_capture_request",
+          "title": "Capture request payload",
+          "instruction": "Normalize request fields and validate required identifiers before processing.",
+          "output": "Normalized request object with required context tags.",
+          "uses_asset_keys": []
+        },
+        {
+          "step_id": "s2_collect_post_context",
+          "title": "Collect source context",
+          "instruction": "Retrieve post context and any approved surrounding discussion context.",
+          "output": "Source_context object with timestamps and references.",
+          "uses_asset_keys": [
+            "decision:source_first_before_generation_v1"
+          ]
+        },
+        {
+          "step_id": "s3_extract_signal_summary",
+          "title": "Extract high-value signals",
+          "instruction": "Derive key themes, claims, and stance to align the comment to actual context.",
+          "output": "Context summary and evidence map.",
+          "uses_asset_keys": [
+            "prompt:lead_research_brief_v2"
+          ]
+        },
+        {
+          "step_id": "s4_apply_source_gate",
+          "title": "Apply source-first gate",
+          "instruction": "Block generation unless source_context is confirmed and complete enough for low-risk drafting.",
+          "output": "Gate decision with rationale and missing fields if any.",
+          "uses_asset_keys": [
+            "decision:source_first_before_generation_v1"
+          ]
+        },
+        {
+          "step_id": "s5_draft_comment",
+          "title": "Draft candidate comments",
+          "instruction": "Produce primary and optional alternate comment drafts in requested tone.",
+          "output": "Two candidate comments with concise evidence note.",
+          "uses_asset_keys": [
+            "prompt:lead_research_brief_v2"
+          ]
+        },
+        {
+          "step_id": "s6_validate_and_trim",
+          "title": "Quality and safety check",
+          "instruction": "Remove unsupported claims, reduce risk language, and ensure context alignment.",
+          "output": "Validated comment set ready for human review.",
+          "uses_asset_keys": [
+            "decision:source_first_before_generation_v1"
+          ]
+        },
+        {
+          "step_id": "s7_prepare_handoff",
+          "title": "Return publish package",
+          "instruction": "Bundle approved comment, confidence level, and evidence references for operator review.",
+          "output": "Prepared publish package with primary and alternate comments, confidence notes, and evidence references.",
+          "uses_asset_keys": []
+        }
+      ],
+      "completion_criteria": [
+        "Candidate comments are prepared with attached source context evidence.",
+        "Source-first gate result is recorded with rationale.",
+        "Primary and backup variants are included in the operator handoff packet."
+      ],
+      "failure_handling": [
+        {
+          "condition": "Post context cannot be captured reliably.",
+          "action": "Stop generation and request missing context from requester."
+        },
+        {
+          "condition": "Source-first gate fails.",
+          "action": "Escalate to reviewer with specific missing evidence items."
+        },
+        {
+          "condition": "Draft fails safety or compliance checks.",
+          "action": "Return revised draft marked for manual rewrite."
+        }
+      ]
+    }
+  },
+  {
+    "asset_key": "workflow:zoom_monday_call_scoring_v1",
+    "asset_family_key": "workflow:zoom_monday_call_scoring",
+    "content_schema_version": 1,
+    "change_summary": "Meeting scoring workflow that links transcript evidence to a scored operational record and follow-up actions.",
+    "body": {
+      "trigger": "Meeting outcome ingestion with transcript reference and scoring requirement.",
+      "inputs": [
+        {
+          "name": "meeting_record_id",
+          "description": "Unique meeting identifier.",
+          "required": true
+        },
+        {
+          "name": "transcript_reference",
+          "description": "Reference to transcript or equivalent conversation evidence.",
+          "required": true
+        },
+        {
+          "name": "record_owner",
+          "description": "Owner team responsible for follow-up.",
+          "required": true
+        },
+        {
+          "name": "scoring_model",
+          "description": "Scoring rubric version to apply.",
+          "required": true
+        },
+        {
+          "name": "followup_owner",
+          "description": "Person or queue for final action items.",
+          "required": false
+        }
+      ],
+      "steps": [
+        {
+          "step_id": "s1_ingest_meeting",
+          "title": "Ingest meeting record",
+          "instruction": "Validate event identifiers and load transcript reference.",
+          "output": "Normalized meeting payload for scoring flow.",
+          "uses_asset_keys": []
+        },
+        {
+          "step_id": "s2_verify_transcript",
+          "title": "Verify transcript evidence",
+          "instruction": "Confirm transcript reference resolves to approved evidence before any scoring.",
+          "output": "Verified transcript context.",
+          "uses_asset_keys": [
+            "decision:source_first_before_generation_v1"
+          ]
+        },
+        {
+          "step_id": "s3_extract_outcomes",
+          "title": "Extract outcomes and commitments",
+          "instruction": "Capture decisions, objections, and next steps from evidence.",
+          "output": "Outcome log with quotes and timestamps.",
+          "uses_asset_keys": []
+        },
+        {
+          "step_id": "s4_score_meeting",
+          "title": "Apply scoring rubric",
+          "instruction": "Score urgency, clarity, and next-step readiness per rubric fields.",
+          "output": "Scoring object with rationale.",
+          "uses_asset_keys": []
+        },
+        {
+          "step_id": "s5_write_operational_record",
+          "title": "Persist operational record",
+          "instruction": "Create outcome, transcript evidence, and score artifact for downstream handoff.",
+          "output": "Operational record artifact with evidence-linked scoring context.",
+          "uses_asset_keys": []
+        },
+        {
+          "step_id": "s6_emit_followups",
+          "title": "Generate follow-up package",
+          "instruction": "Create assigned follow-up items and due dates.",
+          "output": "Follow-up artifact and owner mapping.",
+          "uses_asset_keys": []
+        },
+        {
+          "step_id": "s7_notify_owner",
+          "title": "Prepare owner packet",
+          "instruction": "Prepare owner packet with completion summary and action requirements.",
+          "output": "Completion packet with record reference and follow-up actions.",
+          "uses_asset_keys": []
+        }
+      ],
+      "completion_criteria": [
+        "Evidence-verified meeting context is prepared.",
+        "Scoring artifact with rationale is prepared.",
+        "Follow-up artifact with owner mapping is prepared."
+      ],
+      "failure_handling": [
+        {
+          "condition": "Transcript reference is missing or inaccessible.",
+          "action": "Pause workflow and request transcript remediation."
+        },
+        {
+          "condition": "Evidence cannot be linked to scoring fields.",
+          "action": "Store partial outputs and escalate for manual review."
+        },
+        {
+          "condition": "Record persistence fails.",
+          "action": "Retry once with retry-safe timeout, then escalate to operator."
+        }
+      ]
+    }
+  },
+  {
+    "asset_key": "workflow:ai_workspace_onboarding_v1",
+    "asset_family_key": "workflow:ai_workspace_onboarding",
+    "content_schema_version": 1,
+    "change_summary": "Standardized onboarding workflow to create a private AI-ready workspace and issue safe instructions after repeatable validation.",
+    "body": {
+      "trigger": "Workspace onboarding request is submitted with registrant profile and selected onboarding path.",
+      "inputs": [
+        {
+          "name": "registrant_name",
+          "description": "Full name of the person requesting onboarding.",
+          "required": true
+        },
+        {
+          "name": "registrant_email",
+          "description": "Contact identity for workspace communication.",
+          "required": true
+        },
+        {
+          "name": "requested_role",
+          "description": "Operator role descriptor for access configuration.",
+          "required": true
+        },
+        {
+          "name": "use_case",
+          "description": "Primary use case to shape starter assets.",
+          "required": true
+        },
+        {
+          "name": "workspace_tier",
+          "description": "Optional onboarding tier or profile.",
+          "required": false
+        }
+      ],
+      "steps": [
+        {
+          "step_id": "s1_capture_request",
+          "title": "Capture and validate request",
+          "instruction": "Validate required identity fields and accepted onboarding scope.",
+          "output": "Validated onboarding request snapshot.",
+          "uses_asset_keys": []
+        },
+        {
+          "step_id": "s2_define_access_profile",
+          "title": "Define access profile",
+          "instruction": "Apply deterministic access baseline for the requested role descriptor.",
+          "output": "Access configuration profile.",
+          "uses_asset_keys": []
+        },
+        {
+          "step_id": "s3_create_workspace",
+          "title": "Create workspace shell",
+          "instruction": "Provision private workspace namespaces and default folders.",
+          "output": "Workspace identifier and structural manifest.",
+          "uses_asset_keys": []
+        },
+        {
+          "step_id": "s4_apply_demo_boundary",
+          "title": "Apply public-safe boundaries",
+          "instruction": "Attach approved synthetic demo corpus and block richer internal material by default.",
+          "output": "Boundary configuration and restrictions.",
+          "uses_asset_keys": [
+            "practice:public_safe_demo_boundary_v1"
+          ]
+        },
+        {
+          "step_id": "s5_seed_start_kit",
+          "title": "Seed onboarding kit",
+          "instruction": "Attach safe starter artifacts and first-run instructions.",
+          "output": "Workspace-ready onboarding bundle.",
+          "uses_asset_keys": []
+        },
+        {
+          "step_id": "s6_issue_instructions",
+          "title": "Generate access instructions",
+          "instruction": "Create handoff message with workspace path, safety constraints, and next steps.",
+          "output": "User-ready instruction package.",
+          "uses_asset_keys": []
+        },
+        {
+          "step_id": "s7_confirm_completion",
+          "title": "Confirm onboarding",
+          "instruction": "Produce completion state for requester and operator queue.",
+          "output": "Completion status with handoff reference.",
+          "uses_asset_keys": []
+        }
+      ],
+      "completion_criteria": [
+        "Workspace structure is prepared with active boundary rules.",
+        "Onboarding kit and access instructions are prepared.",
+        "Completion packet includes handoff reference and status."
+      ],
+      "failure_handling": [
+        {
+          "condition": "Required registrant data is incomplete.",
+          "action": "Reject request and return missing fields to requester."
+        },
+        {
+          "condition": "Workspace provisioning fails during deterministic step.",
+          "action": "Retry provisioning once, then escalate to operations."
+        },
+        {
+          "condition": "Boundary policy cannot be applied.",
+          "action": "Pause handoff and route to reviewer before any access artifact is distributed."
+        }
+      ]
+    }
+  },
+  {
+    "asset_key": "agent:node_red_ops_orchestrator_v1",
+    "asset_family_key": "agent:node_red_ops_orchestrator",
+    "content_schema_version": 1,
+    "change_summary": "Defines a Node-RED operations orchestrator contract with explicit deterministic steps, bounded AI, and clear escalation paths.",
+    "body": {
+      "purpose": "Coordinate deterministic execution across operational workflows while restricting AI use to bounded assistive steps and preserving auditable handoffs.",
+      "runtime": {
+        "orchestration": "Explicit stateful orchestration with ordered checkpoints and step logs.",
+        "model_policy": "Use AI only in approved assistance steps for drafting, summarization, or classification; never for control decisions without deterministic gates.",
+        "timeout_seconds": 7
+      },
+      "inputs": [
+        "incoming_event",
+        "target_workflow_key",
+        "policy_context",
+        "resource_constraints",
+        "handoff_channel"
+      ],
+      "tools": [
+        {
+          "tool_key": "workflow_registry",
+          "purpose": "Resolve approved workflows and required inputs.",
+          "access": "read"
+        },
+        {
+          "tool_key": "execution_state_log",
+          "purpose": "Record step transitions, outcomes, and failures.",
+          "access": "append"
+        },
+        {
+          "tool_key": "policy_gate",
+          "purpose": "Evaluate source-first and safety boundaries before AI-assisted output.",
+          "access": "evaluate"
+        },
+        {
+          "tool_key": "handoff_bus",
+          "purpose": "Route completion, failure, and escalation packets to operator destinations.",
+          "access": "handoff"
+        }
+      ],
+      "operating_instructions": [
+        "Never start AI-assisted output before required deterministic inputs are validated.",
+        "Advance workflow only through declared steps in sequence.",
+        "Persist evidence references for each notable transformation.",
+        "Apply policy gates before and after AI-assisted steps.",
+        "Emit explicit failure packets with required_next_action when any gate fails."
+      ],
+      "allowed_actions": [
+        "Execute approved workflows end-to-end.",
+        "Invoke bounded AI for tasks labeled draft_assist or summarization_assist.",
+        "Attach structured evidence and status to all outputs.",
+        "Escalate with machine-readable reason codes.",
+        "Stop and wait for human guidance when policy is blocked."
+      ],
+      "prohibited_actions": [
+        "Modify any production controller or endpoint outside the contract.",
+        "Invent source evidence or user data.",
+        "Skip source-first checks in any content-generation branch.",
+        "Return unvalidated outputs without handoff metadata.",
+        "Expose private credentials, secrets, or internal-only artifacts."
+      ],
+      "handoff_conditions": [
+        "Missing sources or evidence fields are detected.",
+        "Policy gates block forward progress.",
+        "Step failures repeat during critical transitions.",
+        "Input payload ambiguity exceeds deterministic handling.",
+        "Policy risk indicators are raised by gate evaluation."
+      ],
+      "output_contract": {
+        "format": "json",
+        "required_fields": [
+          "request_id",
+          "workflow_key",
+          "status",
+          "completed_step_count",
+          "evidence_references",
+          "policy_checks",
+          "handoff_reason",
+          "next_action"
+        ]
+      }
+    }
+  },
+  {
+    "asset_key": "decision:source_first_before_generation_v1",
+    "asset_family_key": "decision:source_first_before_generation",
+    "content_schema_version": 1,
+    "change_summary": "Mandatory quality rule: inspect and validate source context first for generated comments, outreach, and summaries.",
+    "body": {
+      "context": "Use this decision whenever a workflow generates comments, outreach copy, meeting summaries, or website content claims.",
+      "decision_rule": "Do not generate or publish final drafted text until source context is inspected, versioned, and linked to the output.",
+      "required_evidence": [
+        "source_reference",
+        "evidence_excerpt",
+        "collection_timestamp",
+        "source_trust_level",
+        "review_gate_status"
+      ],
+      "branches": [
+        {
+          "when": "Required source evidence is missing or unverifiable",
+          "then": "Block generation and return a structured request for missing inputs."
+        },
+        {
+          "when": "Source evidence exists but confidence is partial",
+          "then": "Allow assisted drafting only with explicit uncertainty markers and no hard claims."
+        },
+        {
+          "when": "Source evidence is complete and consistent",
+          "then": "Allow normal generation with concise evidence linkage."
+        }
+      ],
+      "exceptions": [
+        "If the task is a pure transformation of already provided text and all required source fields are already attached to the payload, generation may proceed without adding new source inspection.",
+        "If the task only rephrases an existing artifact with unchanged factual claims, generation may proceed with provenance preserved."
+      ],
+      "escalate_when": [
+        "Evidence conflicts across sources or with requested claims.",
+        "References are stale relative to required retention policy.",
+        "Required fields remain missing after retry.",
+        "Policy gate is repeatedly blocked."
+      ]
+    }
+  },
+  {
+    "asset_key": "practice:public_safe_demo_boundary_v1",
+    "asset_family_key": "practice:public_safe_demo_boundary",
+    "content_schema_version": 1,
+    "change_summary": "Governance practice for separating reviewed synthetic public demos from internal test material to prevent data leakage.",
+    "body": {
+      "principle": "Public routes must use reviewed synthetic or public-only materials only, while internal, richer corpora stay isolated behind separate controls.",
+      "applies_when": [
+        "Public demos and landing content are prepared.",
+        "Client-facing training assets are published.",
+        "Workspace onboarding exposes starter datasets.",
+        "Website or workflow outputs include proof examples."
+      ],
+      "do": [
+        "Use only synthetic or explicitly approved public datasets in any public flow.",
+        "Separate and label demo, internal, and restricted corpora.",
+        "Document corpus provenance and approval state.",
+        "Attach safety checks in workflow preconditions."
+      ],
+      "avoid": [
+        "Do not mix restricted internal content into public artifacts.",
+        "Do not treat synthetic samples as source of truth for private reporting.",
+        "Do not bypass corpus checks to speed publish.",
+        "Do not expose internal logs, transcripts, or credentials in demo paths."
+      ],
+      "checklist": [
+        {
+          "item": "Is dataset visibility explicitly classified?",
+          "required": true
+        },
+        {
+          "item": "Are public artifacts limited to approved synthetic input?",
+          "required": true
+        },
+        {
+          "item": "Are private/internal artifacts physically separated in storage/access control?",
+          "required": true
+        },
+        {
+          "item": "Is reviewer approval attached to the demo corpus version?",
+          "required": true
+        },
+        {
+          "item": "Are boundary changes validated before route activation?",
+          "required": true
+        }
+      ],
+      "success_signals": [
+        "Public-facing artifacts remain free of restricted or internal material.",
+        "Prepared outputs include provenance labels and approved synthetic proof examples."
+      ]
+    }
+  },
+  {
+    "asset_key": "workflow:portfolio_site_delivery_v1",
+    "asset_family_key": "workflow:portfolio_site_delivery",
+    "content_schema_version": 1,
+    "change_summary": "Portfolio delivery workflow that turns positioning, proof, and architecture inputs into a structured website build handoff with source checks.",
+    "body": {
+      "trigger": "Accepted website delivery request with positioning, proof, and target architecture inputs.",
+      "inputs": [
+        {
+          "name": "request_id",
+          "description": "Unique website delivery request identifier.",
+          "required": true
+        },
+        {
+          "name": "project_name",
+          "description": "Requested site project name.",
+          "required": true
+        },
+        {
+          "name": "positioning_notes",
+          "description": "Draft positioning and audience focus.",
+          "required": true
+        },
+        {
+          "name": "proof_pack",
+          "description": "Reviewed proof artifacts to map to sections.",
+          "required": true
+        },
+        {
+          "name": "architecture_notes",
+          "description": "Technical and content architecture inputs.",
+          "required": true
+        },
+        {
+          "name": "delivery_constraints",
+          "description": "Brand or implementation constraints from internal standards.",
+          "required": false
+        }
+      ],
+      "steps": [
+        {
+          "step_id": "s1_scope_and_owners",
+          "title": "Lock scope and ownership",
+          "instruction": "Capture project owner, audiences, and release constraints.",
+          "output": "Scoped delivery manifest.",
+          "uses_asset_keys": []
+        },
+        {
+          "step_id": "s2_generate_handoff_brief",
+          "title": "Create handoff brief",
+          "instruction": "Run a website handoff brief generation pass to structure proof-first hierarchy.",
+          "output": "Structured handoff brief artifact.",
+          "uses_asset_keys": [
+            "prompt:website_handoff_brief_v1"
+          ]
+        },
+        {
+          "step_id": "s3_apply_source_gate",
+          "title": "Apply source-first gate",
+          "instruction": "Validate that required evidence and proof links are present before implementation instructions are produced.",
+          "output": "Gate result and missing-evidence report.",
+          "uses_asset_keys": [
+            "decision:source_first_before_generation_v1"
+          ]
+        },
+        {
+          "step_id": "s4_design_information_architecture",
+          "title": "Define information architecture",
+          "instruction": "Convert brief sections into ordered page and section map.",
+          "output": "Site architecture map with section priorities.",
+          "uses_asset_keys": []
+        },
+        {
+          "step_id": "s5_map_proof_to_sections",
+          "title": "Map proof to content blocks",
+          "instruction": "Attach proof_pack items directly to relevant sections and define confidence labels.",
+          "output": "Evidence map and section provenance.",
+          "uses_asset_keys": []
+        },
+        {
+          "step_id": "s6_set_anti_template_rules",
+          "title": "Set anti-template implementation constraints",
+          "instruction": "Capture style and anti-pattern rules that prevent generic output.",
+          "output": "Constraint bundle for implementation lane.",
+          "uses_asset_keys": []
+        },
+        {
+          "step_id": "s7_prepare_build_handoff",
+          "title": "Assemble deliverable package",
+          "instruction": "Compile handoff files, risks, and quality checks for design/developer handoff.",
+          "output": "Build handoff package with acceptance checklist.",
+          "uses_asset_keys": []
+        },
+        {
+          "step_id": "s8_finalize_handoff",
+          "title": "Finalize and route",
+          "instruction": "Record handoff state and route to designated team with completion criteria.",
+          "output": "Handoff packet and acceptance-ready checklist.",
+          "uses_asset_keys": []
+        }
+      ],
+      "completion_criteria": [
+        "Handoff package includes approved content hierarchy.",
+        "Proof mapping and anti-template constraints are included.",
+        "Readiness status is prepared for implementation handoff."
+      ],
+      "failure_handling": [
+        {
+          "condition": "Required proof_pack or architecture input is missing.",
+          "action": "Return to requester with explicit dependency gaps and halt delivery."
+        },
+        {
+          "condition": "Source-first gate fails.",
+          "action": "Escalate to reviewer and stop execution until evidence is corrected."
+        },
+        {
+          "condition": "Acceptance criteria are not satisfied after review.",
+          "action": "Create correction plan and re-enter from scope lock step."
+        }
+      ]
+    }
+  }
+]

@@ -182,6 +182,15 @@ function normalizeAsset(asset = {}) {
     usedSuccessfullyIn: asArray(asset.used_successfully_in || asset.usedSuccessfullyIn),
     sourceTurns: asArray(evidence.source_turns || asset.sourceTurns || asset.source_turns || asset.source_turn_ids),
     relatedAssets: asArray(evidence.related_assets || asset.relatedAssets || asset.related_assets || asset.linked_evidence_keys),
+    content: {
+      familyKey: asset.content?.asset_family_key || '',
+      version: asset.content?.version || asset.version || '',
+      schemaVersion: asset.content?.schema_version ?? null,
+      contentType: asset.content?.content_type || '',
+      changeSummary: asset.content?.change_summary || '',
+      sha256: asset.content?.sha256 || '',
+      body: asset.content?.body && typeof asset.content.body === 'object' ? asset.content.body : {},
+    },
   };
 }
 
@@ -211,6 +220,10 @@ function normalizeAnalytics(payload = {}) {
     capabilityCounts: root.capability_area_counts || root.counts_by_capability_area || [],
     duplicatedPatterns: root.duplicated_patterns || root.duplication_signals || [],
     missingCapabilities: root.missing_capabilities || root.capability_gaps || [],
+    computedGaps: root.computed_gaps || [],
+    coverage: root.coverage || {},
+    reuse: root.reuse || {},
+    measurementBasis: root.measurement_basis || {},
   };
 }
 
@@ -426,55 +439,92 @@ function homePage() {
 
 function demoPage() {
   return `
-    <div class="page-shell">
-      ${pageIntro(
-        'Start a task from proven capability memory',
-        'Select a public-safe task mapping, retrieve the governed assets behind it, and optionally ask Codex Spark to adapt that starting point.',
-        'Public demo only',
-      )}
-      <section class="recommendation-workspace" aria-labelledby="recommendation-title">
-        <div class="workspace-heading">
-          <div><h2 id="recommendation-title">Task-start recommendation</h2><p>Selected from stored mappings and returned with the assets that support the task.</p></div>
-          <span class="record-label">Deterministic record</span>
+    <div class="judge-demo">
+      <header class="judge-topbar">
+        <a class="judge-menu" href="/" aria-label="Return to product home" title="Product home">
+          <span></span><span></span><span></span>
+        </a>
+        <a class="judge-brand" href="/">Organizational AI Memory</a>
+        <label class="judge-global-search">
+          <span aria-hidden="true"></span>
+          <input type="search" value="Prepare a website delivery handoff" aria-label="Search memory" data-judge-global-search />
+          <kbd>⌘ K</kbd>
+        </label>
+        <a class="judge-help" href="/method" aria-label="Open method and architecture" title="Method and architecture">?</a>
+        <div class="judge-session" aria-label="Current public session">
+          <span class="judge-avatar" aria-hidden="true">PJ</span>
+          <span><strong>Public judge</strong><small>Public-safe session</small></span>
         </div>
-        <form class="recommendation-form" data-recommendation-form>
-          <label class="field-label">
-            Task
-            <select name="task_key" disabled required><option value="">Loading task mappings...</option></select>
-          </label>
-          <button class="button" type="submit" disabled>Retrieve starting point</button>
-        </form>
-        <div class="status-line" role="status" aria-live="polite" data-recommendation-status></div>
-        <div class="recommendation-result-reserved" data-recommendation-result>
-          <div class="loading-state">Loading deterministic task mappings...</div>
-        </div>
+      </header>
+
+      <section class="judge-lifecycle" aria-label="Governed capability lifecycle">
+        <div class="lifecycle-step is-complete"><span class="lifecycle-icon">1</span><span><strong>Capture</strong><small>Synthetic evidence retained</small></span></div>
+        <span class="lifecycle-connector" aria-hidden="true"></span>
+        <div class="lifecycle-step is-complete"><span class="lifecycle-icon">2</span><span><strong>Review</strong><small>Governance recorded</small></span></div>
+        <span class="lifecycle-connector is-dotted" aria-hidden="true"></span>
+        <div class="lifecycle-step is-current"><span class="lifecycle-icon">✓</span><span><strong>Reuse</strong><small>Public-safe capability</small></span></div>
+        <div class="lifecycle-policy"><strong>Content is governed.</strong><span>Only approved content is reusable.</span><a href="/method">Learn more</a></div>
       </section>
 
-      <section class="assist-workspace" aria-labelledby="assist-title">
-        <div class="workspace-heading">
-          <div><h2 id="assist-title">Adapt the stored starting point</h2><p>Generated prose is separated from the authoritative recommendation and cannot change the stored memory.</p></div>
-          <span class="generated-label">Spark-generated adaptation</span>
-        </div>
-        <form class="assist-form" data-assist-form>
-          <label class="field-label">
-            Adaptation request
-            <textarea name="request" rows="3" maxlength="500" required placeholder="Adapt this starting point for a small agency team preparing a client handoff."></textarea>
-          </label>
-          <button class="button-secondary" type="submit" disabled data-assist-submit>Generate adaptation</button>
-        </form>
-        <div class="status-line" role="status" aria-live="polite" data-assist-status></div>
-        <div data-assist-result>
-          <div class="empty-state"><p>The deterministic record remains authoritative. Spark adaptation is optional.</p></div>
-        </div>
-      </section>
+      <div class="judge-workspace">
+        <main class="judge-main">
+          <section class="judge-section judge-search-section" aria-labelledby="judge-search-title">
+            <div class="judge-section-title"><h1 id="judge-search-title">1. Grounded capability search</h1><a href="/method" aria-label="About deterministic search">i</a></div>
+            <form class="judge-search-form" data-capability-search-form>
+              <label class="judge-query-field">
+                <span class="judge-search-glyph" aria-hidden="true"></span>
+                <input name="query" type="search" value="Prepare a website delivery handoff" maxlength="320" autocomplete="off" required aria-label="Capability search query" />
+                <button type="reset" class="judge-clear-query" aria-label="Clear query" title="Clear query">×</button>
+              </label>
+              <button class="judge-primary-button" type="submit">Search</button>
+            </form>
+            <div class="judge-filter-row">
+              <label>Consumer role<select name="consumer_role" form="judge-filter-proxy" data-judge-role><option value="">Any governed role</option><option value="developer">Developer</option><option value="designer">Designer</option><option value="operator">Operator</option><option value="reviewer">Reviewer</option></select></label>
+              <label>Capability type<select data-judge-type-filter><option value="">All types</option><option value="prompt">Prompt</option><option value="workflow">Workflow</option><option value="agent">Agent</option><option value="decision_pattern">Decision pattern</option><option value="best_practice">Best practice</option></select></label>
+              <button type="button" class="judge-text-button" data-judge-clear-filters>Clear all</button>
+            </div>
+            <form id="judge-filter-proxy" hidden></form>
+            <div class="judge-search-meta" role="status" aria-live="polite" data-judge-search-status>Loading the deterministic capability index…</div>
+            <div class="judge-search-results" data-judge-search-results>
+              <div class="judge-loading">Reading approved capability records…</div>
+            </div>
+          </section>
 
-      <section class="demo-evidence-query" aria-labelledby="evidence-query-title">
-        <div class="workspace-heading">
-          <div><h2 id="evidence-query-title">Query the evidence engine</h2><p>Retrieve current and prior project context from Postgres and follow facts back to source turns.</p></div>
-          <span class="scope-line">Public demo only</span>
-        </div>
-        ${queryForm('demo-query-result')}
-      </section>
+          <section class="judge-section judge-plan-section" aria-labelledby="judge-plan-title">
+            <div class="judge-plan-heading">
+              <div class="judge-section-title"><h2 id="judge-plan-title">2. Adapted plan</h2><span data-plan-mode>(grounded starting point)</span></div>
+              <label class="judge-toggle"><input type="checkbox" checked data-citation-toggle /><span aria-hidden="true"></span>Source citations</label>
+            </div>
+            <form class="judge-adapt-form" data-assist-form>
+              <label><span class="sr-only">Adaptation request</span><input name="request" value="Adapt this starting point for a small delivery team." maxlength="500" required /></label>
+              <button class="judge-secondary-button" type="submit" disabled data-assist-submit>Adapt plan</button>
+            </form>
+            <div class="judge-plan-status" role="status" aria-live="polite" data-assist-status></div>
+            <div class="judge-plan-result" data-assist-result>
+              <div class="judge-loading">Preparing the authoritative starting point…</div>
+            </div>
+          </section>
+
+          <details class="judge-more-evidence">
+            <summary>Additional evidence and related capabilities</summary>
+            <p>Open any result row to inspect its full governance, lineage, and source-turn evidence.</p>
+          </details>
+        </main>
+
+        <aside class="judge-proof-rail" aria-label="Live proof rail">
+          <section class="judge-rail-section" aria-labelledby="judge-analytics-title">
+            <div class="judge-section-title"><h2 id="judge-analytics-title">3. Reuse analytics</h2><a href="/assets" aria-label="Open capability inventory">i</a></div>
+            <div data-judge-analytics><div class="judge-loading">Loading live inventory…</div></div>
+          </section>
+          <section class="judge-rail-section" aria-labelledby="judge-access-title">
+            <div class="judge-rail-heading">
+              <div class="judge-section-title"><h2 id="judge-access-title">4. Governed access proof</h2><a href="/evidence" aria-label="Open evidence ledger">i</a></div>
+              <button type="button" class="judge-icon-button" data-rerun-access-proof aria-label="Rerun access proofs" title="Rerun live proofs">↻</button>
+            </div>
+            <div class="judge-access-proofs" data-access-proofs><div class="judge-loading">Loading four-plane enforcement evidence…</div></div>
+          </section>
+        </aside>
+      </div>
     </div>
   `;
 }
@@ -862,6 +912,470 @@ function renderRecommendationRecord(recommendation, { compact = false } = {}) {
   `;
 }
 
+const judgeState = {
+  searchPayload: null,
+  assets: [],
+  currentPlan: null,
+  currentPlanOptions: { mode: 'authoritative', model: '' },
+};
+
+function citationCode(asset, index) {
+  const prefix = {
+    prompt: 'P',
+    workflow: 'W',
+    agent: 'A',
+    decision_pattern: 'D',
+    best_practice: 'B',
+  }[asset.assetType] || 'C';
+  return `${prefix}${index + 1}`;
+}
+
+function judgeRecommendationFromSearch(payload = {}) {
+  const root = payload?.data || payload || {};
+  if (!root.recommendation) return null;
+  const recommendation = normalizeRecommendation(root.recommendation);
+  return recommendation.taskKey ? recommendation : null;
+}
+
+function judgeSearchAssets(payload = {}) {
+  const root = payload?.data || payload || {};
+  const recommendation = judgeRecommendationFromSearch(root);
+  if (recommendation?.assets.length) return recommendation.assets;
+  return asArray(root.asset_matches)
+    .map((match) => normalizeAsset(match.asset || match))
+    .filter((asset) => asset.assetKey);
+}
+
+function judgeMatchByAsset(payload = {}) {
+  const root = payload?.data || payload || {};
+  return new Map(asArray(root.asset_matches).map((match) => [
+    match.asset?.asset_key || match.asset_key,
+    match,
+  ]));
+}
+
+function judgeFilteredAssets() {
+  const role = document.querySelector('[data-judge-role]')?.value || '';
+  const type = document.querySelector('[data-judge-type-filter]')?.value || '';
+  return judgeState.assets.filter((asset) => (
+    (!role || asset.governance.consumerRoles.includes(role))
+    && (!type || asset.assetType === type)
+  ));
+}
+
+function renderJudgeSearchResults() {
+  const target = document.querySelector('[data-judge-search-results]');
+  if (!target) return;
+  const items = judgeFilteredAssets();
+  const matches = judgeMatchByAsset(judgeState.searchPayload);
+  if (!items.length) {
+    target.innerHTML = `
+      <div class="judge-zero-state">
+        <strong>No governed capabilities match these filters.</strong>
+        <span>Clear the filters or enter a different task. No result was fabricated.</span>
+      </div>
+    `;
+    return;
+  }
+  target.innerHTML = `
+    <div class="judge-result-scroll">
+      <table class="judge-results-table">
+        <thead><tr><th>Type</th><th>Capability</th><th>Version</th><th>Validated</th><th>Why it worked</th><th>Source evidence</th></tr></thead>
+        <tbody>
+          ${items.map((asset, index) => {
+            const match = matches.get(asset.assetKey) || {};
+            const source = asset.sourceTurns[0] || {};
+            const sourceId = source.source_turn_id || source.turn_id || source.id || 'Evidence retained';
+            const scope = source.context_scope || 'public-safe source turn';
+            return `
+              <tr>
+                <td><span class="judge-type-code judge-type-${escapeHtml(asset.assetType)}">${escapeHtml(citationCode(asset, index).slice(0, 1))}</span><strong>${escapeHtml(ASSET_TYPE_LABELS[asset.assetType] || humanize(asset.assetType))}</strong></td>
+                <td><a href="${escapeHtml(assetHref(asset.assetKey))}">${escapeHtml(asset.title)}</a><span>${escapeHtml(humanize(asset.capabilityArea))}</span></td>
+                <td><span class="judge-version">v${escapeHtml(asset.governance.version || '—')}</span>${reviewStatusMarkup(asset.governance.reviewStatus)}</td>
+                <td><time>${escapeHtml(formatDate(asset.governance.lastValidatedAt, { dateOnly: true, empty: 'Not recorded' }))}</time>${Number.isFinite(Number(match.score)) ? `<span>rank score ${escapeHtml(String(match.score))}</span>` : '<span>stored mapping</span>'}</td>
+                <td><q>${escapeHtml(asset.whyItWorked || asset.summary || 'Not provided')}</q></td>
+                <td><a href="${escapeHtml(assetHref(asset.assetKey))}">${escapeHtml(sourceId)}</a><span>${escapeHtml(scope)}</span></td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="judge-results-footer"><a href="/assets">View all governed assets</a><span>${items.length} result${items.length === 1 ? '' : 's'} shown</span></div>
+  `;
+}
+
+function renderJudgePlanNote(label, values) {
+  const items = asArray(values);
+  if (!items.length) return '';
+  return `
+    <div class="judge-plan-note">
+      <strong>${escapeHtml(label)}</strong>
+      <div class="judge-plan-note-items">${items.map((item) => `<span>${escapeHtml(item)}</span>`).join('')}</div>
+    </div>
+  `;
+}
+
+function renderJudgePlan(plan, {
+  mode = 'authoritative',
+  model = '',
+} = {}) {
+  const steps = asArray(plan?.steps);
+  const assets = recommendationState.current?.assets || [];
+  const assetIndex = new Map(assets.map((asset, index) => [asset.assetKey, { asset, index }]));
+  if (!steps.length) {
+    return '<div class="judge-zero-state"><strong>No adapted steps are available.</strong><span>The deterministic capability result remains visible above.</span></div>';
+  }
+  const rows = steps.map((step, index) => {
+    const keys = asArray(step.asset_keys);
+    const turns = asArray(step.source_turn_ids);
+    return `
+      <details class="judge-plan-row">
+        <summary>
+          <span class="judge-step-number">${index + 1}</span>
+          <span class="judge-step-copy"><strong>${escapeHtml(step.title || `Use governed capability ${index + 1}`)}</strong><span>${escapeHtml(step.action || '')}</span></span>
+          <span class="judge-citation-list">
+            ${keys.map((key) => {
+              const indexed = assetIndex.get(key);
+              return `<a href="${escapeHtml(assetHref(key))}" title="${escapeHtml(key)}">${escapeHtml(indexed ? citationCode(indexed.asset, indexed.index) : compactId(key))}</a>`;
+            }).join('')}
+            ${turns.map((turn) => `<span title="Source turn ${escapeHtml(turn)}">${escapeHtml(turn)}</span>`).join('')}
+          </span>
+        </summary>
+        <div class="judge-plan-detail">
+          <span><strong>Authority</strong>${mode === 'generated' ? 'Non-authoritative adaptation' : mode === 'fallback' ? 'Deterministic fallback' : 'Stored capability record'}</span>
+          <span><strong>Human review</strong>${step.requires_human_review === false ? 'Not requested by plan' : 'Required before use'}</span>
+        </div>
+      </details>
+    `;
+  }).join('');
+  const allKeys = [...new Set(steps.flatMap((step) => asArray(step.asset_keys)))];
+  return `
+    <div class="judge-plan-ledger" data-plan-mode-value="${escapeHtml(mode)}">
+      ${plan.summary ? `<p class="judge-plan-summary">${escapeHtml(plan.summary)}</p>` : ''}
+      ${rows}
+      ${renderJudgePlanNote('Missing context', plan.missing_context)}
+      ${renderJudgePlanNote('Limitations', plan.limitations)}
+      <div class="judge-plan-footer">
+        <span><strong>Citations:</strong>${allKeys.map((key) => {
+          const indexed = assetIndex.get(key);
+          return `<a href="${escapeHtml(assetHref(key))}">${escapeHtml(indexed ? `${citationCode(indexed.asset, indexed.index)} ${indexed.asset.title}` : key)}</a>`;
+        }).join('')}</span>
+        <button type="button" class="judge-copy-button" data-copy-plan>Copy plan</button>
+      </div>
+    </div>
+  `;
+}
+
+function deterministicJudgePlan(recommendation) {
+  const assets = recommendation?.assets || [];
+  return {
+    summary: `Start from ${assets.length} approved capability asset${assets.length === 1 ? '' : 's'} selected by the stored task mapping.`,
+    steps: assets.map((asset) => ({
+      title: `Use ${asset.title}`,
+      action: asset.summary || asset.whyItWorked || 'Inspect the stored capability before reuse.',
+      asset_keys: [asset.assetKey],
+      source_turn_ids: asset.sourceTurns.slice(0, 1).map((source) => source.source_turn_id || source.turn_id || source.id).filter(Boolean),
+      requires_human_review: true,
+    })),
+    missing_context: [],
+    limitations: ['This starting point is retrieved from stored memory and does not claim task completion.'],
+  };
+}
+
+function setJudgePlan(plan, options) {
+  const target = document.querySelector('[data-assist-result]');
+  if (!target) return;
+  judgeState.currentPlan = plan;
+  judgeState.currentPlanOptions = {
+    mode: options?.mode || 'authoritative',
+    model: options?.model || '',
+  };
+  target.innerHTML = renderJudgePlan(plan, options);
+  const label = document.querySelector('[data-plan-mode]');
+  if (label) {
+    label.textContent = options?.mode === 'generated'
+      ? '(AI-assisted)'
+      : options?.mode === 'fallback'
+        ? '(deterministic fallback)'
+        : '(authoritative starting point)';
+  }
+  bindJudgePlanActions();
+}
+
+function judgePlanAuthority(mode) {
+  if (mode === 'generated') return 'Non-authoritative AI-assisted adaptation';
+  if (mode === 'fallback') return 'Deterministic fallback';
+  return 'Authoritative stored capability starting point';
+}
+
+function formatJudgePlanForClipboard() {
+  const plan = judgeState.currentPlan || {};
+  const options = judgeState.currentPlanOptions || {};
+  const steps = asArray(plan.steps);
+  const assets = recommendationState.current?.assets || [];
+  const assetIndex = new Map(assets.map((asset, index) => [asset.assetKey, { asset, index }]));
+  const lines = [
+    'Organizational AI Memory capability plan',
+    `Task: ${recommendationState.current?.taskKey || 'Not recorded'}`,
+    `Authority: ${judgePlanAuthority(options.mode)}`,
+  ];
+  if (options.model) lines.push(`Model: ${options.model}`);
+  if (plan.summary) lines.push(`Summary: ${plan.summary}`);
+  lines.push('', 'Steps:');
+  steps.forEach((step, index) => {
+    const keys = asArray(step.asset_keys);
+    const turns = asArray(step.source_turn_ids);
+    lines.push(`${index + 1}. ${step.title || `Use governed capability ${index + 1}`}`);
+    lines.push(`   Action: ${step.action || 'Inspect the stored capability before reuse.'}`);
+    lines.push(`   Assets: ${keys.length ? keys.join(', ') : 'Not recorded'}`);
+    lines.push(`   Source turns: ${turns.length ? turns.join(', ') : 'Not recorded'}`);
+    lines.push(`   Human review: ${step.requires_human_review === false ? 'Not requested by plan' : 'Required before use'}`);
+  });
+  const appendList = (label, values) => {
+    const items = asArray(values);
+    if (!items.length) return;
+    lines.push('', `${label}:`, ...items.map((item) => `- ${item}`));
+  };
+  appendList('Missing context', plan.missing_context);
+  appendList('Limitations', plan.limitations);
+  const citationKeys = [...new Set(steps.flatMap((step) => asArray(step.asset_keys)))];
+  if (citationKeys.length) {
+    lines.push('', 'Citations:');
+    citationKeys.forEach((key) => {
+      const indexed = assetIndex.get(key);
+      const label = indexed ? `${citationCode(indexed.asset, indexed.index)} ${indexed.asset.title}` : key;
+      lines.push(`- ${label} [${key}]`);
+    });
+  }
+  return lines.join('\n');
+}
+
+function bindJudgePlanActions() {
+  const target = document.querySelector('[data-assist-result]');
+  const toggle = document.querySelector('[data-citation-toggle]');
+  if (target && toggle) target.dataset.citations = toggle.checked ? 'shown' : 'hidden';
+  document.querySelector('[data-copy-plan]')?.addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    const text = formatJudgePlanForClipboard();
+    try {
+      await navigator.clipboard.writeText(text);
+      button.textContent = 'Copied';
+      window.setTimeout(() => {
+        if (button.isConnected) button.textContent = 'Copy plan';
+      }, 1_500);
+    } catch {
+      button.textContent = 'Copy unavailable';
+    }
+  });
+}
+
+function updateJudgeCitationVisibility() {
+  const target = document.querySelector('[data-assist-result]');
+  const toggle = document.querySelector('[data-citation-toggle]');
+  if (target && toggle) target.dataset.citations = toggle.checked ? 'shown' : 'hidden';
+}
+
+async function runJudgeCapabilitySearch(query) {
+  const status = document.querySelector('[data-judge-search-status]');
+  const target = document.querySelector('[data-judge-search-results]');
+  const assistButton = document.querySelector('[data-assist-submit]');
+  if (!status || !target) return;
+  status.textContent = 'Searching approved capability content with deterministic lexical retrieval…';
+  target.innerHTML = '<div class="judge-loading">Matching task mappings, capability content, and evidence…</div>';
+  if (assistButton) assistButton.disabled = true;
+  recommendationState.current = null;
+  try {
+    const payload = await fetchJson('/api/public/capability-search', {
+      method: 'POST',
+      body: JSON.stringify({ query }),
+    });
+    judgeState.searchPayload = payload;
+    judgeState.assets = judgeSearchAssets(payload);
+    const root = payload?.data || payload || {};
+    const recommendation = judgeRecommendationFromSearch(root);
+    recommendationState.current = recommendation ? await hydrateRecommendation(recommendation) : null;
+    if (recommendationState.current) judgeState.assets = recommendationState.current.assets;
+    renderJudgeSearchResults();
+    const aliasCount = asArray(root.retrieval?.applied_aliases).length;
+    const resolution = humanize(root.resolution?.reason || root.status || 'completed');
+    const matched = root.status === 'matched' && judgeState.assets.length > 0;
+    status.dataset.matchStatus = matched ? 'matched' : 'none';
+    status.innerHTML = `<strong>${judgeState.assets.length} result${judgeState.assets.length === 1 ? '' : 's'}</strong><span>${matched ? 'Deterministic match ✓' : 'No deterministic match'}</span><span>${escapeHtml(resolution)}</span>${aliasCount ? `<span>${aliasCount} query alias${aliasCount === 1 ? '' : 'es'} applied</span>` : ''}`;
+    if (recommendationState.current) {
+      setJudgePlan(deterministicJudgePlan(recommendationState.current), { mode: 'authoritative' });
+      if (assistButton) assistButton.disabled = false;
+    } else {
+      setJudgePlan({ steps: [] }, { mode: 'authoritative' });
+    }
+  } catch (error) {
+    judgeState.searchPayload = null;
+    judgeState.assets = [];
+    target.innerHTML = `<div class="judge-error"><strong>Capability search unavailable</strong><span>${escapeHtml(error.message)}</span></div>`;
+    status.textContent = 'The deterministic search request did not complete.';
+    setJudgePlan({ steps: [] }, { mode: 'authoritative' });
+  }
+}
+
+function renderJudgeAnalytics(payload) {
+  const analytics = normalizeAnalytics(payload);
+  const total = Math.max(analyticsTotal(analytics), 1);
+  const approved = countValue(analytics.reviewCounts.find((item) => countKey(item, ['review_status', 'status']) === 'approved'));
+  const reviewed = countValue(analytics.reviewCounts.find((item) => countKey(item, ['review_status', 'status']) === 'reviewed'));
+  const reuseCoverage = Number(analytics.reuse.recommendation_coverage_percent);
+  const evidenceCoverage = Number(analytics.coverage.evidence_coverage_percent);
+  const taskCoverage = Number(analytics.coverage.task_coverage_percent);
+  const hasCoverage = [reuseCoverage, evidenceCoverage, taskCoverage].every(Number.isFinite);
+  const gapCount = analytics.computedGaps.length || analytics.missingCapabilities.length;
+  const values = hasCoverage
+    ? [
+        ['Reuse coverage', `${reuseCoverage}%`, reuseCoverage / 100, 'teal'],
+        ['Evidence coverage', `${evidenceCoverage}%`, evidenceCoverage / 100, 'green'],
+        ['Task coverage', `${taskCoverage}%`, taskCoverage / 100, 'amber'],
+        ['Capability gaps', gapCount, Math.min(gapCount / total, 1), 'red'],
+      ]
+    : [
+        ['Governed assets', analyticsTotal(analytics), analyticsTotal(analytics) / total, 'teal'],
+        ['Approved', approved, approved / total, 'green'],
+        ['Reviewed', reviewed, reviewed / total, 'amber'],
+        ['Capability gaps', gapCount, Math.min(gapCount / total, 1), 'red'],
+      ];
+  return `
+    <div class="judge-metrics">
+      ${values.map(([label, value, ratio, color]) => `
+        <div class="judge-metric"><span><strong>${escapeHtml(label)}</strong><b>${escapeHtml(String(value))}</b></span><i><em class="is-${color}" style="width:${Math.max(4, Math.round(ratio * 100))}%"></em></i></div>
+      `).join('')}
+    </div>
+    <p class="judge-analytics-note">${hasCoverage ? 'Computed from current Postgres records; outcome claims are not measured.' : 'Derived from the current public-safe capability inventory.'}</p>
+    <a class="judge-rail-link" href="/assets">View inventory details</a>
+  `;
+}
+
+async function loadJudgeAnalytics() {
+  const target = document.querySelector('[data-judge-analytics]');
+  if (!target) return;
+  try {
+    target.innerHTML = renderJudgeAnalytics(await fetchJson('/api/public/capability-analytics'));
+  } catch (error) {
+    target.innerHTML = `<div class="judge-error"><strong>Analytics unavailable</strong><span>${escapeHtml(error.message)}</span></div>`;
+  }
+}
+
+async function runPublicAccessProofs() {
+  const target = document.querySelector('[data-access-proofs]');
+  const button = document.querySelector('[data-rerun-access-proof]');
+  if (!target) return;
+  if (button) button.disabled = true;
+  target.innerHTML = '<div class="judge-loading">Loading the build-bound four-plane proof and rerunning the public boundary…</div>';
+  try {
+    const [identityProof, allowResponse, denyResponse] = await Promise.all([
+      fetchJson('/api/public/access-proof'),
+      fetch('/api/public/corpus', { headers: { accept: 'application/json' } }),
+      fetch('/api/public/evidence?type=fact&thread=private', { headers: { accept: 'application/json' } }),
+    ]);
+    const [allowPayload, denyPayload] = await Promise.all([
+      allowResponse.json().catch(() => ({})),
+      denyResponse.json().catch(() => ({})),
+    ]);
+    const scope = allowPayload?.scope || allowPayload?.data?.scope || {};
+    const allowPassed = allowResponse.ok;
+    const denyPassed = denyResponse.status >= 400 && denyResponse.status < 500;
+    const denyCode = denyPayload?.error?.code || `http_${denyResponse.status}`;
+    const proofChecks = asArray(identityProof?.checks);
+    const proofCounts = identityProof?.counts || {};
+    const requiredCount = proofChecks.filter((check) => check.required).length;
+    const passedCount = Number(proofCounts.pass || 0);
+    const identityPassed = identityProof?.overall_status === 'PASS'
+      && requiredCount > 0
+      && passedCount === requiredCount;
+    const planeSummary = [...new Set(proofChecks.map((check) => check.plane).filter(Boolean))]
+      .map((plane) => {
+        const checks = proofChecks.filter((check) => check.plane === plane);
+        return `${humanize(plane)} ${checks.filter((check) => check.status === 'PASS').length}/${checks.length}`;
+      })
+      .join(' · ');
+    const proofs = [
+      {
+        passed: identityPassed,
+        title: identityPassed ? 'Four-plane proof passed' : 'Four-plane proof failed',
+        action: 'Verify identity enforcement',
+        resource: `${requiredCount} required controls`,
+        policy: planeSummary || 'No proof groups returned',
+        result: `${identityProof?.overall_status || 'FAIL'} ${passedCount}/${requiredCount}`,
+        time: identityProof?.generated_at,
+      },
+      {
+        passed: allowPassed && denyPassed,
+        title: allowPassed && denyPassed ? 'Live boundary passed' : 'Live boundary failed',
+        action: 'Allow public read; reject scope injection',
+        resource: scope.corpus_key || scope.pack_key || 'Pinned public corpus',
+        policy: denyCode,
+        result: `allow ${allowResponse.status} · deny ${denyResponse.status}`,
+        time: new Date().toISOString(),
+      },
+    ];
+    target.innerHTML = proofs.map((proof) => `
+      <article class="judge-proof ${proof.passed ? 'is-pass' : 'is-fail'}">
+        <div class="judge-proof-title"><span>${proof.passed ? '✓' : '×'}</span><strong>${escapeHtml(proof.title)}</strong></div>
+        <dl><div><dt>Session</dt><dd>Public judge</dd></div><div><dt>Action</dt><dd>${escapeHtml(proof.action)}</dd></div><div><dt>Resource</dt><dd>${escapeHtml(proof.resource)}</dd></div><div><dt>Result</dt><dd>${escapeHtml(proof.result)}</dd></div><div><dt>Time</dt><dd>${escapeHtml(formatDate(proof.time))}</dd></div><div><dt>Policy</dt><dd>${escapeHtml(proof.policy)}</dd></div></dl>
+      </article>
+    `).join('') + '<a class="judge-rail-link" href="/architect/">Open the protected Architect Console</a>';
+  } catch (error) {
+    target.innerHTML = `<div class="judge-error"><strong>Access proof unavailable</strong><span>${escapeHtml(error.message)}</span></div>`;
+  } finally {
+    if (button) button.disabled = false;
+  }
+}
+
+function bindJudgeDemo() {
+  const form = document.querySelector('[data-capability-search-form]');
+  if (!form) return;
+  const global = document.querySelector('[data-judge-global-search]');
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const query = form.elements.query.value.trim();
+    if (global) global.value = query;
+    if (query) runJudgeCapabilitySearch(query);
+  });
+  form.addEventListener('reset', () => {
+    window.setTimeout(() => {
+      form.elements.query.value = '';
+      form.elements.query.focus();
+    });
+  });
+  global?.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    form.elements.query.value = global.value;
+    form.requestSubmit();
+  });
+  document.addEventListener('keydown', (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      global?.focus();
+    }
+  });
+  document.querySelector('[data-judge-role]')?.addEventListener('change', renderJudgeSearchResults);
+  document.querySelector('[data-judge-type-filter]')?.addEventListener('change', renderJudgeSearchResults);
+  document.querySelector('[data-judge-clear-filters]')?.addEventListener('click', () => {
+    document.querySelector('[data-judge-role]').value = '';
+    document.querySelector('[data-judge-type-filter]').value = '';
+    form.requestSubmit();
+  });
+  document.querySelector('[data-citation-toggle]')?.addEventListener('change', updateJudgeCitationVisibility);
+  document.querySelector('[data-rerun-access-proof]')?.addEventListener('click', runPublicAccessProofs);
+}
+
+async function initializeJudgeDemo() {
+  bindJudgeDemo();
+  const query = document.querySelector('[data-capability-search-form]')?.elements.query.value.trim();
+  await Promise.all([
+    query ? runJudgeCapabilitySearch(query) : Promise.resolve(),
+    loadJudgeAnalytics(),
+    runPublicAccessProofs(),
+  ]);
+}
+
 function countValue(item = {}) {
   return Number(item.count ?? item.value ?? 0);
 }
@@ -1022,6 +1536,17 @@ function renderAssetInspector(asset) {
         <div><dt>Problem solved</dt><dd>${escapeHtml(asset.problemSolved || 'Not provided')}</dd></div>
         <div><dt>Why it worked</dt><dd>${escapeHtml(asset.whyItWorked || 'Not provided')}</dd></div>
       </dl>
+    </section>
+    <section class="asset-inspector-section">
+      <h3>Reusable typed content</h3>
+      <dl class="governance-grid">
+        <div><dt>Schema</dt><dd>v${escapeHtml(String(asset.content.schemaVersion ?? 'Not provided'))}</dd></div>
+        <div><dt>Content type</dt><dd>${escapeHtml(asset.content.contentType || 'Not provided')}</dd></div>
+        <div class="governance-wide"><dt>Family</dt><dd><code>${escapeHtml(asset.content.familyKey || 'Not provided')}</code></dd></div>
+        <div class="governance-wide"><dt>Change</dt><dd>${escapeHtml(asset.content.changeSummary || 'Not provided')}</dd></div>
+        <div class="governance-wide"><dt>SHA-256</dt><dd><code>${escapeHtml(asset.content.sha256 || 'Not provided')}</code></dd></div>
+      </dl>
+      <pre class="asset-content-body">${escapeHtml(JSON.stringify(asset.content.body, null, 2))}</pre>
     </section>
     <section class="asset-inspector-section">
       <div class="inspector-section-heading"><h3>Governance</h3>${reviewStatusMarkup(governance.reviewStatus)}</div>
@@ -1230,6 +1755,19 @@ function renderStructuredAssist(output) {
 function renderAssistInteraction(payload) {
   const root = payload?.data || payload || {};
   const interaction = root.interaction || root.assist || {};
+  if (document.querySelector('.judge-demo')) {
+    const mode = interaction.status === 'generated' ? 'generated' : 'fallback';
+    const plan = interaction.plan || interaction.output;
+    if (plan?.steps?.length) {
+      return renderJudgePlan(plan, { mode, model: interaction.model || '' });
+    }
+    return `
+      <div class="judge-zero-state">
+        <strong>${mode === 'fallback' ? 'Deterministic records loaded; adaptation unavailable.' : 'No validated plan returned.'}</strong>
+        <span>The authoritative capability result remains visible above.</span>
+      </div>
+    `;
+  }
   const generated = interaction.status === 'generated' && (interaction.explanation || interaction.output);
   if (!generated) {
     return `
@@ -1259,38 +1797,59 @@ async function runAssist(form) {
   if (!taskKey || !request || !button || !status || !target) return;
   button.disabled = true;
   status.textContent = 'Requesting a bounded adaptation from Codex Spark...';
-  target.innerHTML = '<div class="loading-state">Adapting only the selected public-safe record...</div>';
+  target.innerHTML = document.querySelector('.judge-demo')
+    ? '<div class="judge-loading">Adapting only the selected public-safe record…</div>'
+    : '<div class="loading-state">Adapting only the selected public-safe record...</div>';
   try {
     const payload = await fetchJson('/api/public/capability-assist', {
       method: 'POST',
       body: JSON.stringify({ task_key: taskKey, request }),
     });
     const selectedTaskKey = document.querySelector('[data-recommendation-form] select')?.value;
-    if (selectedTaskKey !== taskKey || recommendationState.current?.taskKey !== taskKey) return;
+    const judgeDemo = document.querySelector('.judge-demo');
+    if ((!judgeDemo && selectedTaskKey !== taskKey) || recommendationState.current?.taskKey !== taskKey) return;
     const responseRoot = payload?.data || payload || {};
     const returnedRecommendation = responseRoot.recommendation
       || (responseRoot.task && Array.isArray(responseRoot.recommendations) ? responseRoot : null);
     if (returnedRecommendation) {
       const hydratedRecommendation = await hydrateRecommendation(returnedRecommendation);
       const currentTaskKey = document.querySelector('[data-recommendation-form] select')?.value;
-      if (currentTaskKey !== taskKey || recommendationState.current?.taskKey !== taskKey) return;
+      if ((!judgeDemo && currentTaskKey !== taskKey) || recommendationState.current?.taskKey !== taskKey) return;
       recommendationState.current = hydratedRecommendation;
       const recordTarget = document.querySelector('[data-recommendation-result]');
       if (recordTarget) recordTarget.innerHTML = renderRecommendationRecord(recommendationState.current);
     }
     target.innerHTML = renderAssistInteraction(payload);
     const interaction = responseRoot.interaction || {};
+    if (document.querySelector('.judge-demo')) {
+      const mode = interaction.status === 'generated' ? 'generated' : 'fallback';
+      const plan = interaction.plan || interaction.output;
+      judgeState.currentPlan = plan?.steps?.length ? plan : null;
+      judgeState.currentPlanOptions = { mode, model: interaction.model || '' };
+      const label = document.querySelector('[data-plan-mode]');
+      if (label) label.textContent = interaction.status === 'generated' ? '(AI-assisted)' : '(deterministic fallback)';
+      bindJudgePlanActions();
+    }
     status.textContent = interaction.status === 'generated'
       ? 'Spark-generated adaptation returned; the deterministic record remains authoritative.'
       : 'Deterministic records loaded; adaptation unavailable.';
   } catch {
     const selectedTaskKey = document.querySelector('[data-recommendation-form] select')?.value;
-    if (selectedTaskKey !== taskKey || recommendationState.current?.taskKey !== taskKey) return;
-    target.innerHTML = renderAssistInteraction({ interaction: { status: 'fallback' } });
+    const judgeDemo = document.querySelector('.judge-demo');
+    if (!judgeDemo && (selectedTaskKey !== taskKey || recommendationState.current?.taskKey !== taskKey)) return;
+    if (judgeDemo && recommendationState.current) {
+      setJudgePlan(deterministicJudgePlan(recommendationState.current), { mode: 'fallback' });
+    } else {
+      target.innerHTML = renderAssistInteraction({ interaction: { status: 'fallback' } });
+    }
+    if (document.querySelector('.judge-demo')) {
+      const label = document.querySelector('[data-plan-mode]');
+      if (label) label.textContent = '(deterministic fallback)';
+    }
     status.textContent = 'Deterministic records loaded; adaptation unavailable.';
   } finally {
     const selectedTaskKey = document.querySelector('[data-recommendation-form] select')?.value;
-    if (selectedTaskKey === taskKey && recommendationState.current?.taskKey === taskKey) {
+    if ((document.querySelector('.judge-demo') || selectedTaskKey === taskKey) && recommendationState.current?.taskKey === taskKey) {
       button.disabled = false;
     }
   }
@@ -1501,6 +2060,7 @@ function bindAssistForm() {
 
 function renderRoute() {
   const path = window.location.pathname.replace(/\/$/, '') || '/';
+  document.body.classList.toggle('judge-demo-mode', path === '/demo');
   const routes = {
     '/': homePage,
     '/assets': assetsPage,
@@ -1531,9 +2091,7 @@ function renderRoute() {
     initializeAssetsPage();
   }
   if (path === '/demo') {
-    initializeDemoRecommendations();
-    const form = document.querySelector('[data-query-form]');
-    runQuery(form, { preserveReserve: true });
+    initializeJudgeDemo();
   }
   if (path === '/evidence') {
     loadCorpusInventory();

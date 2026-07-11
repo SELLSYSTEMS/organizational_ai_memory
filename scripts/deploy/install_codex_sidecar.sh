@@ -23,14 +23,15 @@ if ! id oam-codex >/dev/null 2>&1; then
     oam-codex
 fi
 
-usermod --append --groups oam-codex tgops
+if id oam-public >/dev/null 2>&1; then
+  usermod --append --groups oam-codex oam-public
+fi
 
 install -d -o root -g root -m 0755 \
   "${install_root}/app/lib" \
   "${install_root}/deploy/codex" \
   /var/empty/oam-codex \
-  /etc/systemd/system/organizational-ai-memory-codex.service.d \
-  /etc/systemd/system/organizational-ai-memory.service.d
+  /etc/systemd/system/organizational-ai-memory-codex.service.d
 install -d -o oam-codex -g oam-codex -m 0700 /var/lib/oam-codex/.codex
 
 install -o root -g root -m 0644 \
@@ -40,6 +41,9 @@ install -o root -g root -m 0644 \
   "${repo_root}/app/lib/codex-spark-runner.mjs" \
   "${install_root}/app/lib/codex-spark-runner.mjs"
 install -o root -g root -m 0644 \
+  "${repo_root}/app/lib/structured-capability-plan.mjs" \
+  "${install_root}/app/lib/structured-capability-plan.mjs"
+install -o root -g root -m 0644 \
   "${repo_root}/deploy/codex/explanation.schema.json" \
   "${install_root}/deploy/codex/explanation.schema.json"
 
@@ -47,19 +51,12 @@ install -o root -g root -m 0644 \
   "${repo_root}/deploy/systemd/organizational-ai-memory-codex.service" \
   /etc/systemd/system/organizational-ai-memory-codex.service
 install -o root -g root -m 0644 \
-  "${repo_root}/deploy/systemd/organizational-ai-memory.service" \
-  /etc/systemd/system/organizational-ai-memory.service
-install -o root -g root -m 0644 \
   "${repo_root}/deploy/systemd/organizational-ai-memory-codex.service.d/zzzz-oam-hardening.conf" \
   /etc/systemd/system/organizational-ai-memory-codex.service.d/zzzz-oam-hardening.conf
-install -o root -g root -m 0644 \
-  "${repo_root}/deploy/systemd/organizational-ai-memory.service.d/zzzz-oam-hardening.conf" \
-  /etc/systemd/system/organizational-ai-memory.service.d/zzzz-oam-hardening.conf
-
 systemctl daemon-reload
-systemctl enable --now organizational-ai-memory-codex.service
+systemctl enable organizational-ai-memory-codex.service
+systemctl restart organizational-ai-memory-codex.service
 
 printf '%s\n' \
   'Codex sidecar installed.' \
-  'The isolated account must have its own login before generation works:' \
-  'runuser -u oam-codex -- env HOME=/var/lib/oam-codex CODEX_HOME=/var/lib/oam-codex/.codex codex login --device-auth'
+  'Generation uses only the isolated oam-codex login under /var/lib/oam-codex/.codex.'

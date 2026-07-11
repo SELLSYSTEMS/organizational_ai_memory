@@ -8,8 +8,8 @@
     { "asset_type": "best_practice", "count": 1 }
   ],
   "review_status_counts": [
-    { "review_status": "approved", "count": 7 },
-    { "review_status": "reviewed", "count": 2 },
+    { "review_status": "approved", "count": 9 },
+    { "review_status": "reviewed", "count": 0 },
     { "review_status": "draft", "count": 0 }
   ],
   "capability_area_counts": [
@@ -36,9 +36,9 @@
   ],
   "missing_capabilities": [
     {
-      "gap_key": "role_review_workflow",
-      "title": "Explicit role review workflow",
-      "signal": "Assets carry roles and review status, but the current demo does not yet expose a role-aware approval surface."
+      "gap_key": "enterprise_identity_federation",
+      "title": "Enterprise identity federation",
+      "signal": "The MVP proves role-aware review and physical workload isolation, but production SSO and SCIM lifecycle automation are not implemented."
     },
     {
       "gap_key": "recommendation_feedback_loop",

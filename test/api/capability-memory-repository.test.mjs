@@ -26,6 +26,14 @@ function assetRow() {
     last_validated_at: '2026-07-10',
     risk_note: null,
     used_successfully_in: [],
+    search_text: 'public demo governed workflow',
+    asset_family_key: 'workflow:public_demo',
+    content_schema_version: 1,
+    content_type: 'application/json',
+    change_summary: 'Initial typed workflow.',
+    content_body: { trigger: 'Prepare a public demo.' },
+    body_text: 'trigger prepare a public demo',
+    content_sha256: 'a'.repeat(64),
   };
 }
 
@@ -74,14 +82,13 @@ function fakePool() {
 
 function assertPinnedScope(call) {
   assert.deepEqual(call.parameters.slice(0, 6), publicCapabilityScopeSqlParameters());
+  assert.match(call.sql, /FROM oam_public\.capability_packs p/);
   assert.match(call.sql, /p\.pack_key = \$1/);
   assert.match(call.sql, /p\.brand_key = \$2/);
   assert.match(call.sql, /p\.corpus = \$3/);
   assert.match(call.sql, /p\.source_classification = \$4/);
   assert.match(call.sql, /p\.publication_status = \$5/);
-  assert.match(call.sql, /evidence_thread\.thread_key = \$6/);
-  assert.match(call.sql, /evidence_thread\.metadata @> jsonb_build_object/);
-  assert.match(call.sql, /'review_status', 'approved_for_public_demo'::text/);
+  assert.doesNotMatch(call.sql, /\bmemory\./);
 }
 
 test('all asset reads are pinned and filters remain SQL parameters', async () => {
@@ -90,6 +97,11 @@ test('all asset reads are pinned and filters remain SQL parameters', async () =>
   const injected = "governance' OR p.source_classification = 'internal";
 
   assert.equal(await repository.readiness(), true);
+  const readinessCall = pool.calls.find((call) => call.sql.includes('capability:readiness'));
+  assert.match(readinessCall.sql, /capability_source_evidence/);
+  assert.match(readinessCall.sql, /count\(DISTINCT a\.asset_type\)[\s\S]+\) = 5/);
+  assert.match(readinessCall.sql, /task\.task_key = 'website_delivery_handoff'/);
+  assert.match(readinessCall.sql, /capability_task_recommendations/);
   const assets = await repository.listAssets({
     type: 'workflow',
     capability_area: injected,
@@ -123,7 +135,7 @@ test('recommendations join stored assets in the same eligible pack', async () =>
   const recommendationCall = pool.calls.find((call) => call.sql.includes('capability:recommendations'));
   assertPinnedScope(recommendationCall);
   assert.equal(recommendationCall.parameters[6], 'public_demo_release');
-  assert.match(recommendationCall.sql, /JOIN memory\.capability_assets a/);
+  assert.match(recommendationCall.sql, /JOIN oam_public\.capability_assets a/);
   assert.match(recommendationCall.sql, /a\.pack_id = p\.id/);
 });
 
@@ -135,8 +147,11 @@ test('analytics derive counts from stored assets while reading persisted gap sig
 
   const call = pool.calls.at(-1);
   assertPinnedScope(call);
-  assert.match(call.sql, /count\(\*\).*memory\.capability_assets/s);
-  assert.match(call.sql, /memory\.capability_analytics_signals/);
+  assert.match(call.sql, /count\(\*\).*oam_public\.capability_assets/s);
+  assert.match(call.sql, /oam_public\.capability_analytics_signals/);
+  assert.match(call.sql, /assets_with_content/);
+  assert.match(call.sql, /reused_across_tasks/);
+  assert.match(call.sql, /duplicate_content_groups/);
   assert.equal(call.sql.includes('internal_demo'), false);
   assert.equal(PUBLIC_CAPABILITY_SCOPE.sourceClassification, 'public_safe');
 });

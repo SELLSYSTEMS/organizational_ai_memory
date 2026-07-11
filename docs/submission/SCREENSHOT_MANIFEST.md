@@ -1,26 +1,34 @@
 # Screenshot Manifest
 
-This manifest records the five public-safe submission images produced from the
-live HTTPS application. The machine-readable capture result is stored beside
-them as `artifacts/submission/screenshots/capture-report.json`.
+The machine-readable live capture result is
+`artifacts/submission/screenshots/capture-report.json`. The final run captured
+eight images and passed 8/8 with no unexpected browser errors at
+`2026-07-11T04:12:59.529Z`.
 
-| Final filename | Live capture state | Submission caption |
+| Final filename | Verified live state | Suggested caption |
 | --- | --- | --- |
-| `artifacts/submission/screenshots/01-home-capability-memory-1440.png` | `/`, canonical website-delivery task loaded | "Organizational AI Memory retrieves reusable prompts, workflows, agent patterns, decisions, and practices before optional generation." |
-| `artifacts/submission/screenshots/02-demo-website-delivery-recommendation-1440.png` | `/demo?task=website_delivery_handoff`, all three stored assets visible | "The website delivery task deterministically retrieves a governed prompt, workflow, and decision pattern from Postgres." |
-| `artifacts/submission/screenshots/03-assets-governance-provenance-1440.png` | `/assets?asset=prompt%3Awebsite_handoff_brief_v1`, selected inspector visible | "Each capability records the problem solved, why it worked, lifecycle and role metadata, and `asset -> observation -> source turn` provenance." |
-| `artifacts/submission/screenshots/04-demo-temporal-truth-1440.png` | `/demo?task=website_delivery_handoff`, canonical continuity query submitted | "Current and superseded facts remain auditable together, with every claim linked through `fact -> observation -> source turn`." |
-| `artifacts/submission/screenshots/05-method-authority-1440.png` | `/method`, six-stage authority flow and canonical reuse example visible | "Postgres is authoritative; task mappings are deterministic; Spark adaptation is bounded and optional; internal memory is not publicly routed." |
+| `01-home-capability-memory-1440.png` | Home recommendation and four temporal facts loaded | "Organizational AI Memory starts from proven capability and preserves current truth without erasing history." |
+| `02-judge-demo-capability-loop-1440.png` | Three deterministic assets, four analytics metrics, and 22/22 proof visible | "One judge screen connects grounded search, governed reuse, analytics, and executed access evidence." |
+| `03-judge-demo-spark-plan-1440.png` | Live `gpt-5.3-codex-spark` plan with validated asset and source-turn citations | "Spark adapts only the selected records; the deterministic capability result remains authoritative." |
+| `04-assets-governance-provenance-1440.png` | Prompt inspector with open source path | "Typed capability memory retains version, review state, why it worked, and `asset -> observation -> source turn` provenance." |
+| `05-method-architecture-1440.png` | Public architecture and authority method | "Four aligned planes separate application identity, policy, runtime identity, and data authority." |
+| `06-judge-demo-mobile-390.png` | Responsive deterministic search and proof path | "The complete public judge workflow remains usable without horizontal overflow on mobile." |
+| `07-architect-console-four-plane-1440.png` | Authenticated four-plane overview using a private token not present in the image | "The protected console maps every principal to policy, runtime bindings, and data authority." |
+| `08-architect-effective-access-1440.png` | AI Architect evaluation shows 12 allowed actions and explicit canonical-write denial | "Even the architect cannot write canonical memory directly; reviewed promotion produces a draft." |
+
+All paths are relative to `artifacts/submission/screenshots/`.
 
 ## Capture contract
 
-1. Use the public domain in a fresh browser at `1440 x 900` and 100% zoom.
-2. Capture only public-safe product surfaces. Do not include browser account
-   chrome, terminals, service logs, authentication screens, or operator data.
-3. Make labels and evidence text readable at submission-thumbnail size.
-4. Do not show a generated state unless the live response reports
-   `interaction.status = "generated"`.
-5. Keep the deterministic-record and non-authoritative/fallback labels in
-   frame whenever an assist result is shown.
-6. Record the capture date and tested URL in the final handoff. The capture
-   report is the authoritative timestamp and route record.
+1. Public screens are captured from `https://memory.sellsystems.agency` at
+   `1440 x 1000`; the mobile image uses `390 x 844`.
+2. The Browser plugin was unavailable, so the repository Playwright workflow
+   used system Chrome and recorded that fallback.
+3. The generated screenshot is accepted only when the rendered mode is exactly
+   `generated`; one bounded retry is allowed after an explicit fallback.
+4. Operator credentials are read from a private root-owned file, exchanged for
+   an HttpOnly session, and never written to the report or image.
+5. The expected public `400` scope-injection probe and initial operator `401`
+   session check are recorded as explained security responses. Any other console
+   or page error fails capture.
+6. Do not edit screenshot content or add unsupported metrics after capture.

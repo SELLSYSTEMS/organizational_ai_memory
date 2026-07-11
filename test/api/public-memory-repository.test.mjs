@@ -45,6 +45,8 @@ test('every public read query carries the pinned scope and visibility parameters
   assert.equal(pool.calls.length, 8);
   for (const call of pool.calls) {
     assert.deepEqual(call.parameters, expected);
+    assert.match(call.sql, /oam_public\.continuity_/);
+    assert.doesNotMatch(call.sql, /\bmemory\./);
     assert.match(call.sql, /brand_key = \$1/);
     assert.match(call.sql, /thread_key = \$2/);
     assert.match(call.sql, /metadata @> jsonb_build_object/);
@@ -60,14 +62,16 @@ test('retrieval audit is parameterized and never interpolates client query text'
   await repository.recordRetrieval(query, { status: 'no_grounded_memory' });
 
   assert.equal(pool.calls.length, 1);
-  assert.equal(pool.calls[0].parameters[5], query);
+  assert.equal(JSON.parse(pool.calls[0].parameters[5]).query_text, query);
   assert.equal(pool.calls[0].sql.includes(query), false);
   assert.match(pool.calls[0].sql, /\$6/);
+  assert.match(pool.calls[0].sql, /audit\.record_public_interaction/);
+  assert.doesNotMatch(pool.calls[0].sql, /\bmemory\./);
   assert.deepEqual(pool.calls[0].parameters.slice(0, 5), [
-    PUBLIC_SCOPE.brandKey,
+    'public_retrieval',
+    'continuity_query',
     PUBLIC_SCOPE.threadKey,
-    PUBLIC_SCOPE.corpus,
-    PUBLIC_SCOPE.visibility,
-    PUBLIC_SCOPE.status,
+    'recorded',
+    null,
   ]);
 });

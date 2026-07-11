@@ -1,13 +1,18 @@
 # Demo Video Plan
 
-Target: one `110` second public product walkthrough.
+Target: one `110` second walkthrough.
 
-Status: recording plan only. No final video asset is claimed by this document.
+Status: recording plan only. No final video asset is claimed.
 
 ## Canonical scenario
 
-Use the task key `website_delivery_handoff` throughout. The stored result must
-show these three assets before any optional generation:
+Search:
+
+```text
+Prepare a website delivery handoff
+```
+
+Expected stored assets:
 
 ```text
 prompt:website_handoff_brief_v1
@@ -15,45 +20,41 @@ workflow:portfolio_site_delivery_v1
 decision:source_first_before_generation_v1
 ```
 
-Use this adaptation request:
+Adaptation request:
 
 ```text
-Adapt this starting point for a small agency team preparing a client handoff.
-```
-
-Use this continuity query:
-
-```text
-What is the current budget and deadline, and what changed?
+Adapt this grounded starting point for a small delivery team.
 ```
 
 ## 110-second shot list
 
 | Time | Screen and action | Narration point |
 | --- | --- | --- |
-| `00:00-00:12` | Open `https://memory.sellsystems.agency/`. Hold on the product name, promise, and task-start proof. | "Organizational AI Memory turns proven work into reusable, governed capability memory, while retaining the evidence behind it." |
-| `00:12-00:22` | Point to the deterministic-record label and capability inventory, then open the public demo. | "A task starts from a stored Postgres record, not from a model guess." |
-| `00:22-00:44` | On `/demo`, keep the default `Prepare a new website delivery handoff` task and retrieve the starting point. Pause on the three ranked assets. | "This task maps deterministically to a handoff prompt, a delivery workflow, and a source-first decision pattern. That selection remains authoritative." |
-| `00:44-01:01` | Open `/assets`, select `Website design-to-build handoff brief`, and show review state, version, owner and consumer roles, why it worked, and `asset -> observation -> source turn`. | "Capability memory keeps operational value, lifecycle metadata, and a traceable source narrative together. These roles are governance metadata, not enforced RBAC in this MVP." |
-| `01:01-01:15` | Return to `/demo`, submit the short adaptation request, and hold on the interaction status. | If generated: "Spark adapts only the selected public-safe record and is labeled non-authoritative." If fallback: "Optional adaptation is unavailable, so the product keeps the complete deterministic recommendation and states the degraded mode directly." |
-| `01:15-01:37` | Run the continuity query. Show current and superseded budget and deadline values, then open one provenance disclosure. | "Temporal memory preserves what is current without erasing what changed, and every fact follows `fact -> observation -> source turn`." |
-| `01:37-01:50` | Open `/method`. Hold on canonical store, deterministic recommendation, bounded adaptation, and the public/internal safety boundary. | "Postgres remains the authority, optional prose cannot write memory, and the browser cannot select the isolated internal corpus." |
-
-Total planned duration: `1 minute 50 seconds`.
+| `00:00-00:12` | Open `/demo`; hold on the capture-review-reuse lifecycle and product name. | "Organizational AI Memory preserves proven AI work as governed organizational capability." |
+| `00:12-00:32` | Run the default search and point to the three typed/versioned results, why-it-worked excerpts, and evidence. | "A task starts from a deterministic PostgreSQL record, not a model guess." |
+| `00:32-00:47` | Filter to Prompt, clear the filter, then show the authoritative three-step plan. | "The same source assets remain visible through role-aware filtering and reuse." |
+| `00:47-01:04` | Submit the adaptation request and show the generated cited steps. | "Spark adapts only the selected public-safe records; validated citations keep the result grounded and non-authoritative." |
+| `01:04-01:20` | Point to coverage metrics, the capability gap, `PASS 22/22`, and rerun the public boundary. | "Analytics state what is measured, while executed controls prove the application, policy, Linux, database, broker, governance, and revocation boundaries." |
+| `01:20-01:34` | Open the prompt asset and show governance plus `asset -> observation -> source turn`. | "Reusable capability retains why it worked and where the supporting narrative came from." |
+| `01:34-01:48` | Cut to the prepared Architect Console effective-access screenshot. | "A linked agent has its own OS identity and data grant; even the architect is explicitly denied direct canonical-memory writes." |
+| `01:48-01:50` | Return to `/demo` product name and lifecycle. | "Individual learning becomes permanent, governed organizational capability." |
 
 ## Recording rules
 
-1. Record a fresh desktop browser at `1440 x 900`, 100% zoom, with no terminal,
-   cookies, account details, or operator UI visible.
-2. Confirm readiness and run both canonical requests once before recording.
-3. Do not simulate a generated response. Record whichever interaction status
-   the endpoint actually returns.
-4. Keep the cursor still while evidence and governance details are readable.
-5. Use direct cuts only. Do not add fake metrics, animated architecture, or
-   claims that are absent from the product.
-6. Export an H.264 MP4 at 1080p with legible text and normalized speech.
+1. Record at `1440 x 1000` or 1080p, 100% zoom, in a clean browser profile.
+2. Confirm readiness, the 22/22 proof, and one generated Spark response before
+   recording.
+3. Record the real interaction state. If Spark falls back, narrate the fallback
+   contract rather than simulating generation.
+4. Never show an operator token, cookie, terminal, internal path, model auth
+   file, or browser account chrome.
+5. Use the prepared Architect Console screenshots unless a private recording
+   session is already authenticated.
+6. Do not claim measured time savings, ROI, autonomous gap discovery, or broad
+   enterprise deployment.
+7. Export H.264 MP4 at 1080p with legible text and normalized speech.
 
-Suggested final filename:
+Suggested filename:
 
 ```text
 artifacts/submission/video/organizational-ai-memory-demo-110s.mp4
@@ -61,11 +62,11 @@ artifacts/submission/video/organizational-ai-memory-demo-110s.mp4
 
 ## Final review
 
-The video is ready only if a reviewer can answer all five questions from the
-recording alone:
+The video is ready only if a reviewer can answer:
 
 1. What is stored?
-2. Which task was started?
-3. Why were those assets selected?
-4. Where is the evidence?
-5. Which part is authoritative when generation is unavailable?
+2. Why did the search select these assets?
+3. Which part is authoritative?
+4. Where is the provenance?
+5. How is an agent's access physically constrained?
+6. What happens when generation or authorization fails?

@@ -114,6 +114,7 @@ export function createCodexSidecarServer({
       sendJson(res, 200, {
         status: 'generated',
         model: CODEX_SPARK_MODEL,
+        plan: result.plan,
         explanation: result.explanation,
       });
     } catch (error) {
