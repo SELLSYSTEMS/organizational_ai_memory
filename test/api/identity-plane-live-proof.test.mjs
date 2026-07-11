@@ -61,6 +61,7 @@ function passingAdapter({ failProvisioning = false, leakCandidate = false } = {}
       { label: 'application_environment_read', expected: 'denied', actual: 'denied', passed: true, code: 'EACCES' },
       { label: 'model_authentication_read', expected: 'denied', actual: 'denied', passed: true, code: 'EACCES' },
       { label: 'own_workspace_write', expected: 'allowed', actual: 'allowed', passed: true },
+      { label: 'outbound_ip_socket', expected: 'denied', actual: 'denied', passed: true, code: 'EAFNOSUPPORT' },
       { label: 'direct_postgres_connect', expected: 'denied', actual: 'denied', passed: true, code: '42501' },
     ],
     broker: {
@@ -157,7 +158,6 @@ function passingAdapter({ failProvisioning = false, leakCandidate = false } = {}
             service_active: true,
             service_user_matches: true,
             no_new_privileges: true,
-            private_network: true,
             broker_socket_present: true,
           }
         : {

@@ -37,6 +37,7 @@ function validAgentProof(overrides = {}) {
         'model_authentication_read',
       ].map((label) => ({ label, expected: 'denied', actual: 'denied', passed: true, code: 'EACCES' })),
       { label: 'own_workspace_write', expected: 'allowed', actual: 'allowed', passed: true },
+      { label: 'outbound_ip_socket', expected: 'denied', actual: 'denied', passed: true, code: 'EAFNOSUPPORT' },
       { label: 'direct_postgres_connect', expected: 'denied', actual: 'denied', passed: true, code: 'postgres_authority_denied' },
     ],
     broker: {
@@ -77,6 +78,9 @@ test('agent activation proof is exact, fresh, principal-bound, and policy-bound'
   const wrongPolicy = validAgentProof();
   wrongPolicy.broker = { ...wrongPolicy.broker, policy_hash: 'c'.repeat(64) };
   assert.throws(() => validateAgentProof(wrongPolicy, contract), /agent_broker_proof_invalid/);
+  const allowedNetwork = validAgentProof();
+  allowedNetwork.checks.find((check) => check.label === 'outbound_ip_socket').actual = 'allowed';
+  assert.throws(() => validateAgentProof(allowedNetwork, contract), /agent_network_boundary_proof_invalid/);
 });
 
 test('provisioning plans derive every host identifier from the principal key', () => {

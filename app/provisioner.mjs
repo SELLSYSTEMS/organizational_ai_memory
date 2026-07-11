@@ -160,7 +160,7 @@ export function validateAgentProof(proof, {
     || (exactKeys(proof, [...baseKeys, 'personal_broker']) && proof.personal_broker === null);
   if (!exactRuntimeShape || proof.schema_version !== 1 || proof.principal_key !== principalKey
       || proof.runtime_user !== osUser || proof.passed !== true || !Array.isArray(proof.checks)
-      || proof.checks.length !== 6) {
+      || proof.checks.length !== 7) {
     throw new Error('agent_proof_contract_invalid');
   }
   const checkedAt = Date.parse(proof.checked_at);
@@ -187,6 +187,12 @@ export function validateAgentProof(proof, {
   if (!workspace || workspace.expected !== 'allowed' || workspace.actual !== 'allowed'
       || workspace.passed !== true) {
     throw new Error('agent_workspace_proof_invalid');
+  }
+  const outboundIpSocket = byLabel.get('outbound_ip_socket');
+  if (!outboundIpSocket || outboundIpSocket.expected !== 'denied'
+      || outboundIpSocket.actual !== 'denied' || outboundIpSocket.passed !== true
+      || !['EACCES', 'EPERM', 'EAFNOSUPPORT', 'EPROTONOSUPPORT'].includes(outboundIpSocket.code)) {
+    throw new Error('agent_network_boundary_proof_invalid');
   }
   const postgres = byLabel.get('direct_postgres_connect');
   if (!postgres || postgres.expected !== 'denied' || postgres.actual !== 'denied'

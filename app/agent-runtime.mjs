@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import http from 'node:http';
+import net from 'node:net';
 import path from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -57,6 +58,40 @@ async function ownWorkspaceProbe(stateDirectory) {
       code: boundedText(error?.code || 'write_failed', 40),
     };
   }
+}
+
+async function outboundIpSocketProbe() {
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (result, socket) => {
+      if (settled) return;
+      settled = true;
+      socket?.destroy();
+      resolve(result);
+    };
+    const socket = net.createConnection({ host: '127.0.0.1', port: 9 });
+    socket.setTimeout(1_500);
+    socket.once('connect', () => finish({
+      label: 'outbound_ip_socket', expected: 'denied', actual: 'allowed', passed: false,
+    }, socket));
+    socket.once('timeout', () => finish({
+      label: 'outbound_ip_socket',
+      expected: 'denied',
+      actual: 'probe_failed',
+      passed: false,
+      code: 'network_probe_timeout',
+    }, socket));
+    socket.once('error', (error) => {
+      const denied = ['EACCES', 'EPERM', 'EAFNOSUPPORT', 'EPROTONOSUPPORT'].includes(error?.code);
+      finish({
+        label: 'outbound_ip_socket',
+        expected: 'denied',
+        actual: denied ? 'denied' : 'allowed',
+        passed: denied,
+        code: boundedText(error?.code || 'network_probe_failed', 40),
+      }, socket);
+    });
+  });
 }
 
 async function postgresProbe(osUser) {
@@ -238,6 +273,7 @@ export async function runAgentProof(options = {}) {
   const access = await Promise.all((options.probes || DEFAULT_PROBES)
     .map(([label, targetPath]) => accessProbe(label, targetPath)));
   const workspace = await ownWorkspaceProbe(stateDirectory);
+  const outboundIpSocket = await outboundIpSocketProbe();
   const postgres = await postgresProbe(osUser);
   const broker = await requestBrokerRecommendation({ socketPath, token, principalKey });
   const personalQuery = options.personalQuery || process.env.OAM_AGENT_PERSONAL_CONTEXT_QUERY || '';
@@ -249,7 +285,7 @@ export async function runAgentProof(options = {}) {
       query: personalQuery,
     })
     : null;
-  const checks = [...access, workspace, postgres];
+  const checks = [...access, workspace, outboundIpSocket, postgres];
   const passed = checks.every((check) => check.passed)
     && broker.passed
     && (!personalBroker || personalBroker.passed);

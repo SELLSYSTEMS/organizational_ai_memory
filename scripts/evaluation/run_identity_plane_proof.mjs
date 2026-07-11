@@ -319,7 +319,7 @@ async function hostProbe(binding, principalKey, brokerSocketPath, phase) {
   const service = await runFile('/usr/bin/systemctl', [
     'show', expected.unitName, '--no-pager',
     '--property=ActiveState', '--property=SubState', '--property=User',
-    '--property=NoNewPrivileges', '--property=PrivateNetwork',
+    '--property=NoNewPrivileges',
   ], { allowFailure: true });
   const properties = Object.fromEntries(service.stdout.trim().split('\n').filter(Boolean).map((line) => {
     const index = line.indexOf('=');
@@ -349,7 +349,6 @@ async function hostProbe(binding, principalKey, brokerSocketPath, phase) {
     service_active: properties.ActiveState === 'active' && properties.SubState === 'running',
     service_user_matches: properties.User === expected.osUser,
     no_new_privileges: properties.NoNewPrivileges === 'yes',
-    private_network: properties.PrivateNetwork === 'yes',
     broker_socket_present: socket.exists && socket.socket,
     broker_group_member: groupNames.includes('oam-agent-broker'),
     account_locked: password.code === 0 && password.stdout.trim().split(/\s+/)[1] === 'L',
@@ -820,21 +819,24 @@ export async function runIdentityPlaneProof({
         broker_group_member: value?.broker_group_member === true,
       }),
     ) : null;
+    const proof = provisioned?.proof;
+    const outboundIpSocket = agentProofCheck(proof, 'outbound_ip_socket');
     recorder.derived(
       'SYS-01',
-      host,
-      (value) => value.service_active && value.service_user_matches
-        && value.no_new_privileges && value.private_network && value.broker_socket_present,
+      host && proof ? { host, outboundIpSocket } : null,
+      (value) => value.host.service_active && value.host.service_user_matches
+        && value.host.no_new_privileges && value.host.broker_socket_present
+        && value.outboundIpSocket?.passed === true
+        && value.outboundIpSocket.actual === 'denied',
       (value) => ({
-        active: value?.service_active === true,
-        dedicated_identity: value?.service_user_matches === true,
-        no_new_privileges: value?.no_new_privileges === true,
-        private_network: value?.private_network === true,
-        broker_socket_present: value?.broker_socket_present === true,
+        active: value?.host?.service_active === true,
+        dedicated_identity: value?.host?.service_user_matches === true,
+        no_new_privileges: value?.host?.no_new_privileges === true,
+        broker_socket_present: value?.host?.broker_socket_present === true,
+        outbound_ip_socket: checkedEvidence(value?.outboundIpSocket),
       }),
     );
 
-    const proof = provisioned?.proof;
     const protectedChecks = [
       agentProofCheck(proof, 'repository_read'),
       agentProofCheck(proof, 'installed_application_read'),
