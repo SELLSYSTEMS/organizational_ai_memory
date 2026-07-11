@@ -1,9 +1,9 @@
 # Organizational AI Memory
 
-**Elevator pitch:** Organizational AI Memory binds each employee to exactly one
-distinct governed Personal Memory Agent, then turns explicitly shared
-experience and reviewed work into searchable, reusable capability with full
-provenance.
+**Elevator pitch:** Organizational AI Memory turns individual prompts,
+workflows, decisions, and experience into reviewed, versioned, cited capability
+that authorized people and agents can safely reuse at task start with explicit
+source provenance.
 
 **Primary challenge:** P5, Organizational AI Memory. Independent agent
 identities are part of its enforcement architecture, ensuring that agent reuse
@@ -11,9 +11,12 @@ remains bounded by explicit policy.
 
 **Evidence status:** Release `525ff861b3580365839f487ca0dca10d0bf791cd`
 is live. It has build-bound 22/22 identity proof, 275/275 API/security checks,
-five passing real-PostgreSQL integration cases, 35/35 browser checks, eight
-public product captures, a 20-frame protected workflow, and a hashed H.264
-walkthrough.
+five previously executed passing real-PostgreSQL contract cases, 35/35 browser
+checks, eight public product captures, and a 20-frame protected workflow. The
+PostgreSQL cases are recorded contract evidence, not a fresh live-database run
+for this release. This submission-media branch adds two separately manifested,
+captioned 1080p judge videos built from that release evidence and one fresh
+public capability capture.
 
 ## Inspiration
 
@@ -37,23 +40,6 @@ promote, or change it.
 
 ## What it does
 
-An architect can onboard an employee through one protected workflow. The
-system atomically creates the human principal, exactly one Personal Memory
-Agent, a private employee workspace, and the policy records needed for physical
-provisioning. The pair stays unusable until a confirmed root provisioner creates
-and proves the agent's locked Linux identity, private state, systemd unit,
-broker credential, grants, and lack of direct PostgreSQL authority.
-
-The employee then records a versioned profile, experiences, lessons,
-preferences, skills, decisions, and patterns. New memory is private. A separate
-revision-bound action can let only the linked Personal Memory Agent retrieve the
-current version. Editing creates a new owner-only version, so the employee must
-explicitly share the revision again. Results carry memory ID, revision, and
-SHA-256 citations. The employee workspace preview and the dedicated Linux agent
-process are labeled as separate execution paths. Personal sharing does not
-publish content into organizational memory; that remains a separate
-review-gated path.
-
 Organizational AI Memory captures reusable capability as typed, versioned
 prompts, workflows, agent patterns, decision patterns, and best practices. Each
 asset records its purpose, constraints, review state, intended consumers, why it
@@ -67,6 +53,24 @@ source-first decision pattern. Codex Spark can adapt only those selected
 public-safe records into a cited plan. It cannot choose different assets or
 change authoritative memory, and the complete stored recommendation remains
 available if generation fails.
+
+An architect can also onboard an employee through one protected workflow. The
+system atomically creates the human principal, exactly one Personal Memory
+Agent, a private employee workspace, and the policy records needed for physical
+provisioning. The pair stays unusable until a confirmed root provisioner creates
+and proves the agent's locked Linux identity, private state, systemd unit,
+broker credential, grants, and lack of direct PostgreSQL authority.
+
+The employee then records a versioned profile, experiences, lessons,
+preferences, skills, decisions, and patterns. New memory is private. A separate
+revision-bound action can let only the linked Personal Memory Agent retrieve the
+current version. Editing creates a new owner-only version, so the employee must
+explicitly share the revision again. Results carry memory ID, revision, and
+SHA-256 citations. The employee workspace preview and the dedicated Linux agent
+process are labeled as separate execution paths. Personal sharing does not
+publish content into organizational memory and has no automatic promotion path.
+Organizational candidates enter a separate quarantine, evidence, independent
+review, and draft-only promotion lane.
 
 The protected Architect Console provides the governed path from quarantined
 input to a reviewed promotion draft:
@@ -199,6 +203,10 @@ them into regression coverage rather than hiding them in release material.
 - Automated API/security, real PostgreSQL integration, and browser
   route/viewport suites cover the product and its allow/deny boundaries without
   relying on a slide-only demonstration.
+- The final public capture made exactly one Spark request and produced a
+  six-step adaptation whose assets and source turns passed citation
+  containment. The 55.50-second and 177.00-second videos include narration,
+  burned-in captions, WebVTT, transcript, hashes, and full-stream QA.
 - The live protected workflow and recorded real-PostgreSQL integration coverage exercise atomic
   onboarding, one-to-one cardinality, physical activation conditions, private
   versioned capture, explicit agent access, cited retrieval, cross-employee
@@ -250,13 +258,14 @@ ceiling.
 - nginx
 - OpenAI Codex CLI with `gpt-5.3-codex-spark`
 - Playwright and system Chrome
+- FFmpeg and WebVTT
+- ElevenLabs Multilingual v2 narration
 - Google Stitch for bounded design exploration
 
 ## Optional Links
 
 - [Live product](https://memory.sellsystems.agency/)
 - [Capability workspace](https://memory.sellsystems.agency/capabilities)
-- [Protected employee workspace](https://memory.sellsystems.agency/workspace/)
 - [Architecture and authority method](https://memory.sellsystems.agency/method)
 - [Public evidence inspector](https://memory.sellsystems.agency/evidence)
 - [Sanitized 22-control proof](https://memory.sellsystems.agency/api/public/access-proof)

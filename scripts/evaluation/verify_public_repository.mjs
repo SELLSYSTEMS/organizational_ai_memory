@@ -13,6 +13,15 @@ const releaseManifestPath = path.join(
   'release-media-manifest.json',
 );
 const releaseManifest = JSON.parse(fs.readFileSync(releaseManifestPath, 'utf8'));
+const finalMediaManifestPath = path.join(
+  repositoryRoot,
+  'artifacts',
+  'submission',
+  'media',
+  'final-judge-video',
+  'final-judge-media-manifest.json',
+);
+const finalMediaManifest = JSON.parse(fs.readFileSync(finalMediaManifestPath, 'utf8'));
 const publishingGuide = 'docs/submission/PUBLISHING.md';
 
 function gitOutput(args, options = {}) {
@@ -54,6 +63,7 @@ function binaryKind(relativePath) {
   if (relativePath.endsWith('.png')) return 'png';
   if (relativePath.endsWith('.mp4')) return 'mp4';
   if (relativePath.endsWith('.webm')) return 'webm';
+  if (relativePath.endsWith('.mp3')) return 'mp3';
   return null;
 }
 
@@ -69,6 +79,10 @@ function binarySignatureMatches(kind, buffer) {
     return buffer.length >= 4
       && buffer.subarray(0, 4).equals(Buffer.from('1a45dfa3', 'hex'));
   }
+  if (kind === 'mp3') {
+    return (buffer.length >= 3 && buffer.subarray(0, 3).toString('ascii') === 'ID3')
+      || (buffer.length >= 2 && buffer[0] === 0xff && (buffer[1] & 0xe0) === 0xe0);
+  }
   return false;
 }
 
@@ -78,11 +92,32 @@ const releaseBinaryEntries = [
   ...(releaseManifest.media?.employee_screenshots || []),
   ...(releaseManifest.media?.public_screenshots || []),
 ].filter(Boolean);
+const expectedFinalBinaryPaths = new Set([
+  'artifacts/submission/media/final-judge-video/organizational-ai-memory-full-narration.mp3',
+  'artifacts/submission/media/final-judge-video/organizational-ai-memory-live-demo-narration.mp3',
+  'artifacts/submission/media/final-judge-video/organizational-ai-memory-live-pitch-demo.mp4',
+  'artifacts/submission/media/final-judge-video/organizational-ai-memory-p5-judge-demo-poster.png',
+  'artifacts/submission/media/final-judge-video/organizational-ai-memory-p5-judge-demo.mp4',
+  'artifacts/submission/media/final-judge-video/sources/01-home-1920x1080.png',
+  'artifacts/submission/media/final-judge-video/sources/02-search-results-1920x1080.png',
+  'artifacts/submission/media/final-judge-video/sources/03-asset-inspector-provenance-1920x1080.png',
+  'artifacts/submission/media/final-judge-video/sources/04-asset-source-path-1920x1080.png',
+  'artifacts/submission/media/final-judge-video/sources/05-assist-result-1920x1080.png',
+  'artifacts/submission/media/final-judge-video/sources/06-analytics-access-proof-1920x1080.png',
+  'artifacts/submission/media/final-judge-video/sources/public-capability-interaction.webm',
+]);
+const finalBinaryEntries = finalMediaManifest.artifacts?.binary || [];
+const declaredFinalBinaryPaths = new Set(finalBinaryEntries.map((entry) => entry.path));
+if (declaredFinalBinaryPaths.size !== expectedFinalBinaryPaths.size
+    || [...declaredFinalBinaryPaths].some((relativePath) => !expectedFinalBinaryPaths.has(relativePath))) {
+  throw new Error('Final media manifest binary allowlist does not match the repository contract.');
+}
 const reviewedBinaryPaths = new Set([
   'app/public/assets/og-organizational-ai-memory.png',
   'artifacts/design/ARCHITECT_CONSOLE_CONCEPT_2026-07-11.png',
   'artifacts/design/JUDGE_DEMO_CONCEPT_2026-07-11.png',
   ...releaseBinaryEntries.map((entry) => entry.path),
+  ...declaredFinalBinaryPaths,
 ]);
 const approvedTextExtensions = new Set([
   '.conf',
@@ -101,6 +136,7 @@ const approvedTextExtensions = new Set([
   '.svg',
   '.target',
   '.txt',
+  '.vtt',
   '.xml',
   '.yaml',
   '.yml',
@@ -132,6 +168,11 @@ const unsafeArtifactExtension = /\.(?:token|sqlite3?|db|zip|tar|tgz|gz|7z|rar|p1
 const credentialExportName = /(?:cookie|session|storage-state|credential|auth|token)[^/]*\.json$/i;
 const allowedHistoricalBinaryPath = /^(?:app\/public\/assets\/[^/]+\.png|artifacts\/design\/[^/]+\.png|artifacts\/submission\/(?:screenshots\/[^/]+\.png|media\/(?:[^/]+\.(?:mp4|webm)|screenshots\/employee-workflow\/[^/]+\.png)))$/;
 
+function isAllowedHistoricalBinaryPath(relativePath) {
+  return allowedHistoricalBinaryPath.test(relativePath)
+    || expectedFinalBinaryPaths.has(relativePath);
+}
+
 function unsafePathRule(relativePath, { historical = false } = {}) {
   const segments = relativePath.split('/');
   const basename = segments.at(-1) || '';
@@ -144,7 +185,7 @@ function unsafePathRule(relativePath, { historical = false } = {}) {
   if (unsafeArtifactExtension.test(basename)) return 'unsafe archive or database artifact';
   if (historical
       && !isApprovedTextPath(relativePath)
-      && !allowedHistoricalBinaryPath.test(relativePath)) {
+      && !isAllowedHistoricalBinaryPath(relativePath)) {
     return 'unapproved historical file type';
   }
   return null;
@@ -157,6 +198,8 @@ const secretPatterns = [
   ['Google API header value', /(?:\\?["'])?X-Goog-Api-Key(?:\\?["'])?\s*[:=]\s*(?:\\?["'])?[A-Za-z0-9._-]{20,}/i],
   ['GitHub credential', /(?:github_pat_[A-Za-z0-9_]{22,}|gh[pousr]_[A-Za-z0-9]{20,})/],
   ['OpenAI credential', /sk-(?:proj-|svcacct-)?[A-Za-z0-9_-]{40,}/],
+  ['ElevenLabs credential', /\bsk_[A-Za-z0-9_-]{48}\b/],
+  ['ElevenLabs API header value', /(?:\\?["'])?xi-api-key(?:\\?["'])?\s*[:=]\s*(?:\\?["'])?sk_[A-Za-z0-9_-]{48}/i],
   ['bearer credential', /(?:\\?["'])?Authorization(?:\\?["'])?\s*[:=]\s*(?:\\?["'])?Bearer\s+[A-Za-z0-9._~-]{16,}/i],
   ['workspace access fragment', /(?:#|%23)access_token=[A-Za-z0-9._~-]{12,}/i],
   ['employee session credential', /(?:\\?["'])?oam_employee_session(?:\\?["'])?\s*[:=]\s*(?:\\?["'])?[A-Za-z0-9._~-]{12,}/i],
@@ -254,7 +297,9 @@ for (const relativePath of files) {
   const expectedKind = reviewedBinaryPaths.has(relativePath) ? binaryKind(relativePath) : null;
   if (expectedKind) {
     binaryFiles += 1;
-    if (!isBinary(buffer)) record(relativePath, null, `reviewed ${expectedKind} path is not binary`);
+    if (expectedKind !== 'mp3' && !isBinary(buffer)) {
+      record(relativePath, null, `reviewed ${expectedKind} path is not binary`);
+    }
     else if (!binarySignatureMatches(expectedKind, buffer)) {
       record(relativePath, null, `invalid ${expectedKind} signature`);
     }
@@ -333,9 +378,9 @@ for (const expected of blobObjects) {
 
   const relativePath = objectPaths.get(oid) || `@blob/${oid}`;
   const origin = `history-blob:${oid.slice(0, 12)}`;
-  const kind = allowedHistoricalBinaryPath.test(relativePath) ? binaryKind(relativePath) : null;
+  const kind = isAllowedHistoricalBinaryPath(relativePath) ? binaryKind(relativePath) : null;
   if (kind) {
-    if (!isBinary(buffer)) {
+    if (kind !== 'mp3' && !isBinary(buffer)) {
       record(relativePath, null, `reviewed historical ${kind} path is not binary`, origin);
     } else if (!binarySignatureMatches(kind, buffer)) {
       record(relativePath, null, `invalid historical ${kind} signature`, origin);

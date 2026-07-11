@@ -49,6 +49,7 @@ deploy/nginx/organizational-ai-memory.conf
 
 handoff/*
 !handoff/FINAL_HACKATHON_MVP_HANDOFF_2026-07-10.md
+!handoff/FINAL_JUDGE_MEDIA_HANDOFF_2026-07-11.md
 !handoff/aihackathon_public_safe_asset_pack_2026-07-10/
 handoff/aihackathon_public_safe_asset_pack_2026-07-10/*
 !handoff/aihackathon_public_safe_asset_pack_2026-07-10/assets.json

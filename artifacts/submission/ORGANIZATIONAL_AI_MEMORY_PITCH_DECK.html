@@ -1,0 +1,1494 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Organizational AI Memory | AABW P5 Pitch Deck</title>
+  <style>
+    :root {
+      --ink: #15201f;
+      --muted: #586461;
+      --paper: #f7f8f5;
+      --white: #ffffff;
+      --line: #cfd7d2;
+      --soft: #e8eeea;
+      --teal: #08796f;
+      --teal-dark: #0a4945;
+      --teal-soft: #dceee9;
+      --amber: #a95d08;
+      --amber-soft: #f5e5c8;
+      --red: #a43b32;
+      --stage-scale: 1;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #0d1212;
+    }
+
+    body,
+    button,
+    video {
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button {
+      font-size: 16px;
+    }
+
+    .stage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      transform: translate(-50%, -50%) scale(var(--stage-scale));
+      transform-origin: center;
+      background: var(--paper);
+      box-shadow: 0 24px 80px rgb(0 0 0 / 34%);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-rows: 64px minmax(0, 1fr) 52px;
+      gap: 20px;
+      padding: 38px 92px 34px;
+      overflow: hidden;
+      color: var(--ink);
+      background: var(--paper);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateX(18px);
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+
+    .slide.is-active {
+      z-index: 2;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .slide--dark {
+      color: var(--white);
+      background: #132321;
+    }
+
+    .slide--teal {
+      color: var(--white);
+      background: var(--teal-dark);
+    }
+
+    .slide-header,
+    .slide-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-width: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      min-width: 0;
+      color: inherit;
+      font-size: 18px;
+      font-weight: 720;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 32px;
+      height: 32px;
+      place-items: center;
+      border: 1px solid currentColor;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .section-label,
+    .disclosure,
+    .source-note,
+    figcaption,
+    .metric-label,
+    .status-line {
+      font-size: 16px;
+      line-height: 1.35;
+      color: var(--muted);
+    }
+
+    .slide--dark .section-label,
+    .slide--dark .disclosure,
+    .slide--dark .source-note,
+    .slide--dark figcaption,
+    .slide--teal .section-label,
+    .slide--teal .disclosure,
+    .slide--teal .source-note,
+    .slide--teal figcaption {
+      color: #c3d2ce;
+    }
+
+    .section-label {
+      font-weight: 650;
+    }
+
+    .slide-footer {
+      padding-right: 370px;
+      border-top: 1px solid var(--line);
+    }
+
+    .slide--dark .slide-footer,
+    .slide--teal .slide-footer {
+      border-top-color: rgb(255 255 255 / 24%);
+    }
+
+    .disclosure {
+      white-space: nowrap;
+    }
+
+    .release {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    h1,
+    h2,
+    h3,
+    p,
+    figure,
+    blockquote {
+      margin: 0;
+    }
+
+    h1 {
+      max-width: 740px;
+      font-size: 76px;
+      font-weight: 760;
+      line-height: 1.03;
+    }
+
+    h2 {
+      max-width: 1260px;
+      font-size: 54px;
+      font-weight: 740;
+      line-height: 1.08;
+    }
+
+    h3 {
+      font-size: 24px;
+      font-weight: 720;
+      line-height: 1.2;
+    }
+
+    .lede {
+      max-width: 760px;
+      font-size: 30px;
+      line-height: 1.42;
+      color: var(--muted);
+    }
+
+    .slide--dark .lede,
+    .slide--teal .lede {
+      color: #cfdbd8;
+    }
+
+    .accent-rule {
+      width: 104px;
+      height: 8px;
+      margin-bottom: 28px;
+      background: var(--teal);
+    }
+
+    .slide--dark .accent-rule,
+    .slide--teal .accent-rule {
+      background: #56c6b9;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 0.82fr 1.18fr;
+      align-items: center;
+      gap: 72px;
+      min-height: 0;
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .team-line {
+      padding-top: 26px;
+      border-top: 1px solid var(--line);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--teal-dark);
+    }
+
+    .media-frame {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--white);
+      box-shadow: 0 18px 54px rgb(17 34 31 / 12%);
+    }
+
+    .slide--dark .media-frame,
+    .slide--teal .media-frame {
+      border-color: rgb(255 255 255 / 24%);
+      background: #0d1716;
+      box-shadow: 0 18px 54px rgb(0 0 0 / 28%);
+    }
+
+    .media-frame img,
+    .media-frame video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero-media {
+      aspect-ratio: 16 / 9;
+    }
+
+    .hero-media::after {
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgb(255 255 255 / 40%);
+      content: "";
+      pointer-events: none;
+    }
+
+    .slide-two-grid {
+      display: grid;
+      grid-template-columns: 0.72fr 1.28fr;
+      gap: 68px;
+      min-height: 0;
+    }
+
+    .problem-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    .problem-copy h2 {
+      margin-bottom: 34px;
+    }
+
+    .question-list {
+      border-top: 2px solid var(--ink);
+    }
+
+    .question-list p {
+      display: flex;
+      align-items: center;
+      min-height: 76px;
+      border-bottom: 1px solid var(--line);
+      font-size: 25px;
+      font-weight: 620;
+    }
+
+    .inspector-stack {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      min-height: 0;
+      padding: 18px 0;
+    }
+
+    .captioned-media {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .inspector-crop {
+      min-height: 0;
+    }
+
+    .inspector-crop img {
+      width: 200%;
+      max-width: none;
+      object-fit: cover;
+      transform: translateX(-50%);
+    }
+
+    .inspector-crop--source img {
+      width: 230%;
+      transform: translateX(-57%);
+    }
+
+    .workflow-layout {
+      display: grid;
+      grid-template-rows: auto 122px minmax(0, 1fr);
+      gap: 24px;
+      min-height: 0;
+    }
+
+    .workflow-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 36px;
+    }
+
+    .workflow-heading .lede {
+      max-width: 590px;
+      font-size: 23px;
+      text-align: right;
+    }
+
+    .workflow-rail {
+      display: grid;
+      grid-template-columns: 0.7fr 44px 1.4fr 44px 1fr 44px 1fr 44px 1.25fr;
+      align-items: stretch;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .flow-step {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .flow-step span {
+      margin-bottom: 5px;
+      font-size: 15px;
+      font-weight: 650;
+      color: var(--teal);
+    }
+
+    .flow-arrow {
+      display: grid;
+      place-items: center;
+      color: var(--teal);
+    }
+
+    .flow-arrow svg {
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 2;
+    }
+
+    .workflow-media {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      min-height: 0;
+    }
+
+    .workflow-media .media-frame {
+      min-height: 0;
+    }
+
+    .lane-layout {
+      display: grid;
+      grid-template-rows: auto 194px minmax(0, 1fr);
+      gap: 26px;
+      min-height: 0;
+    }
+
+    .lane-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 40px;
+    }
+
+    .lane-heading .lede {
+      max-width: 690px;
+      font-size: 23px;
+      text-align: right;
+    }
+
+    .lane-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    .lane {
+      padding: 24px 28px;
+      border-left: 8px solid #69cbbf;
+      background: rgb(255 255 255 / 8%);
+    }
+
+    .lane--org {
+      border-left-color: #e7ad5d;
+    }
+
+    .lane-label {
+      display: block;
+      margin-bottom: 18px;
+      font-size: 18px;
+      font-weight: 740;
+      color: #a9ddd6;
+    }
+
+    .lane--org .lane-label {
+      color: #f2c88b;
+    }
+
+    .lane-flow {
+      font-size: 23px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .lane-boundary {
+      margin-top: 15px;
+      font-size: 18px;
+      line-height: 1.35;
+      color: #d4e2df;
+    }
+
+    .proof-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      min-height: 0;
+    }
+
+    .proof-strip .media-frame {
+      min-height: 0;
+      box-shadow: none;
+    }
+
+    .proof-strip img {
+      object-position: center top;
+    }
+
+    .proof-frame {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 10px;
+      min-height: 0;
+    }
+
+    .evidence-layout {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 30px;
+      min-height: 0;
+    }
+
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: 0.94fr 1.06fr;
+      gap: 48px;
+      min-height: 0;
+    }
+
+    .evidence-copy {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .evidence-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 21px;
+      line-height: 1.25;
+    }
+
+    .evidence-table th,
+    .evidence-table td {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .evidence-table th {
+      border-top: 2px solid var(--ink);
+      color: var(--muted);
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .evidence-value {
+      display: grid;
+      grid-template-columns: 76px 1fr;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .evidence-number {
+      font-size: 26px;
+      font-weight: 760;
+      color: var(--teal-dark);
+    }
+
+    .evidence-kind {
+      font-size: 17px;
+      font-weight: 650;
+      line-height: 1.2;
+      color: var(--muted);
+    }
+
+    .contract-note {
+      margin-top: 20px;
+      padding-left: 18px;
+      border-left: 5px solid var(--amber);
+      font-size: 18px;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+
+    .evidence-media {
+      display: grid;
+      grid-template-rows: 1.15fr 0.85fr;
+      gap: 18px;
+      min-height: 0;
+    }
+
+    .analytics-crop img {
+      width: 100%;
+      max-width: 100%;
+      object-position: right top;
+      transform: none;
+      object-fit: cover;
+    }
+
+    .demo-layout {
+      display: grid;
+      grid-template-columns: 0.62fr 1.38fr;
+      align-items: center;
+      gap: 56px;
+      min-height: 0;
+    }
+
+    .demo-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 34px;
+    }
+
+    .demo-quote {
+      padding-left: 28px;
+      border-left: 8px solid #5bc8bc;
+      font-size: 45px;
+      font-weight: 720;
+      line-height: 1.2;
+    }
+
+    .demo-state {
+      min-height: 124px;
+      padding-top: 26px;
+      border-top: 1px solid rgb(255 255 255 / 24%);
+      font-size: 25px;
+      font-weight: 620;
+      line-height: 1.4;
+      color: #d9e4e2;
+    }
+
+    .demo-video {
+      aspect-ratio: 16 / 9;
+      background: #000000;
+    }
+
+    .demo-video video {
+      object-fit: contain;
+      background: #000000;
+    }
+
+    .appendix-title {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 40px;
+      min-width: 0;
+    }
+
+    .appendix-title .lede {
+      max-width: 640px;
+      font-size: 23px;
+      text-align: right;
+    }
+
+    .planes-layout,
+    .threat-layout,
+    .authority-layout,
+    .governance-layout,
+    .gaps-layout {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 32px;
+      min-height: 0;
+    }
+
+    .planes-grid {
+      display: grid;
+      grid-template-columns: 1.22fr 0.78fr;
+      gap: 40px;
+      min-height: 0;
+    }
+
+    .plane-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 2px solid currentColor;
+      border-left: 1px solid var(--line);
+    }
+
+    .plane {
+      padding: 30px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .plane-number {
+      display: block;
+      margin-bottom: 13px;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--teal);
+    }
+
+    .plane p {
+      margin-top: 12px;
+      font-size: 19px;
+      line-height: 1.42;
+      color: var(--muted);
+    }
+
+    .appendix-media {
+      min-height: 0;
+    }
+
+    .appendix-media img {
+      object-position: center top;
+    }
+
+    .boundary-note {
+      margin-top: 14px;
+      padding: 18px 20px;
+      border-left: 6px solid var(--amber);
+      background: var(--amber-soft);
+      font-size: 18px;
+      line-height: 1.4;
+    }
+
+    .threat-grid {
+      display: grid;
+      grid-template-columns: 0.82fr 1.18fr;
+      gap: 46px;
+      min-height: 0;
+    }
+
+    .threat-copy {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .trust-boundary {
+      margin-bottom: 22px;
+      padding: 20px 22px;
+      border-left: 7px solid var(--amber);
+      background: var(--amber-soft);
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .deny-list {
+      border-top: 2px solid var(--ink);
+    }
+
+    .deny-row {
+      display: grid;
+      grid-template-columns: 1fr 112px;
+      align-items: center;
+      min-height: 62px;
+      border-bottom: 1px solid var(--line);
+      font-size: 20px;
+      font-weight: 610;
+    }
+
+    .result {
+      justify-self: end;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--red);
+    }
+
+    .result--allow {
+      color: var(--teal);
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 24px;
+      line-height: 1.34;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 24px 30px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .comparison-table th:last-child,
+    .comparison-table td:last-child {
+      border-right: 0;
+    }
+
+    .comparison-table th {
+      border-top: 8px solid var(--teal);
+      background: var(--teal-soft);
+      font-size: 21px;
+      color: var(--teal-dark);
+    }
+
+    .comparison-table th:last-child {
+      border-top-color: var(--amber);
+      background: var(--amber-soft);
+      color: #6f3b00;
+    }
+
+    .comparison-table td {
+      height: 94px;
+      font-weight: 620;
+    }
+
+    .authority-note {
+      margin-top: 24px;
+      font-size: 23px;
+      font-weight: 700;
+      color: var(--teal-dark);
+    }
+
+    .governance-grid {
+      display: grid;
+      grid-template-columns: 1fr 0.82fr;
+      gap: 50px;
+      min-height: 0;
+    }
+
+    .governance-flow {
+      display: grid;
+      align-content: center;
+      gap: 0;
+      min-height: 0;
+      border-top: 2px solid currentColor;
+    }
+
+    .governance-step {
+      display: grid;
+      grid-template-columns: 72px 1fr auto;
+      align-items: center;
+      min-height: 84px;
+      border-bottom: 1px solid rgb(255 255 255 / 24%);
+      font-size: 25px;
+      font-weight: 680;
+    }
+
+    .governance-step span:first-child {
+      color: #77d3c8;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .governance-step span:last-child {
+      font-size: 16px;
+      color: #bed0cc;
+    }
+
+    .governance-step--deny {
+      color: #ffd4cd;
+    }
+
+    .gaps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 46px;
+      min-height: 0;
+    }
+
+    .roadmap-column {
+      padding-top: 24px;
+      border-top: 8px solid var(--teal);
+    }
+
+    .roadmap-column--gaps {
+      border-top-color: var(--amber);
+    }
+
+    .roadmap-column h3 {
+      margin-bottom: 26px;
+      font-size: 30px;
+    }
+
+    .roadmap-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid var(--line);
+    }
+
+    .roadmap-list li {
+      position: relative;
+      min-height: 88px;
+      padding: 22px 12px 20px 48px;
+      border-bottom: 1px solid var(--line);
+      font-size: 22px;
+      font-weight: 620;
+      line-height: 1.35;
+    }
+
+    .roadmap-list li::before {
+      position: absolute;
+      top: 30px;
+      left: 14px;
+      width: 12px;
+      height: 12px;
+      border: 3px solid var(--teal);
+      border-radius: 50%;
+      content: "";
+    }
+
+    .roadmap-column--gaps .roadmap-list li::before {
+      border-color: var(--amber);
+      border-radius: 2px;
+    }
+
+    .controls {
+      position: absolute;
+      right: 48px;
+      bottom: 24px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+    }
+
+    .icon-button {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      place-items: center;
+      border: 1px solid #b6c2bd;
+      border-radius: 4px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 94%);
+      cursor: pointer;
+    }
+
+    .icon-button:hover {
+      border-color: var(--teal);
+      color: var(--teal-dark);
+    }
+
+    .icon-button:focus-visible {
+      outline: 4px solid #f1b760;
+      outline-offset: 2px;
+    }
+
+    .icon-button:disabled {
+      opacity: 0.42;
+      cursor: default;
+    }
+
+    .icon-button svg {
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 2;
+    }
+
+    .slide-count {
+      display: grid;
+      min-width: 80px;
+      height: 48px;
+      padding: 0 10px;
+      place-items: center;
+      border: 1px solid #b6c2bd;
+      border-radius: 4px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 94%);
+      font-size: 17px;
+      font-variant-numeric: tabular-nums;
+      font-weight: 750;
+      text-align: center;
+    }
+
+    .progress {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 21;
+      height: 7px;
+      background: rgb(8 121 111 / 18%);
+    }
+
+    .progress span {
+      display: block;
+      width: 9.09%;
+      height: 100%;
+      background: var(--teal);
+      transition: width 160ms ease;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .slide,
+      .progress span {
+        transition: none;
+      }
+    }
+
+    @media print {
+      html,
+      body {
+        height: auto;
+        overflow: visible;
+        background: #ffffff;
+      }
+
+      .stage {
+        position: static;
+        width: auto;
+        height: auto;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .slide {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        break-after: page;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+      }
+
+      .controls,
+      .progress {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage" id="stage" aria-label="Organizational AI Memory pitch deck">
+    <section class="slide is-active" data-title="Team and promise" role="group" aria-roledescription="slide" aria-label="Slide 1 of 11: Team and promise">
+      <header class="slide-header">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">OAM</span> Organizational AI Memory</div>
+        <div class="section-label">AABW 2026 · P5</div>
+      </header>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <div>
+            <div class="accent-rule" aria-hidden="true"></div>
+            <h1>Organizational AI Memory</h1>
+          </div>
+          <p class="lede">Turn individual AI know-how into reviewed, cited organizational capability.</p>
+          <p class="team-line">SELLSYSTEMS · Founder Mode Track</p>
+        </div>
+        <figure class="media-frame hero-media">
+          <img src="media/final-judge-video/sources/01-home-1920x1080.png" alt="The live Organizational AI Memory home page showing the capability workspace and reviewed assets">
+        </figure>
+      </div>
+      <footer class="slide-footer">
+        <span class="disclosure">Synthetic public-safe demonstration data</span>
+        <span class="release">Live release evidence · 525ff861</span>
+      </footer>
+    </section>
+
+    <section class="slide" data-title="Problem insight" role="group" aria-roledescription="slide" aria-label="Slide 2 of 11: Problem insight">
+      <header class="slide-header">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">OAM</span> Organizational AI Memory</div>
+        <div class="section-label">Problem insight</div>
+      </header>
+      <div class="slide-two-grid">
+        <div class="problem-copy">
+          <div class="accent-rule" aria-hidden="true"></div>
+          <h2>The failure is not storage. It is authority + context.</h2>
+          <div class="question-list" aria-label="Questions a memory system must answer">
+            <p>What is current?</p>
+            <p>Why did it work?</p>
+            <p>Who may reuse it?</p>
+            <p>What changed after review?</p>
+          </div>
+        </div>
+        <div class="inspector-stack">
+          <figure class="captioned-media">
+            <div class="media-frame inspector-crop">
+              <img src="media/final-judge-video/sources/03-asset-inspector-provenance-1920x1080.png" alt="Typed and versioned capability asset inspector with constraints, rationale, content hash, and provenance">
+            </div>
+            <figcaption>Typed asset · version · review state · content hash</figcaption>
+          </figure>
+          <figure class="captioned-media">
+            <div class="media-frame inspector-crop inspector-crop--source">
+              <img src="media/final-judge-video/sources/04-asset-source-path-1920x1080.png" alt="Capability asset inspector showing the asset-to-observation-to-source-turn path">
+            </div>
+            <figcaption>Inspectable asset → observation → source-turn path</figcaption>
+          </figure>
+        </div>
+      </div>
+      <footer class="slide-footer">
+        <span class="disclosure">Synthetic public-safe demonstration data</span>
+        <span class="release">Authority before similarity</span>
+      </footer>
+    </section>
+
+    <section class="slide" data-title="Agentic workflow" role="group" aria-roledescription="slide" aria-label="Slide 3 of 11: Agentic workflow">
+      <header class="slide-header">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">OAM</span> Organizational AI Memory</div>
+        <div class="section-label">Agentic workflow</div>
+      </header>
+      <div class="workflow-layout">
+        <div class="workflow-heading">
+          <h2>Start with governed memory, then adapt.</h2>
+          <p class="lede">The model never selects company truth.</p>
+        </div>
+        <div class="workflow-rail" aria-label="Bounded capability reuse flow">
+          <div class="flow-step"><span>01</span>Goal</div>
+          <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-step"><span>02</span>Deterministic capability selection</div>
+          <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-step"><span>03</span>Bounded Spark adaptation</div>
+          <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-step"><span>04</span>Validated citations</div>
+          <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-step"><span>05</span>Governed reuse or fail-closed denial</div>
+        </div>
+        <div class="workflow-media">
+          <figure class="captioned-media">
+            <div class="media-frame"><img src="media/final-judge-video/sources/02-search-results-1920x1080.png" alt="Deterministic search returning an approved prompt, workflow, and decision before model generation"></div>
+            <figcaption>1 · Approved source set selected before generation</figcaption>
+          </figure>
+          <figure class="captioned-media">
+            <div class="media-frame"><img src="media/final-judge-video/sources/05-assist-result-1920x1080.png" alt="A structured Codex Spark plan whose asset and source-turn citations are validated"></div>
+            <figcaption>2 · Structured adaptation constrained to that set</figcaption>
+          </figure>
+        </div>
+      </div>
+      <footer class="slide-footer">
+        <span class="disclosure">Synthetic public-safe demonstration data</span>
+        <span class="release">Deterministic recommendation remains authoritative</span>
+      </footer>
+    </section>
+
+    <section class="slide slide--teal" data-title="Personal contribution and governance" role="group" aria-roledescription="slide" aria-label="Slide 4 of 11: Personal contribution and governance">
+      <header class="slide-header">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">OAM</span> Organizational AI Memory</div>
+        <div class="section-label">Why it wins</div>
+      </header>
+      <div class="lane-layout">
+        <div class="lane-heading">
+          <h2>Personal contribution without automatic publication.</h2>
+          <p class="lede">Human and linked agent remain distinct principals.</p>
+        </div>
+        <div class="lane-grid">
+          <div class="lane">
+            <span class="lane-label">PERSONAL MEMORY LANE</span>
+            <p class="lane-flow">owner-only revision → explicit current-revision consent → brokered cited retrieval → edit resets access</p>
+            <p class="lane-boundary">Private by default. Consent applies to exact content, not permanent blanket access.</p>
+          </div>
+          <div class="lane lane--org">
+            <span class="lane-label">ORGANIZATIONAL CANDIDATE LANE</span>
+            <p class="lane-flow">quarantine → sealed evidence → independent review → architect draft</p>
+            <p class="lane-boundary">Separate workflow. No automatic promotion from personal memory and no autonomous canonical write.</p>
+          </div>
+        </div>
+        <div class="proof-strip">
+          <figure class="proof-frame">
+            <div class="media-frame"><img src="media/screenshots/employee-workflow/12-private-memory-excluded.png" alt="Personal Memory Agent search returns no result before current-revision consent"></div>
+            <figcaption>Private memory excluded</figcaption>
+          </figure>
+          <figure class="proof-frame">
+            <div class="media-frame"><img src="media/screenshots/employee-workflow/13-revision-bound-memory-consent.png" alt="Employee explicitly allows access to a current memory revision"></div>
+            <figcaption>Revision-bound consent</figcaption>
+          </figure>
+          <figure class="proof-frame">
+            <div class="media-frame"><img src="media/screenshots/employee-workflow/14-grounded-reuse-with-citation.png" alt="Personal Memory Agent returns grounded current-revision memory with a citation"></div>
+            <figcaption>Brokered cited reuse</figcaption>
+          </figure>
+          <figure class="proof-frame">
+            <div class="media-frame"><img src="media/screenshots/employee-workflow/20-physical-agent-runtime-proof.png" alt="Physical Personal Memory Agent proof showing denied source, secrets, network, and database access"></div>
+            <figcaption>Locked runtime proof</figcaption>
+          </figure>
+        </div>
+      </div>
+      <footer class="slide-footer">
+        <span class="disclosure">Synthetic public-safe demonstration data</span>
+        <span class="release">App policy · PostgreSQL scope · locked runtime · broker grant</span>
+      </footer>
+    </section>
+
+    <section class="slide" data-title="Evidence and impact" role="group" aria-roledescription="slide" aria-label="Slide 5 of 11: Evidence and impact">
+      <header class="slide-header">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">OAM</span> Organizational AI Memory</div>
+        <div class="section-label">Evidence + impact</div>
+      </header>
+      <div class="evidence-layout">
+        <div>
+          <div class="accent-rule" aria-hidden="true"></div>
+          <h2>Evidence now. Pilot measures next.</h2>
+        </div>
+        <div class="evidence-grid">
+          <div class="evidence-copy">
+            <table class="evidence-table">
+              <thead>
+                <tr><th>Observed release evidence</th><th>Proposed pilot measures</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><span class="evidence-value"><span class="evidence-number">275</span><span class="evidence-kind">API / security tests</span></span></td><td>approved asset reuse</td></tr>
+                <tr><td><span class="evidence-value"><span class="evidence-number">22</span><span class="evidence-kind">build-bound identity controls</span></span></td><td>recommendation acceptance</td></tr>
+                <tr><td><span class="evidence-value"><span class="evidence-number">35</span><span class="evidence-kind">browser checks</span></span></td><td>review turnaround</td></tr>
+                <tr><td><span class="evidence-value"><span class="evidence-number">7</span><span class="evidence-kind">physical-agent checks</span></span></td><td>denial + revocation success</td></tr>
+              </tbody>
+            </table>
+            <p class="contract-note">Five real-PostgreSQL integration cases are recorded contract evidence, not a fresh live run. No ROI or testimonial is claimed.</p>
+          </div>
+          <div class="evidence-media">
+            <figure class="captioned-media">
+              <div class="media-frame"><img src="media/screenshots/employee-workflow/20-physical-agent-runtime-proof.png" alt="Physical Personal Memory Agent proof with ordinary-workload allow and deny results"></div>
+              <figcaption>Physical-agent boundary evidence</figcaption>
+            </figure>
+            <figure class="captioned-media">
+              <div class="media-frame analytics-crop"><img src="media/final-judge-video/sources/06-analytics-access-proof-1920x1080.png" alt="Capability reuse analytics with coverage, authored duplicate signals, capability gaps, and governed access proof"></div>
+              <figcaption>Visible coverage, authored duplication, gaps, and access evidence</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+      <footer class="slide-footer">
+        <span class="disclosure">Synthetic public-safe demonstration data</span>
+        <span class="release">Observed checks are not business outcomes</span>
+      </footer>
+    </section>
+
+    <section class="slide slide--dark" data-title="Demo and close" role="group" aria-roledescription="slide" aria-label="Slide 6 of 11: Demo and close">
+      <header class="slide-header">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">OAM</span> Organizational AI Memory</div>
+        <div class="section-label">Demo + close</div>
+      </header>
+      <div class="demo-layout">
+        <div class="demo-copy">
+          <div class="accent-rule" aria-hidden="true"></div>
+          <blockquote class="demo-quote">The model can adapt the plan. It cannot decide what the company knows.</blockquote>
+          <p class="demo-state" id="demo-state" aria-live="polite">When people move on, the organization keeps reviewed capability, not their identity or private memory.</p>
+        </div>
+        <figure class="media-frame demo-video">
+          <video id="judge-video" controls preload="metadata" poster="media/final-judge-video/organizational-ai-memory-p5-judge-demo-poster.png">
+            <source src="media/final-judge-video/organizational-ai-memory-live-pitch-demo.mp4" type="video/mp4">
+            Your browser does not support local MP4 playback.
+          </video>
+        </figure>
+      </div>
+      <footer class="slide-footer">
+        <span class="disclosure">Synthetic public-safe demonstration data · 55.5 seconds · captions included</span>
+        <span class="release">Ready for a bounded enterprise pilot</span>
+      </footer>
+    </section>
+
+    <section class="slide" data-title="Four enforcement planes" role="group" aria-roledescription="slide" aria-label="Slide 7 of 11: Four enforcement planes">
+      <header class="slide-header">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">OAM</span> Organizational AI Memory</div>
+        <div class="section-label">Appendix A</div>
+      </header>
+      <div class="planes-layout">
+        <div class="appendix-title">
+          <h2>Four enforcement planes</h2>
+          <p class="lede">A policy statement becomes real only when every plane agrees.</p>
+        </div>
+        <div class="planes-grid">
+          <div>
+            <div class="plane-list">
+              <div class="plane"><span class="plane-number">01 · APPLICATION IDENTITY</span><h3>Human, agent, workload</h3><p>Distinct principals with explicit ownership and scope.</p></div>
+              <div class="plane"><span class="plane-number">02 · POLICY</span><h3>Department + template</h3><p>Sponsor ceilings and explicit denials constrain assignment.</p></div>
+              <div class="plane"><span class="plane-number">03 · RUNTIME IDENTITY</span><h3>Locked Linux agent</h3><p>Sandboxed service, private workspace, independent broker credential.</p></div>
+              <div class="plane"><span class="plane-number">04 · DATA AUTHORITY</span><h3>FORCE RLS + broker</h3><p>Fixed views and brokered grants; no direct agent PostgreSQL login.</p></div>
+            </div>
+            <p class="boundary-note"><strong>Claim boundary:</strong> the MVP does not claim a Linux or PostgreSQL account per human.</p>
+          </div>
+          <figure class="media-frame appendix-media"><img src="screenshots/07-architect-console-four-plane-1440.png" alt="Architect Console showing four-plane identity and governance controls"></figure>
+        </div>
+      </div>
+      <footer class="slide-footer">
+        <span class="disclosure">Synthetic public-safe demonstration data</span>
+        <span class="release">Application · policy · runtime · data authority</span>
+      </footer>
+    </section>
+
+    <section class="slide" data-title="Threat boundary" role="group" aria-roledescription="slide" aria-label="Slide 8 of 11: Threat boundary">
+      <header class="slide-header">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">OAM</span> Organizational AI Memory</div>
+        <div class="section-label">Appendix B</div>
+      </header>
+      <div class="threat-layout">
+        <div class="appendix-title">
+          <h2>Threat boundary</h2>
+          <p class="lede">Proof is scoped to ordinary workloads under trusted administrators.</p>
+        </div>
+        <div class="threat-grid">
+          <div class="threat-copy">
+            <p class="trust-boundary">Trusted: host root + PostgreSQL superuser</p>
+            <div class="deny-list" aria-label="Physical agent runtime results">
+              <div class="deny-row"><span>Protected repository + installed source</span><span class="result">DENIED</span></div>
+              <div class="deny-row"><span>Application + model credentials</span><span class="result">DENIED</span></div>
+              <div class="deny-row"><span>Outbound IP socket</span><span class="result">DENIED</span></div>
+              <div class="deny-row"><span>Direct PostgreSQL</span><span class="result">DENIED</span></div>
+              <div class="deny-row"><span>Own private workspace</span><span class="result result--allow">ALLOWED</span></div>
+              <div class="deny-row"><span>Consented current revision via broker</span><span class="result result--allow">ALLOWED</span></div>
+            </div>
+          </div>
+          <figure class="media-frame appendix-media"><img src="media/screenshots/employee-workflow/20-physical-agent-runtime-proof.png" alt="Physical Personal Memory Agent proof with concrete filesystem, credential, network, PostgreSQL, and broker results"></figure>
+        </div>
+      </div>
+      <footer class="slide-footer">
+        <span class="disclosure">Synthetic public-safe demonstration data</span>
+        <span class="release">Claims stay inside the proved boundary</span>
+      </footer>
+    </section>
+
+    <section class="slide" data-title="Deterministic authority versus Spark" role="group" aria-roledescription="slide" aria-label="Slide 9 of 11: Deterministic authority versus Spark">
+      <header class="slide-header">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">OAM</span> Organizational AI Memory</div>
+        <div class="section-label">Appendix C</div>
+      </header>
+      <div class="authority-layout">
+        <div class="appendix-title">
+          <h2>Deterministic authority vs. optional Spark</h2>
+          <p class="lede">Generation can improve usability without becoming authority.</p>
+        </div>
+        <div>
+          <table class="comparison-table">
+            <thead><tr><th>Deterministic authority</th><th>Optional Spark adaptation</th></tr></thead>
+            <tbody>
+              <tr><td>Selects approved records</td><td>Rewrites within selected records</td></tr>
+              <tr><td>Retains the complete stored plan</td><td>Returns strict structured steps</td></tr>
+              <tr><td>Defines allowed asset + source-turn citations</td><td>Citations are validated before display</td></tr>
+              <tr><td>Remains available on generation failure</td><td>Non-authoritative and rate limited</td></tr>
+            </tbody>
+          </table>
+          <p class="authority-note">Negative or unsupported queries return no match, not plausible invention.</p>
+        </div>
+      </div>
+      <footer class="slide-footer">
+        <span class="disclosure">Synthetic public-safe demonstration data</span>
+        <span class="release">PostgreSQL remains canonical</span>
+      </footer>
+    </section>
+
+    <section class="slide slide--dark" data-title="Governance boundary" role="group" aria-roledescription="slide" aria-label="Slide 10 of 11: Governance boundary">
+      <header class="slide-header">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">OAM</span> Organizational AI Memory</div>
+        <div class="section-label">Appendix D</div>
+      </header>
+      <div class="governance-layout">
+        <div class="appendix-title">
+          <h2>Governance boundary</h2>
+          <p class="lede">Candidate creation and canonical publication are intentionally different powers.</p>
+        </div>
+        <div class="governance-grid">
+          <div class="governance-flow" aria-label="Governance promotion workflow">
+            <div class="governance-step"><span>01</span><span>Quarantined source</span><span>untrusted input</span></div>
+            <div class="governance-step"><span>02</span><span>Sealed bytes</span><span>immutable evidence</span></div>
+            <div class="governance-step"><span>03</span><span>Service-produced candidate</span><span>bounded extraction</span></div>
+            <div class="governance-step"><span>04</span><span>Independent reviewer approval</span><span>human authority</span></div>
+            <div class="governance-step"><span>05</span><span>Architect draft promotion</span><span>governed draft only</span></div>
+            <div class="governance-step governance-step--deny"><span>06</span><span>Canonical write</span><span>DENIED</span></div>
+          </div>
+          <figure class="media-frame appendix-media"><img src="screenshots/04-assets-governance-provenance-1440.png" alt="Capability asset governance and provenance interface"></figure>
+        </div>
+      </div>
+      <footer class="slide-footer">
+        <span class="disclosure">Synthetic public-safe demonstration data</span>
+        <span class="release">No autonomous canonical publication</span>
+      </footer>
+    </section>
+
+    <section class="slide" data-title="Deployment and known gaps" role="group" aria-roledescription="slide" aria-label="Slide 11 of 11: Deployment and known gaps">
+      <header class="slide-header">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">OAM</span> Organizational AI Memory</div>
+        <div class="section-label">Appendix E</div>
+      </header>
+      <div class="gaps-layout">
+        <div class="appendix-title">
+          <h2>Deployment path + known gaps</h2>
+          <p class="lede">A live enforced MVP with explicit next steps, not an invented enterprise finish line.</p>
+        </div>
+        <div class="gaps-grid">
+          <section class="roadmap-column" aria-labelledby="next-title">
+            <h3 id="next-title">Next deployment steps</h3>
+            <ul class="roadmap-list">
+              <li>Enterprise SSO/SCIM replacing root-managed human credential context</li>
+              <li>Container-runtime adapters preserving distinct agent identity</li>
+              <li>Controlled ingestion connectors</li>
+              <li>Acceptance, outcome, and time-series capability analytics</li>
+            </ul>
+          </section>
+          <section class="roadmap-column roadmap-column--gaps" aria-labelledby="gaps-title">
+            <h3 id="gaps-title">Not claimed today</h3>
+            <ul class="roadmap-list">
+              <li>Autonomous canonical publication</li>
+              <li>Measured ROI or customer testimonials</li>
+              <li>Digital twins or employee impersonation</li>
+              <li>Autonomous duplicate detection or a complete connector set</li>
+            </ul>
+          </section>
+        </div>
+      </div>
+      <footer class="slide-footer">
+        <span class="disclosure">Synthetic public-safe demonstration data</span>
+        <span class="release">Bounded pilot · measurable next step</span>
+      </footer>
+    </section>
+
+    <nav class="controls" aria-label="Slide controls">
+      <button class="icon-button" id="previous-slide" type="button" title="Previous slide" aria-label="Previous slide">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <span class="slide-count" id="slide-count" aria-live="polite">1 / 11</span>
+      <button class="icon-button" id="next-slide" type="button" title="Next slide" aria-label="Next slide">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+      <button class="icon-button" id="fullscreen" type="button" title="Toggle fullscreen" aria-label="Toggle fullscreen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg>
+      </button>
+    </nav>
+    <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+    <p class="sr-only" id="slide-announcement" aria-live="polite"></p>
+  </main>
+
+  <script>
+    (() => {
+      const BASE_WIDTH = 1920;
+      const BASE_HEIGHT = 1080;
+      const stage = document.getElementById('stage');
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const previousButton = document.getElementById('previous-slide');
+      const nextButton = document.getElementById('next-slide');
+      const fullscreenButton = document.getElementById('fullscreen');
+      const count = document.getElementById('slide-count');
+      const progress = document.getElementById('progress-bar');
+      const announcement = document.getElementById('slide-announcement');
+      const video = document.getElementById('judge-video');
+      const demoState = document.getElementById('demo-state');
+      let current = 0;
+
+      function fitStage() {
+        const scale = Math.min(window.innerWidth / BASE_WIDTH, window.innerHeight / BASE_HEIGHT);
+        stage.style.setProperty('--stage-scale', String(scale));
+      }
+
+      function indexFromHash() {
+        const match = window.location.hash.match(/^#slide-(\d+)$/);
+        if (!match) return 0;
+        return Math.max(0, Math.min(slides.length - 1, Number(match[1]) - 1));
+      }
+
+      function showSlide(index, updateHash = true) {
+        current = Math.max(0, Math.min(slides.length - 1, index));
+        slides.forEach((slide, slideIndex) => {
+          const active = slideIndex === current;
+          slide.classList.toggle('is-active', active);
+          slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+          if ('inert' in slide) slide.inert = !active;
+        });
+        if (current !== 5 && !video.paused) video.pause();
+        previousButton.disabled = current === 0;
+        nextButton.disabled = current === slides.length - 1;
+        count.textContent = `${current + 1} / ${slides.length}`;
+        progress.style.width = `${((current + 1) / slides.length) * 100}%`;
+        announcement.textContent = `Slide ${current + 1} of ${slides.length}: ${slides[current].dataset.title}`;
+        document.title = `${current + 1}/${slides.length} · ${slides[current].dataset.title} · Organizational AI Memory`;
+        if (updateHash) history.replaceState(null, '', `#slide-${current + 1}`);
+      }
+
+      previousButton.addEventListener('click', () => showSlide(current - 1));
+      nextButton.addEventListener('click', () => showSlide(current + 1));
+      fullscreenButton.addEventListener('click', async () => {
+        if (document.fullscreenElement) {
+          await document.exitFullscreen();
+        } else {
+          await document.documentElement.requestFullscreen();
+        }
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.target instanceof HTMLMediaElement && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        if (event.key === 'ArrowRight' || event.key === 'PageDown') showSlide(current + 1);
+        if (event.key === 'ArrowLeft' || event.key === 'PageUp') showSlide(current - 1);
+        if (event.key === 'Home') showSlide(0);
+        if (event.key === 'End') showSlide(slides.length - 1);
+      });
+
+      video.addEventListener('play', () => {
+        demoState.textContent = 'One task becomes an approved prompt, workflow, decision pattern, and validated Spark plan.';
+      });
+      video.addEventListener('ended', () => {
+        demoState.textContent = 'When people move on, the organization keeps reviewed capability, not their identity or private memory.';
+      });
+      window.addEventListener('resize', fitStage);
+      window.addEventListener('hashchange', () => showSlide(indexFromHash(), false));
+
+      fitStage();
+      showSlide(indexFromHash(), false);
+    })();
+  </script>
+</body>
+</html>

@@ -109,9 +109,41 @@ git add -- \
   artifacts/submission/media/screenshots/employee-workflow/20-physical-agent-runtime-proof.png
 ```
 
-The WebM is the raw 42.12-second browser capture; the MP4 is the 50.08-second
-submission cut with the separate physical-agent proof appended. They are
-different evidence stages, not duplicate final exports.
+Stage the separately manifested final judge-video package only after its offline
+verifier and scene review pass:
+
+Any future public recapture must first run outside the repository under a
+no-secret unprivileged account with Chrome sandboxing enabled. The capture
+script rejects UID 0. Never use `oam-codex` or an employee/agent identity for
+browser capture. Review the schema-v2 report and its per-file hashes before a
+trusted operator promotes only the six PNGs, WebM, and report into the source
+directory. Rebuild and re-review all downstream media after promotion.
+
+```bash
+OAM_FINAL_VIDEO_VISUAL_REVIEW_CONFIRM=REVIEWED_ALL_FINAL_VIDEO_SCENES \
+  node scripts/evaluation/verify_final_judge_videos.mjs --write-reviewed-report
+node scripts/evaluation/verify_final_judge_videos.mjs --check
+node scripts/evaluation/verify_final_judge_media_manifest.mjs
+git add -- \
+  artifacts/submission/ORGANIZATIONAL_AI_MEMORY_PITCH_DECK.html \
+  artifacts/submission/media/final-judge-video \
+  scripts/evaluation/build_final_judge_media_manifest.mjs \
+  scripts/evaluation/build_final_judge_videos.mjs \
+  scripts/evaluation/capture_final_judge_video_sources.mjs \
+  scripts/evaluation/generate_final_judge_voiceovers.mjs \
+  scripts/evaluation/verify_final_judge_media_manifest.mjs \
+  scripts/evaluation/verify_final_judge_videos.mjs
+```
+
+The final manifest closes the allowed media set at 12 binary and 13 text
+artifacts. The workshop recording, workshop frames/transcript, ElevenLabs key,
+and local review state are not part of the repository.
+
+The supporting employee-workflow WebM is the raw 42.12-second protected browser
+capture; its MP4 is the 50.08-second supporting cut with the separate
+physical-agent proof appended. They are different evidence stages, not
+duplicate final exports. The separately manifested public-capability source
+WebM is a different, sandboxed capture used only to build the final judge cuts.
 
 The five capability-pack JSON files intentionally remain at that fixed path.
 The strict importer and its regression tests depend on them. No Markdown from

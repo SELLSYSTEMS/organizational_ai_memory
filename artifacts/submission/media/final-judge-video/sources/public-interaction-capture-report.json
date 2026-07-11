@@ -1,0 +1,335 @@
+{
+  "schema_version": 2,
+  "generator": {
+    "path": "scripts/evaluation/capture_final_judge_video_sources.mjs",
+    "sha256": "50d780c90c600e1e8e03c91439e591a59d1235e7553056f18d301a9da5926efe"
+  },
+  "base_url": "https://memory.sellsystems.agency",
+  "captured_at": "2026-07-11T20:01:50.567Z",
+  "browser": "Playwright with system Chrome at /usr/bin/google-chrome",
+  "browser_availability": "Browser plugin not available; repository Playwright used with system Chrome.",
+  "browser_security": {
+    "uid": 65534,
+    "root": false,
+    "chrome_sandbox": "enabled"
+  },
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "query": "Prepare a website delivery handoff",
+  "assist_attempts": 1,
+  "assist": {
+    "status": "generated",
+    "model": "gpt-5.3-codex-spark",
+    "selected_asset_keys": [
+      "prompt:website_handoff_brief_v1",
+      "workflow:portfolio_site_delivery_v1",
+      "decision:source_first_before_generation_v1"
+    ],
+    "plan_step_count": 6,
+    "steps": [
+      {
+        "asset_keys": [
+          "workflow:portfolio_site_delivery_v1"
+        ],
+        "source_turn_ids": [
+          "st-009"
+        ]
+      },
+      {
+        "asset_keys": [
+          "prompt:website_handoff_brief_v1"
+        ],
+        "source_turn_ids": [
+          "st-002"
+        ]
+      },
+      {
+        "asset_keys": [
+          "decision:source_first_before_generation_v1"
+        ],
+        "source_turn_ids": [
+          "st-001",
+          "st-007"
+        ]
+      },
+      {
+        "asset_keys": [
+          "workflow:portfolio_site_delivery_v1",
+          "prompt:website_handoff_brief_v1"
+        ],
+        "source_turn_ids": [
+          "st-009",
+          "st-002"
+        ]
+      },
+      {
+        "asset_keys": [
+          "workflow:portfolio_site_delivery_v1",
+          "decision:source_first_before_generation_v1"
+        ],
+        "source_turn_ids": [
+          "st-009",
+          "st-007"
+        ]
+      },
+      {
+        "asset_keys": [
+          "prompt:website_handoff_brief_v1",
+          "workflow:portfolio_site_delivery_v1"
+        ],
+        "source_turn_ids": [
+          "st-002",
+          "st-009"
+        ]
+      }
+    ],
+    "selected_asset_provenance": {
+      "prompt:website_handoff_brief_v1": [
+        "st-002"
+      ],
+      "workflow:portfolio_site_delivery_v1": [
+        "st-009"
+      ],
+      "decision:source_first_before_generation_v1": [
+        "st-001",
+        "st-007"
+      ]
+    },
+    "cited_asset_keys": [
+      "workflow:portfolio_site_delivery_v1",
+      "prompt:website_handoff_brief_v1",
+      "decision:source_first_before_generation_v1"
+    ],
+    "cited_source_turn_ids": [
+      "st-009",
+      "st-002",
+      "st-001",
+      "st-007"
+    ],
+    "per_step_citation_containment": true
+  },
+  "scenes": [
+    {
+      "scene": "capture_start",
+      "at_seconds": 0,
+      "disclosure": "Synthetic public-safe demo data"
+    },
+    {
+      "scene": "home_ready",
+      "at_seconds": 0.918,
+      "route": "/"
+    },
+    {
+      "scene": "search_typing",
+      "at_seconds": 4.375,
+      "route": "/capabilities"
+    },
+    {
+      "scene": "search_results",
+      "at_seconds": 5.898,
+      "route": "/capabilities",
+      "result_count": 3,
+      "selected_asset_keys": [
+        "prompt:website_handoff_brief_v1",
+        "workflow:portfolio_site_delivery_v1",
+        "decision:source_first_before_generation_v1"
+      ]
+    },
+    {
+      "scene": "asset_inspector",
+      "at_seconds": 10.312,
+      "route": "/assets?asset=prompt%3Awebsite_handoff_brief_v1",
+      "asset_key": "prompt:website_handoff_brief_v1"
+    },
+    {
+      "scene": "asset_provenance",
+      "at_seconds": 11.077,
+      "route": "/assets?asset=prompt%3Awebsite_handoff_brief_v1",
+      "path": "asset -> observation -> source turn"
+    },
+    {
+      "scene": "assist_requested",
+      "at_seconds": 15.125,
+      "route": "/capabilities",
+      "attempts": 1
+    },
+    {
+      "scene": "assist_result",
+      "at_seconds": 22.026,
+      "route": "/capabilities",
+      "status": "generated",
+      "model": "gpt-5.3-codex-spark",
+      "selected_asset_keys": [
+        "prompt:website_handoff_brief_v1",
+        "workflow:portfolio_site_delivery_v1",
+        "decision:source_first_before_generation_v1"
+      ],
+      "plan_step_count": 6,
+      "steps": [
+        {
+          "asset_keys": [
+            "workflow:portfolio_site_delivery_v1"
+          ],
+          "source_turn_ids": [
+            "st-009"
+          ]
+        },
+        {
+          "asset_keys": [
+            "prompt:website_handoff_brief_v1"
+          ],
+          "source_turn_ids": [
+            "st-002"
+          ]
+        },
+        {
+          "asset_keys": [
+            "decision:source_first_before_generation_v1"
+          ],
+          "source_turn_ids": [
+            "st-001",
+            "st-007"
+          ]
+        },
+        {
+          "asset_keys": [
+            "workflow:portfolio_site_delivery_v1",
+            "prompt:website_handoff_brief_v1"
+          ],
+          "source_turn_ids": [
+            "st-009",
+            "st-002"
+          ]
+        },
+        {
+          "asset_keys": [
+            "workflow:portfolio_site_delivery_v1",
+            "decision:source_first_before_generation_v1"
+          ],
+          "source_turn_ids": [
+            "st-009",
+            "st-007"
+          ]
+        },
+        {
+          "asset_keys": [
+            "prompt:website_handoff_brief_v1",
+            "workflow:portfolio_site_delivery_v1"
+          ],
+          "source_turn_ids": [
+            "st-002",
+            "st-009"
+          ]
+        }
+      ],
+      "selected_asset_provenance": {
+        "prompt:website_handoff_brief_v1": [
+          "st-002"
+        ],
+        "workflow:portfolio_site_delivery_v1": [
+          "st-009"
+        ],
+        "decision:source_first_before_generation_v1": [
+          "st-001",
+          "st-007"
+        ]
+      },
+      "cited_asset_keys": [
+        "workflow:portfolio_site_delivery_v1",
+        "prompt:website_handoff_brief_v1",
+        "decision:source_first_before_generation_v1"
+      ],
+      "cited_source_turn_ids": [
+        "st-009",
+        "st-002",
+        "st-001",
+        "st-007"
+      ]
+    },
+    {
+      "scene": "analytics_and_access_proof",
+      "at_seconds": 25.432,
+      "route": "/capabilities",
+      "analytics_scope": "current synthetic nine-asset demo pack"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "01-home-1920x1080.png",
+      "bytes": 124909,
+      "sha256": "ea2063109ac58a510d781ee6630020d1285ab4ceb37e3307b63d633af3dae4bc"
+    },
+    {
+      "path": "02-search-results-1920x1080.png",
+      "bytes": 217395,
+      "sha256": "6fa087b5e8668d3827481ea1ffa806ad53d2293a8691d31896be8266e29bf3cd"
+    },
+    {
+      "path": "03-asset-inspector-provenance-1920x1080.png",
+      "bytes": 201040,
+      "sha256": "6223af8b694a784669b2668ba8c6456843ac4fb972590cbc34c1dc5c54f27606"
+    },
+    {
+      "path": "04-asset-source-path-1920x1080.png",
+      "bytes": 75221,
+      "sha256": "4c58be4f47767d105a23a4a66124fe9e97210618d64881516d819b28fd611db9"
+    },
+    {
+      "path": "05-assist-result-1920x1080.png",
+      "bytes": 255409,
+      "sha256": "1c6021ffa1339316b6dd185ab9de7550a0a256aed7bc215dc2b7958833d655f4"
+    },
+    {
+      "path": "06-analytics-access-proof-1920x1080.png",
+      "bytes": 257269,
+      "sha256": "40792723586eec0a032b841d999f37c7bcb08a46604bb7bc8582c77abcc2a2df"
+    }
+  ],
+  "video": {
+    "path": "public-capability-interaction.webm",
+    "bytes": 3067259,
+    "sha256": "50e56929c20450beb08203e2aee3983e3c7a0c9a946306071cff6106253e014f"
+  },
+  "console_messages": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 400 (Bad Request)",
+      "location_url": "https://memory.sellsystems.agency/api/public/evidence?type=fact&thread=private"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 400 (Bad Request)",
+      "location_url": "https://memory.sellsystems.agency/api/public/evidence?type=fact&thread=private"
+    }
+  ],
+  "unexpected_console_messages": [],
+  "non_ok_responses": [
+    {
+      "url": "https://memory.sellsystems.agency/api/public/evidence?type=fact&thread=private",
+      "method": "GET",
+      "status": 400
+    },
+    {
+      "url": "https://memory.sellsystems.agency/api/public/evidence?type=fact&thread=private",
+      "method": "GET",
+      "status": 400
+    }
+  ],
+  "expected_public_boundary_denials": {
+    "url": "https://memory.sellsystems.agency/api/public/evidence?type=fact&thread=private",
+    "expected_count": 2,
+    "observed_count": 2
+  },
+  "assist_api_responses": [
+    {
+      "url": "https://memory.sellsystems.agency/api/public/capability-assist",
+      "method": "POST",
+      "status": 200
+    }
+  ],
+  "page_errors": [],
+  "failed_requests": [],
+  "passed": true
+}

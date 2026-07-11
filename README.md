@@ -52,6 +52,12 @@ workflow capture. Five previously executed real PostgreSQL integration cases
 remain recorded contract evidence; they were not rerun against the live
 database for this commit because they persist fixtures.
 
+The final media package adds a `55.50`-second pitch-room outcome cut and a
+`177.00`-second full P5 judge cut. Both are 1080p H.264 High with AAC narration,
+burned-in two-line captions, separate WebVTT, a transcript, and deterministic
+hash/QA reports. The fresh public capture used exactly one Spark request and
+returned a six-step adaptation constrained to the three selected records.
+
 1. Postgres 17 is the canonical memory and capability store.
 2. The public capability pack contains 9 assets across 5 types, 5 task-start
    definitions, and 13 deterministic task-to-asset mappings.
@@ -318,6 +324,16 @@ See:
 - [Product video plan](docs/demo/DEMO_VIDEO_PLAN.md)
 - [Submission screenshot manifest](docs/submission/SCREENSHOT_MANIFEST.md)
 - [Release media hash manifest](artifacts/submission/media/release-media-manifest.json)
+- [Final 55-second pitch demo](artifacts/submission/media/final-judge-video/organizational-ai-memory-live-pitch-demo.mp4)
+- [Final 177-second P5 judge demo](artifacts/submission/media/final-judge-video/organizational-ai-memory-p5-judge-demo.mp4)
+- [Final judge media manifest](artifacts/submission/media/final-judge-video/final-judge-media-manifest.json)
+- [Final video QA report](artifacts/submission/media/final-judge-video/final-video-qa-report.json)
+- [Final pitch playbook](docs/submission/FINAL_PITCH_PLAYBOOK.md)
+- [Offline interactive pitch deck](artifacts/submission/ORGANIZATIONAL_AI_MEMORY_PITCH_DECK.html)
+- [Portal project story](docs/submission/PROJECT_STORY.md)
+- [Workshop frame-by-frame review](docs/submission/HACKATHON_PITCH_WORKSHOP_REVIEW_2026-07-11.md)
+- [Codex Spark final media review](artifacts/evaluation/gpt-5.3-codex-spark-final-media-release-review.md)
+- [Independent final media watch review](artifacts/evaluation/final-judge-media-independent-watch-review.md)
 - [Judging alignment](docs/submission/JUDGING_ALIGNMENT.md)
 - [Safe publishing guide](docs/submission/PUBLISHING.md)
 - [Evidence-driven development model](docs/development/EVIDENCE_DRIVEN_DEVELOPMENT.md)

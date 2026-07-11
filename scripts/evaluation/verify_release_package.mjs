@@ -19,6 +19,7 @@ runNode('scripts/evaluation/verify_identity_proof.mjs', [
   'artifacts/evaluation/identity-plane-proof',
 ]);
 runNode('scripts/evaluation/verify_release_media_manifest.mjs');
+runNode('scripts/evaluation/verify_final_judge_media_manifest.mjs');
 
 const expectedSource = JSON.parse(fs.readFileSync(
   path.join(repositoryRoot, 'artifacts/evaluation/identity-plane-proof/report.json'),
@@ -48,6 +49,8 @@ console.log(JSON.stringify({
   public_repository: 'PASS',
   identity_proof: 'PASS',
   release_media: 'PASS',
+  final_judge_media: 'PASS',
+  final_judge_media_structural_qa: 'PASS',
   source_commit: expectedSource.source_commit,
   source_sha256: actualSource,
   passed: true,

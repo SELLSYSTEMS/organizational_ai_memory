@@ -1,0 +1,589 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-11T20:31:59.298Z",
+  "build_method": "Deterministic FFmpeg scene assembly with straight cuts and burned-in WebVTT captions.",
+  "ffmpeg_version": "ffmpeg version 7.1.5-0+deb13u1 Copyright (c) 2000-2026 the FFmpeg developers",
+  "source_capture_report": "artifacts/submission/media/final-judge-video/sources/public-interaction-capture-report.json",
+  "voice_generation_report": "artifacts/submission/media/final-judge-video/voice-generation-report.json",
+  "disclosure": "Synthetic public-safe demo data",
+  "metadata_policy": "Input metadata is not mapped into final media.",
+  "builds": [
+    {
+      "id": "full-judge-demo",
+      "expected_duration_seconds": 177,
+      "narration": {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-full-narration.mp3",
+        "bytes": 2793265,
+        "sha256": "4a04cf0008ca3bd16fe35f219320d61112b4fcd1c135d310b8094cab3bdbc816",
+        "loudness_analysis": {
+          "input_i": "-17.24",
+          "input_tp": "-1.75",
+          "input_lra": "2.90",
+          "input_thresh": "-27.29",
+          "output_i": "-16.07",
+          "output_tp": "-1.50",
+          "output_lra": "3.00",
+          "output_thresh": "-26.12",
+          "normalization_type": "dynamic",
+          "target_offset": "0.07"
+        }
+      },
+      "captions": {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-p5-judge-demo.vtt",
+        "bytes": 4582,
+        "sha256": "23c08d36cfb103ddf0a9e5721a92936a59a4608cf4f39b6f81c81b7cfc354c87"
+      },
+      "scenes": [
+        {
+          "sequence": 1,
+          "start_seconds": 0,
+          "end_seconds": 10,
+          "source": "artifacts/submission/media/final-judge-video/sources/01-home-1920x1080.png",
+          "source_sha256": "ea2063109ac58a510d781ee6630020d1285ab4ceb37e3307b63d633af3dae4bc",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "P5 · ORGANIZATIONAL CAPABILITY",
+          "callout": null
+        },
+        {
+          "sequence": 2,
+          "start_seconds": 10,
+          "end_seconds": 19.9,
+          "source": "artifacts/submission/media/final-judge-video/sources/public-capability-interaction.webm",
+          "source_sha256": "50e56929c20450beb08203e2aee3983e3c7a0c9a946306071cff6106253e014f",
+          "source_start_seconds": 0,
+          "framing": "fit",
+          "label": "PUBLIC CAPABILITY",
+          "callout": null
+        },
+        {
+          "sequence": 3,
+          "start_seconds": 19.9,
+          "end_seconds": 25.7,
+          "source": "artifacts/submission/media/final-judge-video/sources/public-capability-interaction.webm",
+          "source_sha256": "50e56929c20450beb08203e2aee3983e3c7a0c9a946306071cff6106253e014f",
+          "source_start_seconds": 3.8,
+          "framing": "fit",
+          "label": "DETERMINISTIC SEARCH",
+          "callout": null
+        },
+        {
+          "sequence": 4,
+          "start_seconds": 25.7,
+          "end_seconds": 33.8,
+          "source": "artifacts/submission/media/final-judge-video/sources/02-search-results-1920x1080.png",
+          "source_sha256": "6fa087b5e8668d3827481ea1ffa806ad53d2293a8691d31896be8266e29bf3cd",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "THREE APPROVED RECORDS",
+          "callout": null
+        },
+        {
+          "sequence": 5,
+          "start_seconds": 33.8,
+          "end_seconds": 38.6,
+          "source": "artifacts/submission/media/final-judge-video/sources/03-asset-inspector-provenance-1920x1080.png",
+          "source_sha256": "6223af8b694a784669b2668ba8c6456843ac4fb972590cbc34c1dc5c54f27606",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "TYPED · VERSIONED · REVIEWED",
+          "callout": null
+        },
+        {
+          "sequence": 6,
+          "start_seconds": 38.6,
+          "end_seconds": 47.6,
+          "source": "artifacts/submission/media/final-judge-video/sources/04-asset-source-path-1920x1080.png",
+          "source_sha256": "4c58be4f47767d105a23a4a66124fe9e97210618d64881516d819b28fd611db9",
+          "source_start_seconds": null,
+          "framing": "provenance",
+          "label": "ASSET → OBSERVATION → SOURCE TURN",
+          "callout": null
+        },
+        {
+          "sequence": 7,
+          "start_seconds": 47.6,
+          "end_seconds": 56.6,
+          "source": "artifacts/submission/media/final-judge-video/sources/public-capability-interaction.webm",
+          "source_sha256": "50e56929c20450beb08203e2aee3983e3c7a0c9a946306071cff6106253e014f",
+          "source_start_seconds": 13.9,
+          "framing": "fit",
+          "label": "ONE SPARK REQUEST",
+          "callout": null
+        },
+        {
+          "sequence": 8,
+          "start_seconds": 56.6,
+          "end_seconds": 65.5,
+          "source": "artifacts/submission/media/final-judge-video/sources/05-assist-result-1920x1080.png",
+          "source_sha256": "1c6021ffa1339316b6dd185ab9de7550a0a256aed7bc215dc2b7958833d655f4",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "BOUNDED SPARK ADAPTATION",
+          "callout": null
+        },
+        {
+          "sequence": 9,
+          "start_seconds": 65.5,
+          "end_seconds": 67.3,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/01-onboard-employee.png",
+          "source_sha256": "2baf35ba44311c59f2be1c82ce9c0f49a2b58b6ff428a8c59e71e6c3b84dc51f",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "SYNTHETIC EMPLOYEE",
+          "callout": null
+        },
+        {
+          "sequence": 10,
+          "start_seconds": 67.3,
+          "end_seconds": 69.1,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/05-physical-provisioning-succeeded.png",
+          "source_sha256": "95b3154ab56a4a73ef508c65154709509fc8f21770020b6904d3081cdad08839",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "GOVERNED PROVISIONING",
+          "callout": null
+        },
+        {
+          "sequence": 11,
+          "start_seconds": 69.1,
+          "end_seconds": 70.9,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/06-active-pair-and-runtime-identity.png",
+          "source_sha256": "85dc8b77d396bff1c0ee7a0cd62749a0bf8f6e09a2265f788f2776721c2bfecc",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "ONE HUMAN · ONE AGENT",
+          "callout": null
+        },
+        {
+          "sequence": 12,
+          "start_seconds": 70.9,
+          "end_seconds": 81,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/11-capture-private-experience.png",
+          "source_sha256": "7b692c395b2daf3a79a72f4cfb13da1143924b184452bc7b1b0d4b701e2438c6",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "OWNER ONLY",
+          "callout": null
+        },
+        {
+          "sequence": 13,
+          "start_seconds": 81,
+          "end_seconds": 84.3,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/12-private-memory-excluded.png",
+          "source_sha256": "8ccab843cdbbea984a3be830f50eed47808742a77b9a0b7d200c9cab1356642e",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "NO CONSENT · NO MATCH",
+          "callout": null
+        },
+        {
+          "sequence": 14,
+          "start_seconds": 84.3,
+          "end_seconds": 86.6,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/13-revision-bound-memory-consent.png",
+          "source_sha256": "8572464140e6b2b43c21aa2613a3887cd5ec01bf8fc91ee6594a89a968a48090",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "CURRENT-REVISION CONSENT",
+          "callout": null
+        },
+        {
+          "sequence": 15,
+          "start_seconds": 86.6,
+          "end_seconds": 96.3,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/14-grounded-reuse-with-citation.png",
+          "source_sha256": "32692bdb3581ab6f8e3bac8751e7982ea805a7e86f696822939222d2b060d248",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "EMPLOYEE PREVIEW",
+          "callout": null
+        },
+        {
+          "sequence": 16,
+          "start_seconds": 96.3,
+          "end_seconds": 102.1,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/06-active-pair-and-runtime-identity.png",
+          "source_sha256": "85dc8b77d396bff1c0ee7a0cd62749a0bf8f6e09a2265f788f2776721c2bfecc",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "DISTINCT RUNTIME IDENTITY",
+          "callout": null
+        },
+        {
+          "sequence": 17,
+          "start_seconds": 102.1,
+          "end_seconds": 108.3,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/20-physical-agent-runtime-proof.png",
+          "source_sha256": "886d6cf3f90a0ceff146fc9e58e11abc8efb6cd2486ba460588657b7b8f49a62",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "PHYSICAL AGENT PROOF",
+          "callout": null
+        },
+        {
+          "sequence": 18,
+          "start_seconds": 108.3,
+          "end_seconds": 111.9,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/15-edit-resets-agent-access.png",
+          "source_sha256": "4f06a1b6760038de5919620ebf2020485fe438731aab8a8455a0acbb18f27d54",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "EDIT RESETS ACCESS",
+          "callout": null
+        },
+        {
+          "sequence": 19,
+          "start_seconds": 111.9,
+          "end_seconds": 115.9,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/16-edited-version-excluded.png",
+          "source_sha256": "0cb4a13006dca14c3b0e3de710f1e4a5327d9e950ac7dc427139479e8f33d295",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "FAIL CLOSED",
+          "callout": null
+        },
+        {
+          "sequence": 20,
+          "start_seconds": 115.9,
+          "end_seconds": 119.5,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/17-current-version-reconsented.png",
+          "source_sha256": "51888d6b5a4c8498c8f390e6b25d73fbe4ac3e34ba3cc5b78bdcc18125d87319",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "NEW REVISION · NEW HASH",
+          "callout": null
+        },
+        {
+          "sequence": 21,
+          "start_seconds": 119.5,
+          "end_seconds": 123.1,
+          "source": "artifacts/submission/screenshots/07-architect-console-four-plane-1440.png",
+          "source_sha256": "2ba27a3769ef5920dd52c714d1e7c31d06c6a72a1d029a3e18d29af1ab621013",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "INDEPENDENT REVIEW LANE",
+          "callout": null
+        },
+        {
+          "sequence": 22,
+          "start_seconds": 123.1,
+          "end_seconds": 125.9,
+          "source": "artifacts/submission/screenshots/08-architect-effective-access-1440.png",
+          "source_sha256": "8c2660f1f47e073112972370285b5ca1021707b4218ef01e67427dc565af7d11",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "CANONICAL WRITE DENIED",
+          "callout": null
+        },
+        {
+          "sequence": 23,
+          "start_seconds": 125.9,
+          "end_seconds": 139.9,
+          "source": "artifacts/submission/media/final-judge-video/sources/06-analytics-access-proof-1920x1080.png",
+          "source_sha256": "40792723586eec0a032b841d999f37c7bcb08a46604bb7bc8582c77abcc2a2df",
+          "source_start_seconds": null,
+          "framing": "analytics",
+          "label": "INVENTORY · DUPLICATION · GAPS",
+          "callout": null
+        },
+        {
+          "sequence": 24,
+          "start_seconds": 139.9,
+          "end_seconds": 150.6,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/20-physical-agent-runtime-proof.png",
+          "source_sha256": "886d6cf3f90a0ceff146fc9e58e11abc8efb6cd2486ba460588657b7b8f49a62",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "BUILD-BOUND EXECUTION PROOF",
+          "callout": null
+        },
+        {
+          "sequence": 25,
+          "start_seconds": 150.6,
+          "end_seconds": 158.7,
+          "source": "artifacts/submission/screenshots/05-method-architecture-1440.png",
+          "source_sha256": "be16e84d87564e22d4204d88b08d1d38df3eb7cb2df0f5d14d7c8fb538ed2fc8",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "RECORDED POSTGRES CONTRACT EVIDENCE",
+          "callout": null
+        },
+        {
+          "sequence": 26,
+          "start_seconds": 158.7,
+          "end_seconds": 168.7,
+          "source": "artifacts/submission/media/final-judge-video/sources/06-analytics-access-proof-1920x1080.png",
+          "source_sha256": "40792723586eec0a032b841d999f37c7bcb08a46604bb7bc8582c77abcc2a2df",
+          "source_start_seconds": null,
+          "framing": "analytics",
+          "label": "PROPOSED ENTERPRISE PILOT",
+          "callout": null
+        },
+        {
+          "sequence": 27,
+          "start_seconds": 168.7,
+          "end_seconds": 177,
+          "source": "artifacts/submission/media/final-judge-video/sources/01-home-1920x1080.png",
+          "source_sha256": "ea2063109ac58a510d781ee6630020d1285ab4ceb37e3307b63d633af3dae4bc",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "ORGANIZATIONAL AI MEMORY",
+          "callout": null
+        }
+      ],
+      "output": {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-p5-judge-demo.mp4",
+        "bytes": 12260891,
+        "sha256": "5e0e03bb0e2a67c087d8c908f6b8a73121708a38791ee93e161b854c6d6a50dc",
+        "duration_seconds": 177,
+        "streams": [
+          {
+            "codec_type": "video",
+            "codec_name": "h264",
+            "profile": "High",
+            "width": 1920,
+            "height": 1080,
+            "pix_fmt": "yuv420p",
+            "avg_frame_rate": "30/1",
+            "duration": "177.000000",
+            "nb_frames": "5310"
+          },
+          {
+            "codec_type": "audio",
+            "codec_name": "aac",
+            "profile": "LC",
+            "sample_rate": "48000",
+            "channels": 2,
+            "avg_frame_rate": "0/0",
+            "duration": "177.000000",
+            "nb_frames": "8295"
+          }
+        ]
+      }
+    },
+    {
+      "id": "live-pitch-demo",
+      "expected_duration_seconds": 55.5,
+      "narration": {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-live-demo-narration.mp3",
+        "bytes": 830946,
+        "sha256": "cedc951ef1939c32f8e1163931e4048fb7ca205482c60272175e4b630b8ec135",
+        "loudness_analysis": {
+          "input_i": "-16.71",
+          "input_tp": "-1.77",
+          "input_lra": "2.00",
+          "input_thresh": "-26.76",
+          "output_i": "-16.39",
+          "output_tp": "-1.50",
+          "output_lra": "2.20",
+          "output_thresh": "-26.43",
+          "normalization_type": "dynamic",
+          "target_offset": "0.39"
+        }
+      },
+      "captions": {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-live-pitch-demo.vtt",
+        "bytes": 1353,
+        "sha256": "0f27af1a6678af9c87698e6c8c317ab6d23edd29b79961aea0477cbe4a1068fc"
+      },
+      "scenes": [
+        {
+          "sequence": 1,
+          "start_seconds": 0,
+          "end_seconds": 3.5,
+          "source": "artifacts/submission/media/final-judge-video/sources/01-home-1920x1080.png",
+          "source_sha256": "ea2063109ac58a510d781ee6630020d1285ab4ceb37e3307b63d633af3dae4bc",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "USER GOAL",
+          "callout": null
+        },
+        {
+          "sequence": 2,
+          "start_seconds": 3.5,
+          "end_seconds": 10.96,
+          "source": "artifacts/submission/media/final-judge-video/sources/public-capability-interaction.webm",
+          "source_sha256": "50e56929c20450beb08203e2aee3983e3c7a0c9a946306071cff6106253e014f",
+          "source_start_seconds": 3.8,
+          "framing": "fit",
+          "label": "DETERMINISTIC SEARCH",
+          "callout": null
+        },
+        {
+          "sequence": 3,
+          "start_seconds": 10.96,
+          "end_seconds": 14.67,
+          "source": "artifacts/submission/media/final-judge-video/sources/04-asset-source-path-1920x1080.png",
+          "source_sha256": "4c58be4f47767d105a23a4a66124fe9e97210618d64881516d819b28fd611db9",
+          "source_start_seconds": null,
+          "framing": "provenance",
+          "label": "SOURCE LINEAGE",
+          "callout": null
+        },
+        {
+          "sequence": 4,
+          "start_seconds": 14.67,
+          "end_seconds": 22.34,
+          "source": "artifacts/submission/media/final-judge-video/sources/public-capability-interaction.webm",
+          "source_sha256": "50e56929c20450beb08203e2aee3983e3c7a0c9a946306071cff6106253e014f",
+          "source_start_seconds": 13.9,
+          "framing": "fit",
+          "label": "SPARK · BOUNDED ADAPTATION",
+          "callout": null
+        },
+        {
+          "sequence": 5,
+          "start_seconds": 22.34,
+          "end_seconds": 24.23,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/11-capture-private-experience.png",
+          "source_sha256": "7b692c395b2daf3a79a72f4cfb13da1143924b184452bc7b1b0d4b701e2438c6",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "OWNER ONLY",
+          "callout": null
+        },
+        {
+          "sequence": 6,
+          "start_seconds": 24.23,
+          "end_seconds": 26.12,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/13-revision-bound-memory-consent.png",
+          "source_sha256": "8572464140e6b2b43c21aa2613a3887cd5ec01bf8fc91ee6594a89a968a48090",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "REVISION CONSENT",
+          "callout": null
+        },
+        {
+          "sequence": 7,
+          "start_seconds": 26.12,
+          "end_seconds": 28.5,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/14-grounded-reuse-with-citation.png",
+          "source_sha256": "32692bdb3581ab6f8e3bac8751e7982ea805a7e86f696822939222d2b060d248",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "EMPLOYEE PREVIEW · SHA-256 CITATION",
+          "callout": null
+        },
+        {
+          "sequence": 8,
+          "start_seconds": 28.5,
+          "end_seconds": 36.78,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/20-physical-agent-runtime-proof.png",
+          "source_sha256": "886d6cf3f90a0ceff146fc9e58e11abc8efb6cd2486ba460588657b7b8f49a62",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "PHYSICAL AGENT PROOF",
+          "callout": null
+        },
+        {
+          "sequence": 9,
+          "start_seconds": 36.78,
+          "end_seconds": 38.98,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/15-edit-resets-agent-access.png",
+          "source_sha256": "4f06a1b6760038de5919620ebf2020485fe438731aab8a8455a0acbb18f27d54",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "EDIT RESETS ACCESS",
+          "callout": null
+        },
+        {
+          "sequence": 10,
+          "start_seconds": 38.98,
+          "end_seconds": 41.18,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/16-edited-version-excluded.png",
+          "source_sha256": "0cb4a13006dca14c3b0e3de710f1e4a5327d9e950ac7dc427139479e8f33d295",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "FAIL CLOSED",
+          "callout": null
+        },
+        {
+          "sequence": 11,
+          "start_seconds": 41.18,
+          "end_seconds": 44.44,
+          "source": "artifacts/submission/media/final-judge-video/sources/05-assist-result-1920x1080.png",
+          "source_sha256": "1c6021ffa1339316b6dd185ab9de7550a0a256aed7bc215dc2b7958833d655f4",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "DETERMINISTIC AUTHORITY",
+          "callout": null
+        },
+        {
+          "sequence": 12,
+          "start_seconds": 44.44,
+          "end_seconds": 46.44,
+          "source": "artifacts/submission/media/screenshots/employee-workflow/17-current-version-reconsented.png",
+          "source_sha256": "51888d6b5a4c8498c8f390e6b25d73fbe4ac3e34ba3cc5b78bdcc18125d87319",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "EXACT REVISION ONLY",
+          "callout": null
+        },
+        {
+          "sequence": 13,
+          "start_seconds": 46.44,
+          "end_seconds": 49.16,
+          "source": "artifacts/submission/media/final-judge-video/sources/01-home-1920x1080.png",
+          "source_sha256": "ea2063109ac58a510d781ee6630020d1285ab4ceb37e3307b63d633af3dae4bc",
+          "source_start_seconds": null,
+          "framing": "fit",
+          "label": "DURABLE CAPABILITY",
+          "callout": null
+        },
+        {
+          "sequence": 14,
+          "start_seconds": 49.16,
+          "end_seconds": 55.5,
+          "source": "artifacts/submission/media/final-judge-video/sources/06-analytics-access-proof-1920x1080.png",
+          "source_sha256": "40792723586eec0a032b841d999f37c7bcb08a46604bb7bc8582c77abcc2a2df",
+          "source_start_seconds": null,
+          "framing": "analytics",
+          "label": "MEMORABLE PROOF",
+          "callout": "275 API/security · 22 identity · 35 browser · 7 boundary checks"
+        }
+      ],
+      "output": {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-live-pitch-demo.mp4",
+        "bytes": 4970201,
+        "sha256": "7390cf8241d4f6824dff27f213ea14346883ab94fa073211cad1094be953d150",
+        "duration_seconds": 55.5,
+        "streams": [
+          {
+            "codec_type": "video",
+            "codec_name": "h264",
+            "profile": "High",
+            "width": 1920,
+            "height": 1080,
+            "pix_fmt": "yuv420p",
+            "avg_frame_rate": "30/1",
+            "duration": "55.500000",
+            "nb_frames": "1665"
+          },
+          {
+            "codec_type": "audio",
+            "codec_name": "aac",
+            "profile": "LC",
+            "sample_rate": "48000",
+            "channels": 2,
+            "avg_frame_rate": "0/0",
+            "duration": "55.500000",
+            "nb_frames": "2602"
+          }
+        ]
+      }
+    }
+  ],
+  "poster": {
+    "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-p5-judge-demo-poster.png",
+    "bytes": 265493,
+    "sha256": "bc3a1efe67b4ca582625523cc1aecd38ddec639d6d8a82d26e3cfe6e66d85e9a",
+    "width": 1920,
+    "height": 1080
+  },
+  "transcript": {
+    "path": "artifacts/submission/media/final-judge-video/FINAL_VIDEO_TRANSCRIPTS.md",
+    "bytes": 3921,
+    "sha256": "dce4041799af1261145aa49eb25bbe90d802babd2bbdab6a1202b99037b4c357"
+  }
+}

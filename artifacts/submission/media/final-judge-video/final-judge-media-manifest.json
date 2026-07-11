@@ -1,0 +1,511 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-11T20:34:04.025Z",
+  "legacy_release_binding": {
+    "manifest": {
+      "path": "artifacts/submission/media/release-media-manifest.json",
+      "bytes": 19184,
+      "sha256": "1e01552141734c22e384ec01a65d24bc6f52c63049c120799a97bcacfc8b4fce"
+    },
+    "deployed_code_commit": "525ff861b3580365839f487ca0dca10d0bf791cd",
+    "deployed_source_sha256": "da4a85d2c50f0605f9bc43287c768edf2a113d00b69fe7ef0c8c36c62c0ce561",
+    "legacy_artifact_count": 31
+  },
+  "source_capture": {
+    "report": {
+      "path": "artifacts/submission/media/final-judge-video/sources/public-interaction-capture-report.json",
+      "bytes": 8914,
+      "sha256": "f9b95b90207e2b7f65e7bb7ace5aadf91337bf3c40ed68fe33a3c6cd22ef0b2c"
+    },
+    "passed": true,
+    "assist_attempts": 1,
+    "assist": {
+      "status": "generated",
+      "model": "gpt-5.3-codex-spark",
+      "selected_asset_keys": [
+        "prompt:website_handoff_brief_v1",
+        "workflow:portfolio_site_delivery_v1",
+        "decision:source_first_before_generation_v1"
+      ],
+      "plan_step_count": 6,
+      "steps": [
+        {
+          "asset_keys": [
+            "workflow:portfolio_site_delivery_v1"
+          ],
+          "source_turn_ids": [
+            "st-009"
+          ]
+        },
+        {
+          "asset_keys": [
+            "prompt:website_handoff_brief_v1"
+          ],
+          "source_turn_ids": [
+            "st-002"
+          ]
+        },
+        {
+          "asset_keys": [
+            "decision:source_first_before_generation_v1"
+          ],
+          "source_turn_ids": [
+            "st-001",
+            "st-007"
+          ]
+        },
+        {
+          "asset_keys": [
+            "workflow:portfolio_site_delivery_v1",
+            "prompt:website_handoff_brief_v1"
+          ],
+          "source_turn_ids": [
+            "st-009",
+            "st-002"
+          ]
+        },
+        {
+          "asset_keys": [
+            "workflow:portfolio_site_delivery_v1",
+            "decision:source_first_before_generation_v1"
+          ],
+          "source_turn_ids": [
+            "st-009",
+            "st-007"
+          ]
+        },
+        {
+          "asset_keys": [
+            "prompt:website_handoff_brief_v1",
+            "workflow:portfolio_site_delivery_v1"
+          ],
+          "source_turn_ids": [
+            "st-002",
+            "st-009"
+          ]
+        }
+      ],
+      "selected_asset_provenance": {
+        "prompt:website_handoff_brief_v1": [
+          "st-002"
+        ],
+        "workflow:portfolio_site_delivery_v1": [
+          "st-009"
+        ],
+        "decision:source_first_before_generation_v1": [
+          "st-001",
+          "st-007"
+        ]
+      },
+      "cited_asset_keys": [
+        "workflow:portfolio_site_delivery_v1",
+        "prompt:website_handoff_brief_v1",
+        "decision:source_first_before_generation_v1"
+      ],
+      "cited_source_turn_ids": [
+        "st-009",
+        "st-002",
+        "st-001",
+        "st-007"
+      ],
+      "per_step_citation_containment": true
+    },
+    "expected_public_boundary_denials": {
+      "url": "https://memory.sellsystems.agency/api/public/evidence?type=fact&thread=private",
+      "expected_count": 2,
+      "observed_count": 2
+    }
+  },
+  "voice_generation": {
+    "report": {
+      "path": "artifacts/submission/media/final-judge-video/voice-generation-report.json",
+      "bytes": 2252,
+      "sha256": "3e254e75f1b146d0ce69d98828f0f122f803d18f40a348cc68616ad3f2aecd59"
+    },
+    "provider": "ElevenLabs",
+    "voice_id": "HsgAn6u75ZbG3h23K3dR",
+    "model_id": "eleven_multilingual_v2",
+    "output_format": "mp3_44100_128",
+    "voice_settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0,
+      "use_speaker_boost": true,
+      "speed": 1
+    }
+  },
+  "video_build": {
+    "report": {
+      "path": "artifacts/submission/media/final-judge-video/final-video-build-report.json",
+      "bytes": 23695,
+      "sha256": "ee7be658510adb0de2e23c473ce153be41c070dc80485a6aba5e18d872e4cb98"
+    },
+    "method": "Deterministic FFmpeg scene assembly with straight cuts and burned-in WebVTT captions.",
+    "ffmpeg_version": "ffmpeg version 7.1.5-0+deb13u1 Copyright (c) 2000-2026 the FFmpeg developers"
+  },
+  "qa": {
+    "report": {
+      "path": "artifacts/submission/media/final-judge-video/final-video-qa-report.json",
+      "bytes": 10195,
+      "sha256": "b6f68731bb455873bcf9ddf73bdc9ff106c71f485371b785eaa9f632ca76f350"
+    },
+    "passed": true,
+    "visual_review_confirmation": "REVIEWED_ALL_FINAL_VIDEO_SCENES"
+  },
+  "control_evidence": {
+    "summary": {
+      "deployed_code_commit": "525ff861b3580365839f487ca0dca10d0bf791cd",
+      "deployed_source_sha256": "da4a85d2c50f0605f9bc43287c768edf2a113d00b69fe7ef0c8c36c62c0ce561",
+      "api_security": {
+        "passed": 275,
+        "total": 275,
+        "source": "handoff/FINAL_HACKATHON_MVP_HANDOFF_2026-07-10.md",
+        "source_sha256": "d425254312791f5d5db50d494675c1b1853e197048da26de4d3c0d486e3445c1"
+      },
+      "postgres_integration": {
+        "passed": 5,
+        "total": 5,
+        "freshness": "recorded contract evidence; not a fresh live-database run",
+        "source": "handoff/FINAL_HACKATHON_MVP_HANDOFF_2026-07-10.md",
+        "source_sha256": "d425254312791f5d5db50d494675c1b1853e197048da26de4d3c0d486e3445c1"
+      },
+      "identity": {
+        "passed": 22,
+        "total": 22,
+        "source": "artifacts/evaluation/identity-plane-proof/report.json",
+        "source_sha256": "5a7bc1f187434647082b510c54055f4850a76c246f08488bef92e9814c5bb4da"
+      },
+      "browser": {
+        "passed": 35,
+        "total": 35,
+        "source": "artifacts/qa/browser/report.json",
+        "source_sha256": "45c4a7d31168a0db40178d2b0180b6aa94f319532a48bcb32eaaa9e4814dc0bb"
+      },
+      "physical_agent_boundaries": {
+        "passed": 7,
+        "total": 7,
+        "source": "artifacts/evaluation/personal-agent-runtime-proof-sanitized.json",
+        "source_sha256": "144f3fcf67c9edd2ef9227aa9b91a8ea750df64e5e9305e4958fa104755b0638"
+      }
+    },
+    "citation_validation": {
+      "source_commit": "525ff861b3580365839f487ca0dca10d0bf791cd",
+      "validator_path": "app/lib/structured-capability-plan.mjs",
+      "validator_sha256": "e0a992cba4475d39ab8cd42ab2f8d78a3131cf2d5246a69a3e045696cc956fa5",
+      "validator_test_path": "test/api/structured-capability-plan.test.mjs",
+      "validator_test_sha256": "514ccf4a93d22a8727d76a5e9de45f483404a10c56f726dbb602b523d852d46b",
+      "per_asset_source_turn_containment": true
+    },
+    "artifacts": {
+      "release_handoff": {
+        "path": "handoff/FINAL_HACKATHON_MVP_HANDOFF_2026-07-10.md",
+        "bytes": 13186,
+        "sha256": "d425254312791f5d5db50d494675c1b1853e197048da26de4d3c0d486e3445c1"
+      },
+      "identity_proof": {
+        "path": "artifacts/evaluation/identity-plane-proof/report.json",
+        "bytes": 11960,
+        "sha256": "5a7bc1f187434647082b510c54055f4850a76c246f08488bef92e9814c5bb4da"
+      },
+      "browser_report": {
+        "path": "artifacts/qa/browser/report.json",
+        "bytes": 26925,
+        "sha256": "45c4a7d31168a0db40178d2b0180b6aa94f319532a48bcb32eaaa9e4814dc0bb"
+      },
+      "physical_agent_proof": {
+        "path": "artifacts/evaluation/personal-agent-runtime-proof-sanitized.json",
+        "bytes": 1976,
+        "sha256": "144f3fcf67c9edd2ef9227aa9b91a8ea750df64e5e9305e4958fa104755b0638"
+      }
+    }
+  },
+  "artifacts": {
+    "binary": [
+      {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-full-narration.mp3",
+        "bytes": 2793265,
+        "sha256": "4a04cf0008ca3bd16fe35f219320d61112b4fcd1c135d310b8094cab3bdbc816",
+        "duration_seconds": 174.550204,
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "codec_type": "audio",
+            "sample_rate": "44100",
+            "channels": 1,
+            "r_frame_rate": "0/0"
+          }
+        ]
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-live-demo-narration.mp3",
+        "bytes": 830946,
+        "sha256": "cedc951ef1939c32f8e1163931e4048fb7ca205482c60272175e4b630b8ec135",
+        "duration_seconds": 51.905306,
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "codec_type": "audio",
+            "sample_rate": "44100",
+            "channels": 1,
+            "r_frame_rate": "0/0"
+          }
+        ]
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-live-pitch-demo.mp4",
+        "bytes": 4970201,
+        "sha256": "7390cf8241d4f6824dff27f213ea14346883ab94fa073211cad1094be953d150",
+        "duration_seconds": 55.5,
+        "streams": [
+          {
+            "codec_name": "h264",
+            "profile": "High",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "pix_fmt": "yuv420p",
+            "r_frame_rate": "30/1"
+          },
+          {
+            "codec_name": "aac",
+            "profile": "LC",
+            "codec_type": "audio",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ]
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-p5-judge-demo-poster.png",
+        "bytes": 265493,
+        "sha256": "bc3a1efe67b4ca582625523cc1aecd38ddec639d6d8a82d26e3cfe6e66d85e9a",
+        "duration_seconds": null,
+        "streams": [
+          {
+            "codec_name": "png",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "pix_fmt": "rgb24",
+            "r_frame_rate": "25/1"
+          }
+        ]
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-p5-judge-demo.mp4",
+        "bytes": 12260891,
+        "sha256": "5e0e03bb0e2a67c087d8c908f6b8a73121708a38791ee93e161b854c6d6a50dc",
+        "duration_seconds": 177,
+        "streams": [
+          {
+            "codec_name": "h264",
+            "profile": "High",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "pix_fmt": "yuv420p",
+            "r_frame_rate": "30/1"
+          },
+          {
+            "codec_name": "aac",
+            "profile": "LC",
+            "codec_type": "audio",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ]
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/sources/01-home-1920x1080.png",
+        "bytes": 124909,
+        "sha256": "ea2063109ac58a510d781ee6630020d1285ab4ceb37e3307b63d633af3dae4bc",
+        "duration_seconds": null,
+        "streams": [
+          {
+            "codec_name": "png",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "pix_fmt": "rgb24",
+            "r_frame_rate": "25/1"
+          }
+        ]
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/sources/02-search-results-1920x1080.png",
+        "bytes": 217395,
+        "sha256": "6fa087b5e8668d3827481ea1ffa806ad53d2293a8691d31896be8266e29bf3cd",
+        "duration_seconds": null,
+        "streams": [
+          {
+            "codec_name": "png",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "pix_fmt": "rgb24",
+            "r_frame_rate": "25/1"
+          }
+        ]
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/sources/03-asset-inspector-provenance-1920x1080.png",
+        "bytes": 201040,
+        "sha256": "6223af8b694a784669b2668ba8c6456843ac4fb972590cbc34c1dc5c54f27606",
+        "duration_seconds": null,
+        "streams": [
+          {
+            "codec_name": "png",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "pix_fmt": "rgb24",
+            "r_frame_rate": "25/1"
+          }
+        ]
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/sources/04-asset-source-path-1920x1080.png",
+        "bytes": 75221,
+        "sha256": "4c58be4f47767d105a23a4a66124fe9e97210618d64881516d819b28fd611db9",
+        "duration_seconds": null,
+        "streams": [
+          {
+            "codec_name": "png",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "pix_fmt": "rgb24",
+            "r_frame_rate": "25/1"
+          }
+        ]
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/sources/05-assist-result-1920x1080.png",
+        "bytes": 255409,
+        "sha256": "1c6021ffa1339316b6dd185ab9de7550a0a256aed7bc215dc2b7958833d655f4",
+        "duration_seconds": null,
+        "streams": [
+          {
+            "codec_name": "png",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "pix_fmt": "rgb24",
+            "r_frame_rate": "25/1"
+          }
+        ]
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/sources/06-analytics-access-proof-1920x1080.png",
+        "bytes": 257269,
+        "sha256": "40792723586eec0a032b841d999f37c7bcb08a46604bb7bc8582c77abcc2a2df",
+        "duration_seconds": null,
+        "streams": [
+          {
+            "codec_name": "png",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "pix_fmt": "rgb24",
+            "r_frame_rate": "25/1"
+          }
+        ]
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/sources/public-capability-interaction.webm",
+        "bytes": 3067259,
+        "sha256": "50e56929c20450beb08203e2aee3983e3c7a0c9a946306071cff6106253e014f",
+        "duration_seconds": 27.36,
+        "streams": [
+          {
+            "codec_name": "vp8",
+            "profile": "0",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "pix_fmt": "yuv420p",
+            "r_frame_rate": "25/1"
+          }
+        ]
+      }
+    ],
+    "text": [
+      {
+        "path": "artifacts/submission/media/final-judge-video/FINAL_VIDEO_TRANSCRIPTS.md",
+        "bytes": 3921,
+        "sha256": "dce4041799af1261145aa49eb25bbe90d802babd2bbdab6a1202b99037b4c357"
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/final-video-build-report.json",
+        "bytes": 23695,
+        "sha256": "ee7be658510adb0de2e23c473ce153be41c070dc80485a6aba5e18d872e4cb98"
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/final-video-qa-report.json",
+        "bytes": 10195,
+        "sha256": "b6f68731bb455873bcf9ddf73bdc9ff106c71f485371b785eaa9f632ca76f350"
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-full-narration-alignment.json",
+        "bytes": 114302,
+        "sha256": "258a59f33cbc880c664d88bafe5fc1fc170eb9fd93af69af11dcfe225b08512b"
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-full-narration.txt",
+        "bytes": 2892,
+        "sha256": "b41ba7250c33c98b0f7e7a3aee7d64f181919be8be32f20ef6794cfae812f292"
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-full-narration.vtt",
+        "bytes": 4582,
+        "sha256": "23c08d36cfb103ddf0a9e5721a92936a59a4608cf4f39b6f81c81b7cfc354c87"
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-live-demo-narration-alignment.json",
+        "bytes": 32869,
+        "sha256": "5e9b3f5bd875df88122f7fbabac40decadf296237aedf08df72f18dc84e914ed"
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-live-demo-narration.txt",
+        "bytes": 847,
+        "sha256": "1f8aef85e1e1a96eddfb1959de5867066034c8095b251fe5ebddfa0661d4531a"
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-live-demo-narration.vtt",
+        "bytes": 1353,
+        "sha256": "0f27af1a6678af9c87698e6c8c317ab6d23edd29b79961aea0477cbe4a1068fc"
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-live-pitch-demo.vtt",
+        "bytes": 1353,
+        "sha256": "0f27af1a6678af9c87698e6c8c317ab6d23edd29b79961aea0477cbe4a1068fc"
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-p5-judge-demo.vtt",
+        "bytes": 4582,
+        "sha256": "23c08d36cfb103ddf0a9e5721a92936a59a4608cf4f39b6f81c81b7cfc354c87"
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/sources/public-interaction-capture-report.json",
+        "bytes": 8914,
+        "sha256": "f9b95b90207e2b7f65e7bb7ace5aadf91337bf3c40ed68fe33a3c6cd22ef0b2c"
+      },
+      {
+        "path": "artifacts/submission/media/final-judge-video/voice-generation-report.json",
+        "bytes": 2252,
+        "sha256": "3e254e75f1b146d0ce69d98828f0f122f803d18f40a348cc68616ad3f2aecd59"
+      }
+    ]
+  },
+  "release_safety": {
+    "synthetic_public_safe_disclosure": true,
+    "captions_burned_in_and_webvtt_included": true,
+    "input_metadata_not_mapped": true,
+    "workshop_recording_excluded": true,
+    "workshop_frames_and_transcript_excluded": true,
+    "credential_material_excluded": true,
+    "visual_review_confirmed": true
+  }
+}

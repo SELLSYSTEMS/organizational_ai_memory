@@ -1,0 +1,5 @@
+Goal: prepare a website handoff the next owner can execute. Before any model runs, Organizational AI Memory selects an approved prompt, workflow, and source-first decision, each with review state, why-it-worked context, and source lineage.
+
+In this fresh capture, Spark creates six cited steps from those records. Each step keeps its selected asset and source-turn citations. Deterministic selection remains authoritative. Personal memory stays owner-only until revision consent. A locked Linux agent retrieves it only through a broker with revision and SHA-256 citation.
+
+Seven runtime checks deny source, model credentials, direct PostgreSQL, and outbound sockets. Editing resets access until re-consent. Spark adapts the plan; it cannot decide company truth. When people move on, the organization keeps reviewed capability, not private memory.
