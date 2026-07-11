@@ -4,6 +4,8 @@ Organizational AI Memory is a provenance-first capability system. Contributions
 must preserve deterministic truth, explicit governance, and the separation
 between public-safe evidence and internal operational state.
 
+Participation is governed by [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
+
 ## Before starting
 
 1. Read `README.md`, `docs/KNOWN_GAPS.md`, and the architecture document relevant

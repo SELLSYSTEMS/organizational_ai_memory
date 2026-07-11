@@ -322,6 +322,7 @@ See:
 - [Safe publishing guide](docs/submission/PUBLISHING.md)
 - [Evidence-driven development model](docs/development/EVIDENCE_DRIVEN_DEVELOPMENT.md)
 - [Contributing guide](CONTRIBUTING.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Security policy](SECURITY.md)
 - [Design contract](DESIGN.md)
 - [Design review](artifacts/design/DESIGN_REVIEW.md)

@@ -49,7 +49,8 @@ Stage the public tree explicitly; do not use a blanket `git add .`:
 
 ```bash
 git add -- \
-  .gitignore .github LICENSE README.md DESIGN.md CONTRIBUTING.md SECURITY.md \
+  .gitignore .github LICENSE README.md DESIGN.md CODE_OF_CONDUCT.md \
+  CONTRIBUTING.md SECURITY.md \
   package.json package-lock.json \
   app config deploy scripts sql test docs \
   artifacts/design/DESIGN_REVIEW.md \
