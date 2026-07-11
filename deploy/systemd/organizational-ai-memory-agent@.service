@@ -1,0 +1,60 @@
+[Unit]
+Description=Organizational AI Memory linked agent %i
+After=network.target organizational-ai-memory-broker.service
+Requires=organizational-ai-memory-broker.service
+PartOf=organizational-ai-memory-agents.target
+
+[Service]
+Type=simple
+User=oam-a-%i
+Group=oam-a-%i
+SupplementaryGroups=oam-agent-broker
+WorkingDirectory=/var/lib/oam-agents/%i
+Environment=NODE_ENV=production
+Environment=HOME=/var/lib/oam-agents/%i
+Environment=OAM_AGENT_STATE_DIR=/var/lib/oam-agents/%i
+Environment=OAM_AGENT_TOKEN_FILE=/etc/oam-agents/%i/broker.token
+Environment=OAM_AGENT_PRINCIPAL_KEY_FILE=/etc/oam-agents/%i/principal.key
+Environment=OAM_AGENT_BROKER_SOCKET=/run/organizational-ai-memory-broker/agent.sock
+Environment=OAM_AGENT_OS_USER=oam-a-%i
+ExecStart=/usr/bin/node /opt/organizational-ai-memory-agent/app/agent-runtime.mjs
+Restart=on-failure
+RestartSec=5s
+TimeoutStartSec=15s
+TimeoutStopSec=10s
+UMask=0077
+
+AmbientCapabilities=
+CapabilityBoundingSet=
+InaccessiblePaths=/home/admin/organizational-ai-memory /etc/tg_ops /var/lib/oam-codex
+InaccessiblePaths=/opt/organizational-ai-memory /opt/organizational-ai-memory-operator /opt/organizational-ai-memory-broker /opt/organizational-ai-memory-security /opt/organizational-ai-memory-codex
+LockPersonality=true
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateNetwork=true
+PrivateTmp=true
+ProtectClock=true
+ProtectControlGroups=true
+ProtectHome=true
+ProtectHostname=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectProc=invisible
+ProtectSystem=strict
+ProcSubset=pid
+ReadOnlyPaths=/opt/organizational-ai-memory-agent
+ReadWritePaths=/var/lib/oam-agents/%i
+RestrictAddressFamilies=AF_UNIX
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+SystemCallArchitectures=native
+TasksMax=32
+MemoryMax=256M
+MemorySwapMax=0
+CPUQuota=30%
+LimitNOFILE=128
+
+[Install]
+WantedBy=organizational-ai-memory-agents.target

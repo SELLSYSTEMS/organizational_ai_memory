@@ -1,0 +1,233 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-07-11T13:43:57.124Z",
+  "base_url": "https://memory.sellsystems.agency",
+  "run_id": "0711-final-f",
+  "scenario": "One synthetic employee and one separately governed Personal Memory Agent",
+  "synthetic_employee": {
+    "display_name": "Mai Nguyen",
+    "job_title": "Delivery Lead",
+    "personal_agent_name": "Mai Nguyen's Personal Memory Agent"
+  },
+  "browser": "Playwright with system Chrome at /usr/bin/google-chrome",
+  "capture_contract": {
+    "operator_authentication_recorded": false,
+    "workspace_link_rendering": "masked password field only",
+    "workspace_activation_fragment_scrubbed_before_render": true,
+    "raw_credentials_written_to_artifacts": false,
+    "created_pair_preserved_for_walkthrough": true
+  },
+  "checks": {
+    "readiness": true,
+    "architect_session_preloaded": true,
+    "workspace_fragment_scrubbed": true,
+    "masked_workspace_link": true,
+    "provisioning_succeeded": true,
+    "one_human_one_agent_active": true,
+    "private_memory_excluded": true,
+    "shared_memory_cited": true,
+    "edit_reset_access": true,
+    "current_revision_cited": true,
+    "mobile_no_horizontal_overflow": true
+  },
+  "steps": [
+    {
+      "sequence": 1,
+      "filename": "screenshots/employee-workflow/01-onboard-employee.png",
+      "route": "/architect/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "A single operator action defines the employee and their one separately governed Personal Memory Agent."
+    },
+    {
+      "sequence": 2,
+      "filename": "screenshots/employee-workflow/02-created-pair-masked-link.png",
+      "route": "/architect/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "The employee, personal agent, and revocable private workspace are created atomically; the only returned link remains masked."
+    },
+    {
+      "sequence": 3,
+      "filename": "screenshots/employee-workflow/03-immutable-plan-queued.png",
+      "route": "/architect/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "Physical provisioning begins as an immutable, revisioned plan rather than an unreviewed browser-side action."
+    },
+    {
+      "sequence": 4,
+      "filename": "screenshots/employee-workflow/04-revision-bound-confirmation.png",
+      "route": "/architect/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "The operator confirms the exact plan revision and hash before privileged provisioning can execute."
+    },
+    {
+      "sequence": 5,
+      "filename": "screenshots/employee-workflow/05-physical-provisioning-succeeded.png",
+      "route": "/architect/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "The completed job records runtime binding, activation proofs, and final activation."
+    },
+    {
+      "sequence": 6,
+      "filename": "screenshots/employee-workflow/06-active-pair-and-runtime-identity.png",
+      "route": "/architect/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "The active personal agent has its own Linux runtime bindings while retaining a one-human, one-agent application pairing."
+    },
+    {
+      "sequence": 7,
+      "filename": "screenshots/employee-workflow/07-private-workspace-activated.png",
+      "route": "/workspace/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "The employee enters a private workspace through a scrubbed activation fragment and an HttpOnly session."
+    },
+    {
+      "sequence": 8,
+      "filename": "screenshots/employee-workflow/08-self-authored-work-profile.png",
+      "route": "/workspace/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "The employee writes the role context, expertise, working style, goals, and constraints that remain under their control."
+    },
+    {
+      "sequence": 9,
+      "filename": "screenshots/employee-workflow/09-private-versioned-work-profile.png",
+      "route": "/workspace/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "Employee-authored work context is saved as an immutable owner-only profile revision."
+    },
+    {
+      "sequence": 10,
+      "filename": "screenshots/employee-workflow/10-explicit-profile-consent.png",
+      "route": "/workspace/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "Profile access is a separate, hash-preserving action bound to the current revision."
+    },
+    {
+      "sequence": 11,
+      "filename": "screenshots/employee-workflow/11-capture-private-experience.png",
+      "route": "/workspace/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "The employee records typed content, context, why it worked, evidence, tags, and sensitivity in one bounded form."
+    },
+    {
+      "sequence": 12,
+      "filename": "screenshots/employee-workflow/12-private-memory-excluded.png",
+      "route": "/workspace/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "Before consent, the exact memory query returns no grounded match even though the employee can see the record."
+    },
+    {
+      "sequence": 13,
+      "filename": "screenshots/employee-workflow/13-revision-bound-memory-consent.png",
+      "route": "/workspace/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "The employee grants only the linked agent access to the next current revision with the same content hash."
+    },
+    {
+      "sequence": 14,
+      "filename": "screenshots/employee-workflow/14-grounded-reuse-with-citation.png",
+      "route": "/workspace/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "After consent, the same deterministic query returns authorized context with revision, hash, citation, and audit receipt."
+    },
+    {
+      "sequence": 15,
+      "filename": "screenshots/employee-workflow/15-edit-resets-agent-access.png",
+      "route": "/workspace/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "Editing shared content creates a new private current revision and resets the prior access decision."
+    },
+    {
+      "sequence": 16,
+      "filename": "screenshots/employee-workflow/16-edited-version-excluded.png",
+      "route": "/workspace/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "The edited current version remains excluded until the employee explicitly consents again."
+    },
+    {
+      "sequence": 17,
+      "filename": "screenshots/employee-workflow/17-current-version-reconsented.png",
+      "route": "/workspace/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "Re-consent exposes only current revision 4, with its own typed citation and retrieval audit receipt."
+    },
+    {
+      "sequence": 18,
+      "filename": "screenshots/employee-workflow/18-personal-agent-boundaries.png",
+      "route": "/workspace/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "caption": "The final ledger separates agent-visible sources, owner-only sources, one-to-one identity, and brokered database authority."
+    },
+    {
+      "sequence": 19,
+      "filename": "screenshots/employee-workflow/19-personal-agent-boundaries-mobile.png",
+      "route": "/workspace/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "caption": "The same identity and access ledger remains usable at a 390-pixel mobile viewport."
+    }
+  ],
+  "artifacts": {
+    "webm": "organizational-ai-memory-employee-workflow.webm",
+    "mp4": "organizational-ai-memory-employee-workflow.mp4",
+    "screenshot_directory": "screenshots/employee-workflow"
+  },
+  "browser_errors": [],
+  "failure": null,
+  "passed": true
+}

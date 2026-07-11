@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#fbfcfa" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta
+      name="description"
+      content="Operator-only console for governed organizational AI identity, provisioning, proofs, and capability promotion."
+    />
+    <title>Architect Console | Organizational AI Memory</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#operator-main">Skip to console</a>
+    <div id="operator-app" aria-live="polite">
+      <div class="boot-state"><span class="spinner" aria-hidden="true"></span>Checking operator session…</div>
+    </div>
+    <dialog class="operator-dialog" data-dialog aria-labelledby="dialog-title">
+      <form method="dialog" class="dialog-shell" data-dialog-form></form>
+    </dialog>
+    <div class="toast-region" aria-live="polite" aria-atomic="true" data-toast-region></div>
+  </body>
+</html>

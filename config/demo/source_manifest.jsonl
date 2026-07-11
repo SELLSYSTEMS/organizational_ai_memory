@@ -1,0 +1,3 @@
+{"source_id":"oam_public_demo_v1","original_class":"synthetic_project_thread","visibility":"public_safe","redaction_note":"Fictional names and project facts; approved for public demo use."}
+{"source_id":"oam_internal_eval_v1","original_class":"synthetic_regression_thread","visibility":"internal_demo_only","redaction_note":"Fictional sanitized regression data; excluded from public APIs and nginx routing."}
+{"source_id":"agent_memory_demo_thread_v1","original_class":"legacy_bootstrap_demo","visibility":"excluded_private","redaction_note":"Predates explicit corpus classification and is not allowed on public routes."}

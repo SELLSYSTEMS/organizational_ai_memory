@@ -1,0 +1,50 @@
+[
+  {
+    "task_key": "new_b2b_lead_intake",
+    "task_title": "Start research for a new B2B lead",
+    "recommended_asset_keys": [
+      "prompt:lead_research_brief_v2",
+      "workflow:linkedin_comment_research_v2",
+      "decision:source_first_before_generation_v1"
+    ],
+    "reason": "This combination enforces source inspection before message drafting."
+  },
+  {
+    "task_key": "sales_call_follow_up",
+    "task_title": "Preserve meeting outcomes after a sales call",
+    "recommended_asset_keys": [
+      "workflow:zoom_monday_call_scoring_v1",
+      "agent:node_red_ops_orchestrator_v1",
+      "decision:source_first_before_generation_v1"
+    ],
+    "reason": "It keeps transcript evidence attached to operational records."
+  },
+  {
+    "task_key": "website_delivery_handoff",
+    "task_title": "Prepare a new website delivery handoff",
+    "recommended_asset_keys": [
+      "prompt:website_handoff_brief_v1",
+      "workflow:portfolio_site_delivery_v1",
+      "decision:source_first_before_generation_v1"
+    ],
+    "reason": "It preserves structure, proof, and content quality before implementation."
+  },
+  {
+    "task_key": "public_demo_release",
+    "task_title": "Prepare a public-facing product demo",
+    "recommended_asset_keys": [
+      "practice:public_safe_demo_boundary_v1",
+      "agent:node_red_ops_orchestrator_v1"
+    ],
+    "reason": "It keeps public-safe and internal corpora separated."
+  },
+  {
+    "task_key": "ai_workspace_onboarding",
+    "task_title": "Onboard a new AI workspace user",
+    "recommended_asset_keys": [
+      "workflow:ai_workspace_onboarding_v1",
+      "practice:public_safe_demo_boundary_v1"
+    ],
+    "reason": "It standardizes provisioning while keeping demo and internal scopes controlled."
+  }
+]

@@ -1,0 +1,39 @@
+{
+  "name": "organizational-ai-memory",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "description": "Provenance-first organizational capability and continuity MVP for the AABW 2026 hackathon.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "app:start": "node app/server.mjs",
+    "app:operator": "node app/operator-server.mjs",
+    "app:employee": "node app/employee-server.mjs",
+    "app:broker": "node app/memory-broker.mjs",
+    "app:codex-sidecar": "node app/codex-sidecar.mjs",
+    "app:test": "node --test test/api/*.test.mjs",
+    "app:qa": "node scripts/evaluation/run_app_browser_qa.mjs",
+    "submission:screenshots": "node scripts/evaluation/capture_submission_screenshots.mjs",
+    "demo:seed": "node scripts/demo/bootstrap_demo_corpora.mjs",
+    "demo:capabilities:import": "node scripts/demo/import_capability_pack.mjs",
+    "demo:eval:internal": "node scripts/demo/run_internal_demo_eval.mjs",
+    "design:stitch": "node scripts/design/generate_stitch_wave.mjs artifacts/design/stitch",
+    "design:og": "node scripts/design/capture_social_preview.mjs",
+    "doctor:node": "node scripts/tools/target_node_doctor.mjs",
+    "memory:import:pg": "node scripts/memory/import_thread_bundle_pg.mjs",
+    "memory:jobs:enqueue": "node scripts/memory/enqueue_memory_jobs.mjs",
+    "memory:jobs:run": "node scripts/memory/run_memory_job.mjs",
+    "memory:pipeline": "node scripts/memory/run_thread_memory_pipeline.mjs",
+    "memory:sync:qdrant": "node scripts/memory/sync_agent_memory_qdrant.mjs",
+    "memory:query": "node scripts/memory/query_agent_memory.mjs",
+    "eval:memory": "node scripts/evaluation/run_memory_eval.mjs"
+  },
+  "dependencies": {
+    "@google/stitch-sdk": "^0.3.5",
+    "pg": "^8.16.3",
+    "playwright": "^1.58.2"
+  }
+}

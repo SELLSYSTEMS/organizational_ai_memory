@@ -1,0 +1,62 @@
+name: Capability change
+description: Propose a bounded product, memory, governance, or evaluation change.
+title: "[Capability]: "
+body:
+  - type: textarea
+    id: objective
+    attributes:
+      label: Exact outcome
+      description: Describe the user-visible or enforcement result, not a broad aspiration.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: In-scope and excluded surfaces
+      description: List files, routes, data objects, services, and explicit non-goals.
+    validations:
+      required: true
+  - type: dropdown
+    id: memory_type
+    attributes:
+      label: Primary capability object
+      options:
+        - Prompt
+        - Workflow
+        - Agent pattern
+        - Decision
+        - Best practice
+        - Identity or permission control
+        - Evaluation or release gate
+    validations:
+      required: true
+  - type: textarea
+    id: truth
+    attributes:
+      label: Truth, provenance, and versioning
+      description: State the authoritative record, source evidence, review state, and supersession behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Executable acceptance gates
+      description: Include positive, negative, authorization, fallback, and browser checks as applicable.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Required release evidence
+      description: Define the public-safe artifacts that will prove completion.
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Boundary confirmation
+      options:
+        - label: Deterministic records remain authoritative before optional generation.
+          required: true
+        - label: Public-safe and internal-only inputs remain separated.
+          required: true

@@ -1,0 +1,113 @@
+{
+  "base_url": "https://memory.sellsystems.agency",
+  "captured_at": "2026-07-11T13:50:57.641Z",
+  "browser": "Playwright with system Chrome at /usr/bin/google-chrome",
+  "browser_availability": "Browser plugin not available; repository Playwright used with system Chrome.",
+  "captures": [
+    {
+      "filename": "01-home-capability-memory-1440.png",
+      "route": "/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "status": 200,
+      "errors": [],
+      "unexpected_errors": []
+    },
+    {
+      "filename": "02-capability-workspace-1440.png",
+      "route": "/capabilities",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "status": 200,
+      "errors": [
+        "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+      ],
+      "unexpected_errors": []
+    },
+    {
+      "filename": "03-capability-spark-plan-1440.png",
+      "route": "/capabilities",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "status": 200,
+      "errors": [
+        "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+      ],
+      "unexpected_errors": []
+    },
+    {
+      "filename": "04-assets-governance-provenance-1440.png",
+      "route": "/assets?asset=prompt%3Awebsite_handoff_brief_v1",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "status": 200,
+      "errors": [],
+      "unexpected_errors": []
+    },
+    {
+      "filename": "05-method-architecture-1440.png",
+      "route": "/method",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "status": 200,
+      "errors": [],
+      "unexpected_errors": []
+    },
+    {
+      "filename": "06-capability-workspace-mobile-390.png",
+      "route": "/capabilities",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "status": 200,
+      "errors": [
+        "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+      ],
+      "unexpected_errors": []
+    },
+    {
+      "filename": "07-architect-console-four-plane-1440.png",
+      "route": "/architect/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "status": 200,
+      "errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+      ],
+      "unexpected_errors": []
+    },
+    {
+      "filename": "08-architect-effective-access-1440.png",
+      "route": "/architect/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "status": 200,
+      "errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+      ],
+      "unexpected_errors": []
+    }
+  ],
+  "operator": {
+    "tested": true,
+    "signed_in_as": "architect",
+    "canonical_write_denial_visible": true
+  },
+  "failures": [],
+  "passed": true
+}

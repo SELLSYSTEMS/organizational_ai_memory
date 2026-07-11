@@ -1,0 +1,54 @@
+{
+  "generated_at": "2026-07-10T04:00:00Z",
+  "asset_counts_by_type": [
+    { "asset_type": "prompt", "count": 2 },
+    { "asset_type": "workflow", "count": 4 },
+    { "asset_type": "agent", "count": 1 },
+    { "asset_type": "decision_pattern", "count": 1 },
+    { "asset_type": "best_practice", "count": 1 }
+  ],
+  "review_status_counts": [
+    { "review_status": "approved", "count": 9 },
+    { "review_status": "reviewed", "count": 0 },
+    { "review_status": "draft", "count": 0 }
+  ],
+  "capability_area_counts": [
+    { "capability_area": "b2b_outreach", "count": 1 },
+    { "capability_area": "content_operations", "count": 1 },
+    { "capability_area": "meeting_operations", "count": 1 },
+    { "capability_area": "ai_enablement", "count": 1 },
+    { "capability_area": "automation_infrastructure", "count": 1 },
+    { "capability_area": "quality_control", "count": 1 },
+    { "capability_area": "governance", "count": 1 },
+    { "capability_area": "website_delivery", "count": 2 }
+  ],
+  "duplicated_patterns": [
+    {
+      "pattern_key": "source_first_before_generation",
+      "asset_keys": [
+        "prompt:lead_research_brief_v2",
+        "workflow:linkedin_comment_research_v2",
+        "workflow:zoom_monday_call_scoring_v1",
+        "workflow:portfolio_site_delivery_v1"
+      ],
+      "signal": "This pattern appears across multiple capability areas and should be elevated as a governed standard."
+    }
+  ],
+  "missing_capabilities": [
+    {
+      "gap_key": "enterprise_identity_federation",
+      "title": "Enterprise identity federation",
+      "signal": "The MVP proves role-aware review and physical workload isolation, but production SSO and SCIM lifecycle automation are not implemented."
+    },
+    {
+      "gap_key": "recommendation_feedback_loop",
+      "title": "Recommendation outcome feedback",
+      "signal": "The pack includes recommendation mappings, but not yet a feedback signal for whether the suggested asset worked."
+    },
+    {
+      "gap_key": "asset_version_timeline",
+      "title": "Version lineage timeline",
+      "signal": "Version metadata exists, but only one asset explicitly supersedes an older asset."
+    }
+  ]
+}

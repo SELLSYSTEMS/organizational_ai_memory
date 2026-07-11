@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "proof_class": "physical_personal_memory_agent",
+  "capture_run_id": "0711-final-f",
+  "employee_display_name": "Mai Nguyen",
+  "agent_display_name": "Mai Nguyen's Personal Memory Agent",
+  "checked_at": "2026-07-11T13:44:51.061Z",
+  "passed": true,
+  "boundary_checks": [
+    {
+      "label": "repository_read",
+      "expected": "denied",
+      "actual": "denied",
+      "passed": true,
+      "code": "EACCES"
+    },
+    {
+      "label": "installed_application_read",
+      "expected": "denied",
+      "actual": "denied",
+      "passed": true,
+      "code": "EACCES"
+    },
+    {
+      "label": "application_environment_read",
+      "expected": "denied",
+      "actual": "denied",
+      "passed": true,
+      "code": "EACCES"
+    },
+    {
+      "label": "model_authentication_read",
+      "expected": "denied",
+      "actual": "denied",
+      "passed": true,
+      "code": "EACCES"
+    },
+    {
+      "label": "own_workspace_write",
+      "expected": "allowed",
+      "actual": "allowed",
+      "passed": true
+    },
+    {
+      "label": "outbound_ip_socket",
+      "expected": "denied",
+      "actual": "denied",
+      "passed": true,
+      "code": "EAFNOSUPPORT"
+    },
+    {
+      "label": "direct_postgres_connect",
+      "expected": "denied",
+      "actual": "denied",
+      "passed": true,
+      "code": "postgres_authority_denied"
+    }
+  ],
+  "organizational_capability": {
+    "passed": true,
+    "authorization": "allowed",
+    "source_count": 1
+  },
+  "personal_context": {
+    "passed": true,
+    "authorization": "allowed",
+    "matched_count": 1,
+    "citation_count": 1,
+    "audit_event_key": "b9c8f0f4-b5db-4566-8da0-fb9b37d6d5f4",
+    "citation_digests": [
+      {
+        "source_type": "memory",
+        "source_id": "64bc0074-2d2f-43c5-b287-0cf5fc864b3c",
+        "revision": 4,
+        "content_sha256": "09526e87ed64248e50ca6b25fda11bf04f8d476aa44967cc6396f799b34e888d"
+      }
+    ]
+  },
+  "credential_disclosure": false
+}

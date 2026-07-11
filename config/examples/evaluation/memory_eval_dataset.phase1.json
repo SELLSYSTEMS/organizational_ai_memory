@@ -1,0 +1,71 @@
+{
+  "eval_key": "memory_phase1_demo_eval_v1",
+  "brand_key": "sell_systems",
+  "thread_key": "agent_memory_demo_thread_v1",
+  "cases": [
+    {
+      "case_key": "budget_case",
+      "query_text": "What monthly budget did the client mention?",
+      "subject_key": "lead:acme_hk",
+      "expected_facts": [
+        {
+          "predicate": "budget",
+          "value_contains": "3000 USD"
+        }
+      ],
+      "expected_text_terms": [
+        "3000",
+        "budget"
+      ]
+    },
+    {
+      "case_key": "tools_case",
+      "query_text": "Which tools does the client already use?",
+      "subject_key": "lead:acme_hk",
+      "expected_facts": [
+        {
+          "predicate": "tools_in_use",
+          "value_contains": "Monday.com"
+        }
+      ],
+      "expected_text_terms": [
+        "Slack",
+        "Google Drive"
+      ]
+    },
+    {
+      "case_key": "language_timezone_case",
+      "query_text": "What communication preference and timezone did they mention?",
+      "subject_key": "lead:acme_hk",
+      "expected_facts": [
+        {
+          "predicate": "preferred_language",
+          "value_contains": "English"
+        },
+        {
+          "predicate": "timezone",
+          "value_contains": "HKT"
+        }
+      ],
+      "expected_text_terms": [
+        "short written updates",
+        "HKT"
+      ]
+    },
+    {
+      "case_key": "delivery_model_case",
+      "query_text": "Is this engagement remote-only or does it include shipping?",
+      "subject_key": "lead:acme_hk",
+      "expected_facts": [
+        {
+          "predicate": "delivery_model",
+          "value_contains": "remote_only"
+        }
+      ],
+      "expected_text_terms": [
+        "remote",
+        "shipping"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Organizational AI Memory">
+  <rect x="2" y="2" width="28" height="28" rx="2" fill="#f4f4f0" stroke="#171a18" stroke-width="2"/>
+  <path d="M9 9h5v14H9zM18 9h5v14h-5z" fill="#171a18"/>
+  <path d="M15 9h2v14h-2z" fill="#087f6b"/>
+</svg>

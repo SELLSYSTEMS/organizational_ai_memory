@@ -1,0 +1,62 @@
+[Unit]
+Description=Organizational AI Memory allowlisted identity provisioner
+After=local-fs.target
+
+[Service]
+Type=simple
+User=root
+Group=oam-operator
+WorkingDirectory=/opt/organizational-ai-memory-security
+Environment=NODE_ENV=production
+Environment=OAM_PROVISIONER_SOCKET=/run/oam-provisioner/provisioner.sock
+Environment=OAM_PROVISIONER_SOCKET_GROUP=oam-operator
+Environment=OAM_PROVISIONER_STATE=/var/lib/oam-provisioner
+Environment=OAM_PROVISIONER_LOGS=/var/log/oam-provisioner
+Environment=OAM_PROVISIONER_MAX_AGENTS=8
+Environment=OAM_QUARANTINE_ROOT=/var/lib/organizational-ai-memory-quarantine
+ExecStart=/usr/bin/node app/provisioner.mjs
+Restart=on-failure
+RestartSec=3s
+RuntimeDirectory=oam-provisioner
+RuntimeDirectoryMode=0750
+StateDirectory=oam-provisioner
+StateDirectoryMode=0700
+LogsDirectory=oam-provisioner
+LogsDirectoryMode=0700
+TimeoutStartSec=15s
+TimeoutStopSec=10s
+UMask=0077
+
+AmbientCapabilities=CAP_CHOWN CAP_DAC_OVERRIDE CAP_FOWNER CAP_KILL
+CapabilityBoundingSet=CAP_CHOWN CAP_DAC_OVERRIDE CAP_FOWNER CAP_KILL
+LockPersonality=true
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateTmp=true
+ProtectClock=true
+ProtectControlGroups=true
+ProtectHome=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectProc=invisible
+ProtectSystem=strict
+ProcSubset=pid
+InaccessiblePaths=/etc/ssh /etc/ssl/private /etc/tg_ops /etc/organizational-ai-memory /var/lib/oam-codex
+ReadWritePaths=/etc/oam-agents /var/lib/oam-agents /var/lib/oam-provisioner /var/log/oam-provisioner
+ReadWritePaths=/var/lib/organizational-ai-memory-quarantine
+# shadow-utils creates PID-suffixed siblings while atomically replacing the
+# account databases, so user creation requires the parent directory writable.
+ReadWritePaths=/etc
+ReadWritePaths=/etc/systemd/system/organizational-ai-memory-agents.target.wants
+RestrictAddressFamilies=AF_UNIX
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+SystemCallArchitectures=native
+TasksMax=48
+MemoryMax=256M
+CPUQuota=25%
+
+[Install]
+WantedBy=multi-user.target

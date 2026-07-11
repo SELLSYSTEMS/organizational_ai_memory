@@ -1,0 +1,94 @@
+{
+  "thread": {
+    "thread_key": "oam_public_demo_v1",
+    "brand_key": "sell_systems_hackathon_demo",
+    "scope_kind": "project_memory",
+    "scope_key": "project:northstar_public_demo",
+    "source_system": "public_safe_synthetic_demo",
+    "external_thread_ref": "demo/northstar-continuity",
+    "title": "Northstar rollout continuity thread",
+    "language_code": "en",
+    "status": "active",
+    "metadata": {
+      "corpus": "public_demo",
+      "visibility": "public_safe",
+      "synthetic_demo": true,
+      "review_status": "approved_for_public_demo",
+      "description": "Fictional project context created to demonstrate provenance and temporal truth."
+    }
+  },
+  "turns": [
+    {
+      "source_turn_id": "public-t001",
+      "actor_role": "operator",
+      "actor_key": "operator:demo",
+      "turn_kind": "message",
+      "sent_at": "2026-06-02T09:00:00Z",
+      "text_raw": "We will preserve the rollout decisions and source every reusable fact."
+    },
+    {
+      "source_turn_id": "public-t002",
+      "actor_role": "client",
+      "actor_key": "team:northstar_demo",
+      "turn_kind": "message",
+      "sent_at": "2026-06-02T09:04:00Z",
+      "text_raw": "We are based in Rotterdam and prefer short written updates in English."
+    },
+    {
+      "source_turn_id": "public-t003",
+      "actor_role": "client",
+      "actor_key": "team:northstar_demo",
+      "turn_kind": "message",
+      "sent_at": "2026-06-02T09:08:00Z",
+      "text_raw": "Our initial budget is 3000 USD per month."
+    },
+    {
+      "source_turn_id": "public-t004",
+      "actor_role": "client",
+      "actor_key": "team:northstar_demo",
+      "turn_kind": "message",
+      "sent_at": "2026-06-02T09:12:00Z",
+      "text_raw": "We use Linear, Slack, and Google Drive today."
+    },
+    {
+      "source_turn_id": "public-t005",
+      "actor_role": "client",
+      "actor_key": "team:northstar_demo",
+      "turn_kind": "message",
+      "sent_at": "2026-06-02T09:16:00Z",
+      "text_raw": "We do not want on-site hardware; everything should be remote."
+    },
+    {
+      "source_turn_id": "public-t006",
+      "actor_role": "client",
+      "actor_key": "team:northstar_demo",
+      "turn_kind": "message",
+      "sent_at": "2026-06-02T09:20:00Z",
+      "text_raw": "Timezone is CET and we need the first workflow ready by August 15, 2026."
+    },
+    {
+      "source_turn_id": "public-t007",
+      "actor_role": "client",
+      "actor_key": "team:northstar_demo",
+      "turn_kind": "message",
+      "sent_at": "2026-06-18T14:00:00Z",
+      "text_raw": "Budget is 4500 USD per month after the security review."
+    },
+    {
+      "source_turn_id": "public-t008",
+      "actor_role": "client",
+      "actor_key": "team:northstar_demo",
+      "turn_kind": "message",
+      "sent_at": "2026-06-20T11:30:00Z",
+      "text_raw": "The revised delivery target is now by August 29, 2026."
+    },
+    {
+      "source_turn_id": "public-t009",
+      "actor_role": "operator",
+      "actor_key": "operator:demo",
+      "turn_kind": "message",
+      "sent_at": "2026-06-20T11:34:00Z",
+      "text_raw": "We will start with source mapping, access review, and a retrieval evaluation."
+    }
+  ]
+}

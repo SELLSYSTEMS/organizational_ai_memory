@@ -1,0 +1,9 @@
+{
+  "query_key": "demo_query_001",
+  "brand_key": "sell_systems",
+  "thread_key": "agent_memory_demo_thread_v1",
+  "subject_key": "lead:acme_hk",
+  "query_text": "What budget, tools, language preference, and delivery model did the client mention?",
+  "semantic_limit": 5,
+  "keyword_limit": 5
+}

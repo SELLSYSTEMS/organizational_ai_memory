@@ -1,0 +1,56 @@
+[Unit]
+Description=Organizational AI Memory public application
+After=network-online.target postgresql.service organizational-ai-memory-codex.service
+Wants=network-online.target organizational-ai-memory-codex.service
+
+[Service]
+Type=simple
+User=oam-public
+Group=oam-public
+SupplementaryGroups=oam-codex
+WorkingDirectory=/opt/organizational-ai-memory
+Environment=NODE_ENV=production
+Environment=OAM_HOST=127.0.0.1
+Environment=OAM_PORT=3000
+Environment=OAM_CODEX_ASSIST_ENABLED=true
+Environment=OAM_CODEX_SOCKET_PATH=/run/organizational-ai-memory-codex/assist.sock
+Environment=OAM_PUBLIC_GENERATIONS_PER_MINUTE=6
+Environment=OAM_PUBLIC_IDENTITY_PROOF_PATH=/var/lib/organizational-ai-memory-proof/public-proof.json
+Environment=OAM_PUBLIC_EXPECTED_SOURCE_SHA256_PATH=/var/lib/organizational-ai-memory-proof/expected-source.sha256
+EnvironmentFile=/etc/organizational-ai-memory/public-db.env
+ExecStart=/usr/bin/node app/server.mjs
+Restart=on-failure
+RestartSec=3s
+TimeoutStartSec=20s
+TimeoutStopSec=10s
+UMask=0027
+
+AmbientCapabilities=
+CapabilityBoundingSet=
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateTmp=true
+ProtectClock=true
+ProtectControlGroups=true
+ProtectHome=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectSystem=strict
+InaccessiblePaths=/etc/tg_ops /etc/organizational-ai-memory/operator-db.env /etc/organizational-ai-memory/broker-db.env /etc/organizational-ai-memory/employee-db.env /etc/organizational-ai-memory/operator-credentials.json
+InaccessiblePaths=/var/lib/oam-codex /var/lib/organizational-ai-memory-operator /var/lib/organizational-ai-memory-quarantine /var/lib/oam-agents /etc/oam-agents
+ReadOnlyPaths=/opt/organizational-ai-memory /var/lib/organizational-ai-memory-proof
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+IPAddressDeny=any
+IPAddressAllow=localhost
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+SystemCallArchitectures=native
+TasksMax=96
+MemoryMax=512M
+MemorySwapMax=0
+LimitNOFILE=1024
+
+[Install]
+WantedBy=multi-user.target

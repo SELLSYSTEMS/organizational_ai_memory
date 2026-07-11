@@ -1,0 +1,807 @@
+{
+  "baseUrl": "https://memory.sellsystems.agency",
+  "generatedAt": "2026-07-11T13:50:30.043Z",
+  "browser": "Playwright with system Chrome at /usr/bin/google-chrome",
+  "browserAvailability": "Browser plugin not available; repository Playwright used with system Chrome.",
+  "checks": [
+    {
+      "route": "/",
+      "viewport": "desktop-1440",
+      "status": 200,
+      "title": "Organizational AI Memory",
+      "h1": [
+        "Organizational AI Memory"
+      ],
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/assets",
+      "viewport": "desktop-1440",
+      "status": 200,
+      "title": "Assets | Organizational AI Memory",
+      "h1": [
+        "Reusable capability assets"
+      ],
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "readyText": "ok",
+      "canonicalWebsiteTask": false,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/capabilities",
+      "viewport": "desktop-1440",
+      "status": 200,
+      "title": "Capabilities | Organizational AI Memory",
+      "h1": [
+        "1. Grounded capability search"
+      ],
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+      ],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/method",
+      "viewport": "desktop-1440",
+      "status": 200,
+      "title": "Method | Organizational AI Memory",
+      "h1": [
+        "How capability memory is formed and reused"
+      ],
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/evidence",
+      "viewport": "desktop-1440",
+      "status": 200,
+      "title": "Evidence | Organizational AI Memory",
+      "h1": [
+        "Inspect the memory behind the result"
+      ],
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "readyText": "ok",
+      "canonicalWebsiteTask": false,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/",
+      "viewport": "desktop-1280",
+      "status": 200,
+      "title": "Organizational AI Memory",
+      "h1": [
+        "Organizational AI Memory"
+      ],
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/assets",
+      "viewport": "desktop-1280",
+      "status": 200,
+      "title": "Assets | Organizational AI Memory",
+      "h1": [
+        "Reusable capability assets"
+      ],
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "readyText": "ok",
+      "canonicalWebsiteTask": false,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/capabilities",
+      "viewport": "desktop-1280",
+      "status": 200,
+      "title": "Capabilities | Organizational AI Memory",
+      "h1": [
+        "1. Grounded capability search"
+      ],
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+      ],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/method",
+      "viewport": "desktop-1280",
+      "status": 200,
+      "title": "Method | Organizational AI Memory",
+      "h1": [
+        "How capability memory is formed and reused"
+      ],
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/evidence",
+      "viewport": "desktop-1280",
+      "status": 200,
+      "title": "Evidence | Organizational AI Memory",
+      "h1": [
+        "Inspect the memory behind the result"
+      ],
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "readyText": "ok",
+      "canonicalWebsiteTask": false,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/",
+      "viewport": "tablet-768",
+      "status": 200,
+      "title": "Organizational AI Memory",
+      "h1": [
+        "Organizational AI Memory"
+      ],
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/assets",
+      "viewport": "tablet-768",
+      "status": 200,
+      "title": "Assets | Organizational AI Memory",
+      "h1": [
+        "Reusable capability assets"
+      ],
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "readyText": "ok",
+      "canonicalWebsiteTask": false,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/capabilities",
+      "viewport": "tablet-768",
+      "status": 200,
+      "title": "Capabilities | Organizational AI Memory",
+      "h1": [
+        "1. Grounded capability search"
+      ],
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+      ],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/method",
+      "viewport": "tablet-768",
+      "status": 200,
+      "title": "Method | Organizational AI Memory",
+      "h1": [
+        "How capability memory is formed and reused"
+      ],
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/evidence",
+      "viewport": "tablet-768",
+      "status": 200,
+      "title": "Evidence | Organizational AI Memory",
+      "h1": [
+        "Inspect the memory behind the result"
+      ],
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "readyText": "ok",
+      "canonicalWebsiteTask": false,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/",
+      "viewport": "mobile-390",
+      "status": 200,
+      "title": "Organizational AI Memory",
+      "h1": [
+        "Organizational AI Memory"
+      ],
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/assets",
+      "viewport": "mobile-390",
+      "status": 200,
+      "title": "Assets | Organizational AI Memory",
+      "h1": [
+        "Reusable capability assets"
+      ],
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "readyText": "ok",
+      "canonicalWebsiteTask": false,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/capabilities",
+      "viewport": "mobile-390",
+      "status": 200,
+      "title": "Capabilities | Organizational AI Memory",
+      "h1": [
+        "1. Grounded capability search"
+      ],
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+      ],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/method",
+      "viewport": "mobile-390",
+      "status": 200,
+      "title": "Method | Organizational AI Memory",
+      "h1": [
+        "How capability memory is formed and reused"
+      ],
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/evidence",
+      "viewport": "mobile-390",
+      "status": 200,
+      "title": "Evidence | Organizational AI Memory",
+      "h1": [
+        "Inspect the memory behind the result"
+      ],
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "readyText": "ok",
+      "canonicalWebsiteTask": false,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/",
+      "viewport": "mobile-560",
+      "status": 200,
+      "title": "Organizational AI Memory",
+      "h1": [
+        "Organizational AI Memory"
+      ],
+      "scrollWidth": 560,
+      "clientWidth": 560,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/assets",
+      "viewport": "mobile-560",
+      "status": 200,
+      "title": "Assets | Organizational AI Memory",
+      "h1": [
+        "Reusable capability assets"
+      ],
+      "scrollWidth": 560,
+      "clientWidth": 560,
+      "readyText": "ok",
+      "canonicalWebsiteTask": false,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/capabilities",
+      "viewport": "mobile-560",
+      "status": 200,
+      "title": "Capabilities | Organizational AI Memory",
+      "h1": [
+        "1. Grounded capability search"
+      ],
+      "scrollWidth": 560,
+      "clientWidth": 560,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+      ],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/method",
+      "viewport": "mobile-560",
+      "status": 200,
+      "title": "Method | Organizational AI Memory",
+      "h1": [
+        "How capability memory is formed and reused"
+      ],
+      "scrollWidth": 560,
+      "clientWidth": 560,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/evidence",
+      "viewport": "mobile-560",
+      "status": 200,
+      "title": "Evidence | Organizational AI Memory",
+      "h1": [
+        "Inspect the memory behind the result"
+      ],
+      "scrollWidth": 560,
+      "clientWidth": 560,
+      "readyText": "ok",
+      "canonicalWebsiteTask": false,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/",
+      "viewport": "tablet-680",
+      "status": 200,
+      "title": "Organizational AI Memory",
+      "h1": [
+        "Organizational AI Memory"
+      ],
+      "scrollWidth": 680,
+      "clientWidth": 680,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/assets",
+      "viewport": "tablet-680",
+      "status": 200,
+      "title": "Assets | Organizational AI Memory",
+      "h1": [
+        "Reusable capability assets"
+      ],
+      "scrollWidth": 680,
+      "clientWidth": 680,
+      "readyText": "ok",
+      "canonicalWebsiteTask": false,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/capabilities",
+      "viewport": "tablet-680",
+      "status": 200,
+      "title": "Capabilities | Organizational AI Memory",
+      "h1": [
+        "1. Grounded capability search"
+      ],
+      "scrollWidth": 680,
+      "clientWidth": 680,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+      ],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/method",
+      "viewport": "tablet-680",
+      "status": 200,
+      "title": "Method | Organizational AI Memory",
+      "h1": [
+        "How capability memory is formed and reused"
+      ],
+      "scrollWidth": 680,
+      "clientWidth": 680,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/evidence",
+      "viewport": "tablet-680",
+      "status": 200,
+      "title": "Evidence | Organizational AI Memory",
+      "h1": [
+        "Inspect the memory behind the result"
+      ],
+      "scrollWidth": 680,
+      "clientWidth": 680,
+      "readyText": "ok",
+      "canonicalWebsiteTask": false,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/",
+      "viewport": "desktop-1080",
+      "status": 200,
+      "title": "Organizational AI Memory",
+      "h1": [
+        "Organizational AI Memory"
+      ],
+      "scrollWidth": 1080,
+      "clientWidth": 1080,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/assets",
+      "viewport": "desktop-1080",
+      "status": 200,
+      "title": "Assets | Organizational AI Memory",
+      "h1": [
+        "Reusable capability assets"
+      ],
+      "scrollWidth": 1080,
+      "clientWidth": 1080,
+      "readyText": "ok",
+      "canonicalWebsiteTask": false,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/capabilities",
+      "viewport": "desktop-1080",
+      "status": 200,
+      "title": "Capabilities | Organizational AI Memory",
+      "h1": [
+        "1. Grounded capability search"
+      ],
+      "scrollWidth": 1080,
+      "clientWidth": 1080,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+      ],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/method",
+      "viewport": "desktop-1080",
+      "status": 200,
+      "title": "Method | Organizational AI Memory",
+      "h1": [
+        "How capability memory is formed and reused"
+      ],
+      "scrollWidth": 1080,
+      "clientWidth": 1080,
+      "readyText": "ok",
+      "canonicalWebsiteTask": true,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    },
+    {
+      "route": "/evidence",
+      "viewport": "desktop-1080",
+      "status": 200,
+      "title": "Evidence | Organizational AI Memory",
+      "h1": [
+        "Inspect the memory behind the result"
+      ],
+      "scrollWidth": 1080,
+      "clientWidth": 1080,
+      "readyText": "ok",
+      "canonicalWebsiteTask": false,
+      "missingReviewBadges": 0,
+      "tinyTargets": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "unexpectedConsoleErrors": []
+    }
+  ],
+  "interaction": {
+    "initialJudgeState": {
+      "resultRows": 3,
+      "planRows": 3,
+      "analyticsMetrics": 4,
+      "passingProofs": 2,
+      "proofText": "\n      \n        ✓Four-plane proof passed\n        ScopeReviewed public accessActionVerify identity enforcementResource22 required controlsResultPASS 22/22TimeJul 11, 2026, 1:42 PM UTCPolicyapplication 4/4 · policy 2/2 · host 4/4 · data 3/3 · broker 1/1 · governance 5/5 · suspension 3/3\n      \n    \n      \n        ✓Live boundary passed\n        ScopeReviewed public accessActionAllow public read; reject scope injectionResourcePinned public corpusResultallow 200 · deny 400TimeJul 11, 2026, 1:50 PM UTCPolicyinvalid_query_parameters\n      \n    Open the protected Architect Console",
+      "lifecycleText": "Content is governed.Only approved content is reusable.Learn more",
+      "hasReviewFilter": false,
+      "citationLinks": 3,
+      "overflow": false
+    },
+    "filteredRows": 1,
+    "negativeSearch": {
+      "rows": 0,
+      "text": "\n      \n        No governed capabilities match these filters.\n        Clear the filters or enter a different task. No result was fabricated.\n      \n    ",
+      "status": "0 resultsNo deterministic matchbelow threshold"
+    },
+    "capabilityInteraction": {
+      "mode": "generated",
+      "planRows": 6,
+      "citationLinks": 9,
+      "notes": [
+        {
+          "itemCount": 3,
+          "directSpans": 0,
+          "aligned": true
+        },
+        {
+          "itemCount": 2,
+          "directSpans": 0,
+          "aligned": true
+        }
+      ],
+      "status": "Spark-generated adaptation returned; the deterministic record remains authoritative."
+    },
+    "copyState": {
+      "text": "Organizational AI Memory capability plan\nTask: website_delivery_handoff\nAuthority: Non-authoritative AI-assisted adaptation\nModel: gpt-5.3-codex-spark\nSummary: Plan to adapt the portfolio website handoff sequence for a small agency team: keep the same proof-first, anti-template discipline while compressing ownership and deliverables into a lean, reviewable flow that prevents template drift and unsupported claims before build execution.\n\nSteps:\n1. Set a lightweight scope-and-ownership anchor\n   Action: Define one request owner, one producer, one reviewer, and the target release date in a single scoped handoff ticket. Record project_name, audience, positioning, conversion_goal, proof_pack status, and delivery constraints so the team starts from shared constraints rather than ad hoc direction.\n   Assets: workflow:portfolio_site_delivery_v1\n   Source turns: st-009\n   Human review: Required before use\n2. Apply source-first gate before any draft text\n   Action: Use a hard evidence check for required fields (source_reference, evidence_excerpt, collection_timestamp, trust level, review status). If any proof is missing, pause and request missing context; do not generate claims or section copy.\n   Assets: decision:source_first_before_generation_v1\n   Source turns: st-001, st-007\n   Human review: Required before use\n3. Generate a structured handoff brief with proof mapping\n   Action: Run a compact version of the handoff brief template that enforces content hierarchy, proof mapping, and conversion goal continuity. Keep claims tied to provided proof_items and avoid placeholder copy.\n   Assets: prompt:website_handoff_brief_v1, workflow:portfolio_site_delivery_v1\n   Source turns: st-002, st-009\n   Human review: Required before use\n4. Convert brief into a small-team information architecture\n   Action: Map required_sections into a small set of implementation-priority blocks (hero, proof, process, services, contact). Assign owners for each block and keep section order stable to reduce rework during build handoff.\n   Assets: workflow:portfolio_site_delivery_v1\n   Source turns: st-009\n   Human review: Not requested by plan\n5. Attach proof to content blocks with confidence labels\n   Action: For each required section, attach the exact proof item that supports it and label confidence (high/medium) to support fast QA. Flag any unsupported language as pending before implementation.\n   Assets: workflow:portfolio_site_delivery_v1, decision:source_first_before_generation_v1\n   Source turns: st-009, st-007\n   Human review: Required before use\n6. Enforce anti-template and visual constraints for implementation\n   Action: Create an implementation constraint bundle from anti_template_rules and visual_style_constraints, then share it as mandatory constraints for design and dev to prevent generic output and preserve brand-safe differentiation.\n   Assets: prompt:website_handoff_brief_v1, workflow:portfolio_site_delivery_v1\n   Source turns: st-002, st-009\n   Human review: Not requested by plan\n\nMissing context:\n- Proof asset details are required but not provided in this request: specific source_reference, evidence_excerpt, collection_timestamp, trust level, and review_gate_status for each proof item.\n- Target visual direction is not specified; only the need for constraints exists, not the concrete style tokens (e.g., palette, typography, spacing system).\n- Team capacity/cadence is assumed (small agency) but not explicitly provided as roles, timeboxes, or communication cadence.\n\nLimitations:\n- Limited to the three selected assets and cannot add or alter source assets; this plan is non-authoritative and assumes assets are used as constraints, not sources of domain-specific truth.\n- No HTML or implementation code is produced, consistent with the source brief guardrails.\n\nCitations:\n- W2 Portfolio site delivery workflow [workflow:portfolio_site_delivery_v1]\n- D3 Source-first before generation [decision:source_first_before_generation_v1]\n- P1 Website design-to-build handoff brief [prompt:website_handoff_brief_v1]",
+      "retainedAuthority": true,
+      "retainedAssets": true,
+      "retainedSourceTurns": true,
+      "retainedHumanReview": true,
+      "retainedCitations": true,
+      "retainedLimitations": true
+    },
+    "projectorState": {
+      "firstPlanVisible": true,
+      "firstPlanTop": 674.15625,
+      "proofFontSize": 10
+    },
+    "queryInteraction": {
+      "rows": 4,
+      "currentRows": 2,
+      "supersededRows": 2,
+      "text": "\n      Jun 20, 2026\n      \n      August 29, 2026Current desired deadline\n    \n      Jun 18, 2026\n      \n      4500 USD per monthCurrent budget\n    \n      Jun 2, 2026\n      \n      August 15, 2026Superseded, still auditable\n    \n      Jun 2, 2026\n      \n      3000 USD per monthSuperseded, still auditable\n    "
+    },
+    "provenanceInteraction": {
+      "selectedAsset": "prompt:website_handoff_brief_v1",
+      "title": "Website design-to-build handoff brief",
+      "evidenceHeading": true,
+      "openEvidence": 1
+    },
+    "operatorInteraction": {
+      "tested": true,
+      "loginStatus": 200,
+      "effectiveAccess": {
+        "permissions": [
+          "audit.append",
+          "audit.read",
+          "candidate.create",
+          "candidate.promote_as_draft",
+          "candidate.review",
+          "memory.department.read",
+          "memory.public.read",
+          "principal.suspend",
+          "proof.record",
+          "provisioning.confirm",
+          "provisioning.queue",
+          "quarantine.submit"
+        ],
+        "denials": [
+          "memory.canonical.write"
+        ]
+      },
+      "operationalDefault": {
+        "filter": "operational",
+        "firstPrincipal": "MNMai Nguyen's Personal Memory Agentagent:fa51c852-e6b4-4e2f-806f-3aa1cecc7e23agentmemberPersonal pair · active4activepassedJul 11, 01:43 PM UTC",
+        "selectedPrincipal": "AAAI Architecthuman:ai_architecthumanarchitect0activeNot recordedJul 10, 07:38 PM UTC"
+      },
+      "desktopState": {
+        "title": "Architect Console | Organizational AI Memory",
+        "h1": "Overview",
+        "planeRows": 5,
+        "navigationItems": 9,
+        "scrollY": 0,
+        "h1Top": 84,
+        "overflow": false
+      },
+      "mobileOpenState": {
+        "navOpen": true,
+        "backdropOpen": true,
+        "focusInsideNav": true,
+        "overflow": false
+      },
+      "mobileState": {
+        "navOpen": false,
+        "backdropOpen": false,
+        "focusReturned": true,
+        "overflow": false
+      },
+      "signedOut": true,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+      ],
+      "unexpectedConsoleErrors": [],
+      "pageErrors": []
+    }
+  },
+  "failures": [],
+  "passed": true
+}
