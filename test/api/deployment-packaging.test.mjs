@@ -100,6 +100,14 @@ test('operator operational principal view excludes proof fixtures and suspended 
   assert.match(client, /ui\.principalFilter === 'operational' && isOperationalPrincipal\(principal\)/);
 });
 
+test('operator provisioning defaults to current work while exposing failures and full history', async () => {
+  const client = await read('app/operator-public/app.js');
+  assert.match(client, /provisioningFilter: 'current'/);
+  assert.match(client, /\['failed', 'Failures'/);
+  assert.match(client, /\['all', 'All history'/);
+  assert.match(client, /data-provisioning-filter=/);
+});
+
 test('agent package proves installed application denial and Codex package includes its validator', async () => {
   const [agent, agentUnit, codexInstaller] = await Promise.all([
     read('app/agent-runtime.mjs'),

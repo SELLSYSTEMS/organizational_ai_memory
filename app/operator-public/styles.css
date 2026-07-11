@@ -999,6 +999,14 @@ pre {
   opacity: 1;
 }
 
+.view-tabs button.is-alert {
+  color: var(--red);
+}
+
+.view-tabs button.is-alert::after {
+  background: var(--red);
+}
+
 .view-tabs span {
   margin-left: 5px;
   color: var(--muted);

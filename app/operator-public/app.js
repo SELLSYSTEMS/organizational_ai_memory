@@ -1,3 +1,5 @@
+import { filterProvisioningJobs } from './provisioning-filter.js';
+
 const mountPrefix = window.location.pathname === '/architect'
   || window.location.pathname.startsWith('/architect/')
   ? '/architect'
@@ -22,6 +24,7 @@ const ui = {
   candidateFilter: 'actionable',
   principalTab: 'application',
   principalFilter: 'operational',
+  provisioningFilter: 'current',
   principalSearch: '',
   effectiveAccess: null,
   effectiveAccessError: '',
@@ -590,11 +593,23 @@ function renderGrantList(grants) {
 }
 
 function renderProvisioning() {
-  const jobs = ui.state.provisioning_jobs;
+  const allJobs = ui.state.provisioning_jobs;
+  const operationalPrincipalIds = operationalPrincipals().map((principal) => principal.id);
+  const jobs = filterProvisioningJobs(allJobs, operationalPrincipalIds, ui.provisioningFilter);
+  const filters = [
+    ['current', 'Current', filterProvisioningJobs(allJobs, operationalPrincipalIds, 'current').length],
+    ['failed', 'Failures', filterProvisioningJobs(allJobs, operationalPrincipalIds, 'failed').length],
+    ['all', 'All history', allJobs.length],
+  ];
   const selected = ui.selectedJobId === '__closed__'
     ? null
     : jobs.find((job) => job.id === ui.selectedJobId) || jobs[0];
-  return `<section class="page-surface provisioning-page">${pageHeader('Provisioning', 'Queue an immutable plan, inspect its hash and revision, then confirm it explicitly.', `<button class="primary-button" data-open-dialog="provision">${icon('plus', 15)}New plan</button>`)}<div class="table-scroll"><table class="data-table"><thead><tr><th>Requested</th><th>Principal</th><th>Operation</th><th>Status</th><th>Revision</th><th>Plan hash</th><th>Action</th></tr></thead><tbody>${jobs.map((job) => `<tr tabindex="0" data-job-id="${escapeHtml(job.id)}" aria-selected="${selected?.id === job.id}"><td>${escapeHtml(formatDate(job.requested_at, { short: true }))}</td><td>${escapeHtml(principalName(job.principal_id))}</td><td>${escapeHtml(humanize(job.plan?.operation || job.job_type))}</td><td>${statusBadge(job.status)}</td><td>${escapeHtml(String(job.revision ?? '—'))}</td><td><code title="${escapeHtml(job.plan_hash)}">${escapeHtml(compact(job.plan_hash, 20))}</code></td><td>${job.status === 'queued' ? `<button class="text-button" data-confirm-job="${escapeHtml(job.id)}">Confirm</button>` : '<span class="not-recorded">—</span>'}</td></tr>`).join('') || `<tr><td colspan="7">${renderEmpty('No provisioning jobs are recorded.')}</td></tr>`}</tbody></table></div>${selected ? renderProvisioningDrawer(selected) : ''}</section>`;
+  const emptyMessage = ui.provisioningFilter === 'failed'
+    ? 'No failed provisioning jobs are recorded.'
+    : ui.provisioningFilter === 'all'
+      ? 'No provisioning jobs are recorded.'
+      : 'No current provisioning jobs are recorded.';
+  return `<section class="page-surface provisioning-page">${pageHeader('Provisioning', 'Queue an immutable plan, inspect its hash and revision, then confirm it explicitly.', `<button class="primary-button" data-open-dialog="provision">${icon('plus', 15)}New plan</button>`)}<div class="view-tabs" role="tablist" aria-label="Provisioning job filters">${filters.map(([key, label, count]) => `<button type="button" role="tab" class="${key === 'failed' && count ? 'is-alert' : ''}" aria-selected="${ui.provisioningFilter === key}" data-provisioning-filter="${key}">${escapeHtml(label)} <span>${count}</span></button>`).join('')}</div><div class="table-scroll"><table class="data-table"><thead><tr><th>Requested</th><th>Principal</th><th>Operation</th><th>Status</th><th>Revision</th><th>Plan hash</th><th>Action</th></tr></thead><tbody>${jobs.map((job) => `<tr tabindex="0" data-job-id="${escapeHtml(job.id)}" aria-selected="${selected?.id === job.id}"><td>${escapeHtml(formatDate(job.requested_at, { short: true }))}</td><td>${escapeHtml(principalName(job.principal_id))}</td><td>${escapeHtml(humanize(job.plan?.operation || job.job_type))}</td><td>${statusBadge(job.status)}</td><td>${escapeHtml(String(job.revision ?? '—'))}</td><td><code title="${escapeHtml(job.plan_hash)}">${escapeHtml(compact(job.plan_hash, 20))}</code></td><td>${job.status === 'queued' ? `<button class="text-button" data-confirm-job="${escapeHtml(job.id)}">Confirm</button>` : '<span class="not-recorded">—</span>'}</td></tr>`).join('') || `<tr><td colspan="7">${renderEmpty(emptyMessage)}</td></tr>`}</tbody></table></div><footer class="table-footer"><span>Showing ${jobs.length} of ${allJobs.length}</span><span>Ledger limit: <strong>200</strong></span></footer>${selected ? renderProvisioningDrawer(selected) : ''}</section>`;
 }
 
 function renderProvisioningDrawer(job) {
@@ -770,6 +785,11 @@ function bindShellEvents() {
   app.querySelectorAll('[data-principal-filter]').forEach((button) => button.addEventListener('click', () => {
     ui.principalFilter = button.dataset.principalFilter;
     ui.selectedPrincipalId = '';
+    renderShell();
+  }));
+  app.querySelectorAll('[data-provisioning-filter]').forEach((button) => button.addEventListener('click', () => {
+    ui.provisioningFilter = button.dataset.provisioningFilter;
+    ui.selectedJobId = '';
     renderShell();
   }));
   app.querySelector('[data-principal-search]')?.addEventListener('input', (event) => {
@@ -1002,6 +1022,7 @@ async function handleDialogSubmit(event) {
     dialog.close();
     if (returned?.id && ['add-human', 'add-agent'].includes(action)) ui.selectedPrincipalId = returned.id;
     if (returned?.id && ['provision', 'confirm-job'].includes(action)) ui.selectedJobId = returned.id;
+    if (action === 'provision') ui.provisioningFilter = 'current';
     if (returned?.id && action === 'create-candidate') ui.selectedCandidateId = returned.id;
     toast('The API accepted the operation and live state was reloaded.');
     renderShell();
