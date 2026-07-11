@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "proof_kind": "four_plane_identity_enforcement",
-  "source_sha256": "d71ae5e50ce880e5e2be436ffbe0d96d017420d16c003897ea83c160cfea5687",
-  "generated_at": "2026-07-11T04:11:17.654Z",
+  "source_sha256": "da4a85d2c50f0605f9bc43287c768edf2a113d00b69fe7ef0c8c36c62c0ce561",
+  "generated_at": "2026-07-11T13:42:15.358Z",
   "overall_status": "PASS",
   "counts": {
     "pass": 22,
@@ -105,7 +105,7 @@
       "title": "Private workspace write allowance",
       "required": true,
       "status": "PASS",
-      "expected": "The agent can write only its private workspace.",
+      "expected": "The agent can write its private persistent workspace.",
       "observed": "The private workspace write probe succeeded.",
       "enforcement": "Filesystem ownership",
       "evidence_sha256": "5c1d03185850b7bef618e2249af4fa4c9a87c44a2dc93bc0acd4fd7a0686d871"
@@ -116,10 +116,10 @@
       "title": "Bounded agent service",
       "required": true,
       "status": "PASS",
-      "expected": "The dedicated agent service is active under the expected identity and sandbox.",
-      "observed": "The bounded agent service was active under the dedicated identity.",
-      "enforcement": "Service manager sandbox",
-      "evidence_sha256": "ac47a019ed40248d5917c517fc6891911855960fae076f3565bb582ff0addf98"
+      "expected": "The dedicated agent service runs under its expected identity with no-new-privileges and IP sockets denied.",
+      "observed": "The active dedicated process had no-new-privileges, an available broker socket, and a denied IP-socket probe.",
+      "enforcement": "Service manager sandbox and runtime socket probe",
+      "evidence_sha256": "499041b5702b96bc1e553abcf011e5d6b0ce7b112ccf141411f63e6d127244b9"
     },
     {
       "id": "DB-01",

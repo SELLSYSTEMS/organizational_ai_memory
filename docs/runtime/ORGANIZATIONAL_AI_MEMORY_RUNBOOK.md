@@ -1,6 +1,8 @@
 # Organizational AI Memory Runbook
 
-Status: factual target-instance runbook, verified on `2026-07-11`.
+Status: factual operating procedure for release
+`525ff861b3580365839f487ca0dca10d0bf791cd`, installed and freshly verified on
+`2026-07-11`.
 
 ## Scope
 
@@ -15,6 +17,7 @@ and upstream proxy configuration are not part of this product path.
 | --- | --- | --- | --- |
 | Public product | `oam-public:oam-public` | `127.0.0.1:3000` | `oam_public_api` -> exactly `oam_public_runtime` -> fixed `oam_public` views |
 | Architect Console | shared `oam-operator:oam-operator` workload | `127.0.0.1:3010` | shared `oam_operator_api` -> exactly `oam_operator_runtime`; per-request human/department context + FORCE RLS |
+| Employee workspace | `oam-employee:oam-employee` | `127.0.0.1:3020` | `oam_employee_api` -> exactly `oam_employee_runtime`; token-hash human/department/agent context + FORCE RLS |
 | Memory broker | `oam-broker:oam-agent-broker` | protected Unix socket | `oam_broker_api` -> exactly `oam_broker_runtime` + FORCE RLS |
 | Provisioner | `root:oam-operator` | protected Unix socket | no application database credential; exact root-operation allowlist |
 | Spark sidecar | `oam-codex:oam-codex` | protected Unix socket | none |
@@ -25,6 +28,7 @@ Units:
 ```text
 organizational-ai-memory.service
 organizational-ai-memory-operator.service
+organizational-ai-memory-employee.service
 organizational-ai-memory-broker.service
 organizational-ai-memory-provisioner.service
 organizational-ai-memory-codex.service
@@ -53,16 +57,47 @@ principal, membership, policy, and database context establishes that scope.
 Dedicated Linux identities are provisioned for linked agents, not ordinary
 human principals; agents still receive no direct PostgreSQL login.
 
+### Employee and Personal Memory Agent lifecycle
+
+1. An architect opens `/architect/` and chooses **Onboard employee**.
+2. One transaction creates the active human, draft personal agent, strict
+   one-to-one pair, member policies, hash-only workspace credential, and initial
+   profile. The raw workspace link is displayed once and must be shared
+   privately. The credential is revocable but is not one-time-use.
+3. The architect queues and confirms the generated agent's physical provisioning
+   plan. The provisioner creates a locked Linux UID, private state directory,
+   systemd unit, and broker credential while direct PostgreSQL access remains
+   denied.
+4. Only after the provisioning job succeeds does PostgreSQL activate the pair.
+5. The employee opens `/workspace/`, records profile and experience privately,
+   and explicitly grants the linked agent access to a current version. Every
+   content edit resets the new version to owner-only until it is re-shared.
+6. Agent retrieval returns only shared current versions with memory ID, revision,
+   and SHA-256 citations. It cannot write canonical organizational memory.
+7. Suspending the employee or agent revokes the workspace credential and pair;
+   employee offboarding also enforces host suspension for the linked agent.
+
+Do not place workspace links in logs, screenshots, issue trackers, shell history,
+or public repository files. PostgreSQL stores only their SHA-256 values.
+
+The employee workspace preview and the physical agent are separate evidence
+classes. Preview runs in `oam-employee` under the employee's DB-bound context so
+the employee can inspect the exact current versions their agent may retrieve.
+Physical proof must come from the dedicated `oam-a-<runtime>` process through
+the broker under its own credential and active grant. Never use preview output
+as proof that the systemd agent process executed.
+
 ## Public routes
 
 | Route | Purpose |
 | --- | --- |
 | `/` | Capability-first product and temporal history |
-| `/demo` | Single-screen deterministic search, plan, analytics, and access proof |
+| `/capabilities` | Integrated deterministic search, plan, analytics, and access proof |
 | `/assets` | Typed/versioned capability inventory and provenance |
 | `/method` | Architecture, authority, and safety contract |
 | `/evidence` | Public continuity objects and source paths |
 | `/architect/` | Protected operator console; token required |
+| `/workspace/` | Protected employee profile, personal memory, and linked-agent context |
 | `/api/readyz` | Public service, database, public corpus, and pack readiness |
 | `/api/public/access-proof` | Sanitized read-only 22-control proof projection |
 
@@ -70,6 +105,12 @@ Root operator APIs under `/api/v1` are not routed publicly. The console prefix
 proxies only `/architect/` to the loopback operator service, which still
 requires the configured Host/Origin contract, bounded token exchange,
 path-scoped Secure/HttpOnly/SameSite cookie, and CSRF on mutation.
+
+The `/workspace/` proxy must preserve the prefix contract, set the configured
+production Host, overwrite `X-Real-IP` with nginx's resolved client address, and
+allow at most `128k` request bodies. The employee service accepts production
+sign-in only with the exact Host/Origin and one valid proxy-overwritten client
+IP. Do not forward a client-supplied `X-Real-IP` unchanged.
 
 ## Fixed public data boundaries
 
@@ -105,7 +146,7 @@ The installer:
 
 1. creates the workload users and groups if absent
 2. generates runtime secrets only when absent under root-only `.local-secrets`
-3. applies memory, capability v1-v2, identity data-plane v1-v7, policy,
+3. applies memory, capability v1-v2, identity data-plane v1-v8, policy,
    operator-context, runtime-login, and seed SQL in fixed order
 4. installs separate application trees and systemd units
 5. writes root-managed service credentials outside the repository
@@ -148,6 +189,7 @@ systemctl is-active \
   organizational-ai-memory.service \
   organizational-ai-memory-operator.service \
   organizational-ai-memory-broker.service \
+  organizational-ai-memory-employee.service \
   organizational-ai-memory-provisioner.service \
   organizational-ai-memory-codex.service \
   nginx.service postgresql.service
@@ -155,12 +197,13 @@ systemctl is-active \
 ss -ltnup
 nginx -t
 curl -fsS http://127.0.0.1:3000/api/readyz | jq
+curl -fsS -H 'Host: memory.sellsystems.agency' http://127.0.0.1:3020/api/readyz | jq
 curl -fsS https://memory.sellsystems.agency/api/readyz | jq
 ```
 
-Expected public TCP listeners are nginx, PostgreSQL loopback, the public app
-loopback, and the operator app loopback. Broker, provisioner, Codex, and agent
-control paths are Unix sockets or local processes, not public listeners.
+Expected product TCP listeners are nginx plus the loopback PostgreSQL, public
+app, operator app, and employee app listeners. Broker, provisioner, Codex, and
+agent control paths are Unix sockets or local processes, not public listeners.
 
 The obsolete target-local `aihackathon-vnc-root-2.service` is stopped and
 disabled, and TCP 5902 must be absent. The unrelated pre-existing VNC `:1`
@@ -172,11 +215,12 @@ Inspect recent logs without exposing environment or credentials:
 journalctl -u organizational-ai-memory.service -n 80 --no-pager
 journalctl -u organizational-ai-memory-operator.service -n 80 --no-pager
 journalctl -u organizational-ai-memory-broker.service -n 80 --no-pager
+journalctl -u organizational-ai-memory-employee.service -n 80 --no-pager
 journalctl -u organizational-ai-memory-provisioner.service -n 80 --no-pager
 journalctl -u organizational-ai-memory-codex.service -n 80 --no-pager
 ```
 
-## Live identity proof
+## Dated identity proof
 
 The proof is intentionally mutating but bounded. It creates a logical human,
 creates and confirms a linked-agent plan, starts the dedicated agent, executes
@@ -226,14 +270,22 @@ The public loader accepts the sanitized projection only when its
 secure ownership and modes with no symlinked component, and the proof is no
 more than 24 hours old. Any mismatch or stale proof fails closed.
 
+The current 22-control proof is build-bound to commit
+`525ff861b3580365839f487ca0dca10d0bf791cd`. It proves the four-plane identity
+contract and revocation boundary. Employee onboarding, private-memory consent,
+physical personal-agent retrieval, edit reset, and cross-employee denial are
+additionally established by the fresh workflow evidence and previously recorded
+real PostgreSQL integration results below.
+
 ## Test and browser acceptance
 
 ```bash
 cd /home/admin/organizational-ai-memory
 npm run app:test
 
-runuser -u postgres -- env \
-  OAM_INTEGRATION_DATABASE_URL='postgresql://postgres@/tg_ops?host=%2Fvar%2Frun%2Fpostgresql' \
+# Apply the installer migration chain to a disposable database first.
+OAM_INTEGRATION_DATABASE_URL='<disposable admin DSN>' \
+OAM_OPERATOR_INTEGRATION_DATABASE_URL='<disposable operator DSN>' \
   node --test test/integration/*.test.mjs
 
 env \
@@ -248,7 +300,12 @@ env \
   npm run submission:screenshots
 ```
 
-Current verified acceptance:
+The integration suite persists synthetic principals and governance records by
+design. Never point it at the live `tg_ops` database. Supply disposable
+credentials through a protected test runner or credential file; do not place a
+password-bearing URL in process arguments.
+
+Prior public-release acceptance recorded on `2026-07-11`:
 
 - 193/193 API/security tests pass
 - 3/3 current real PostgreSQL integration tests pass
@@ -262,13 +319,46 @@ Current verified acceptance:
   denies `memory.canonical.write`
 - desktop and mobile have no horizontal overflow or unexpected browser errors
 
+Current Personal Memory Agent release evidence:
+
+```text
+release commit:                         525ff861b3580365839f487ca0dca10d0bf791cd
+deployed source SHA-256:                da4a85d2c50f0605f9bc43287c768edf2a113d00b69fe7ef0c8c36c62c0ce561
+app:test pass/total:                    275/275 PASS
+recorded PostgreSQL integration result: 5/5 PASS across full + provisioner invocations
+recorded v8 migration result:           2/2 PASS across fresh + repeat migration
+public readiness checked at UTC:        2026-07-11T13:52:47Z, HTTP 200 ready
+employee readiness checked at UTC:      2026-07-11T13:52:47Z, HTTP 200 ready
+employee proof run ID:                  0711-final-f
+browser QA pass/total:                  35/35 PASS
+screenshot reports:                     public 8/8; employee 20/20; 0 browser errors
+identity proof:                         22/22 PASS at 2026-07-11T13:42:15.358Z
+```
+
+The recorded PostgreSQL integration and migration cases persist synthetic
+fixtures, so they were not rerun against the live database for the final
+commit. The exact final build was instead rechecked with the non-persisting
+275-case suite, build-bound proof, browser QA, and protected workflow capture.
+
+The fresh protected workflow must verify, in order:
+
+1. onboarding creates one human and exactly one Personal Memory Agent
+2. a second pair for the same human or agent is rejected
+3. the pair remains draft before physical provisioning succeeds
+4. the employee creates an owner-only version without exposing a credential
+5. explicit share permits employee preview with ID/revision/hash citation
+6. the dedicated agent process retrieves the same citation through the broker
+7. another employee and an agent without the grant are denied
+8. editing resets access; only explicit re-share exposes the new revision/hash
+9. suspension invalidates workspace and physical-agent retrieval
+
 The expected public `400` scope-injection response and initial operator `401`
 session check are explained security probes, not unexpected console failures.
 
 ## Database safety probes
 
 Do not print passwords. Use the root-owned probe file or run catalog checks as
-the PostgreSQL administrator. Verify that the three application logins are not
+the PostgreSQL administrator. Verify that the four application logins are not
 superuser, cannot create roles/databases, cannot replicate, and cannot bypass
 RLS. Verify each has exactly one workload membership.
 
@@ -314,10 +404,11 @@ policy templates/rules cannot be edited in place.
 
 ## Rollback
 
-`sql/identity_data_plane_v1_rollback.sql` removes the complete current v1-v7
-identity, governance, and public-view plane plus its runtime roles. Later
-migrations extend v1-owned schemas; this is a full removal, not a selective
-downgrade. Test it on an isolated database before any production use:
+`sql/identity_data_plane_v1_rollback.sql` predates v8 and is not a complete
+Personal Memory Agent rollback. Do not use it to claim full removal of employee
+workspace credentials, personal-memory tables, or employee roles. A complete
+v8-aware rollback must be written and tested on an isolated database before any
+production use. The existing command is retained only for its earlier scope:
 
 ```bash
 psql -X -v ON_ERROR_STOP=1 -d isolated_test_database \

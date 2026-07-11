@@ -1,72 +1,118 @@
-# Demo Video Plan
+# Product Video Plan
 
-Target: one `110` second walkthrough.
+Status: verified technical walkthrough captured from the live release. The
+repository MP4 is an H.264, caption-ready visual proof with no credential or
+audio stream.
 
-Status: recording plan only. No final video asset is claimed.
+Primary deliverable:
+`artifacts/submission/media/organizational-ai-memory-employee-workflow.mp4`
+(`50.08` seconds, `1440 x 1000`, H.264/yuv420p). The browser workflow occupies
+the first `42.12` seconds and the final eight-second frame is the separately
+rendered physical-agent runtime proof.
 
 ## Canonical scenario
 
-Search:
+Use one synthetic employee and exactly one Personal Memory Agent. The scenario
+must cover:
+
+```text
+architect onboarding
+-> draft one-to-one pair
+-> confirmed physical provisioning
+-> employee private profile and memory
+-> explicit current-revision agent access
+-> employee-authorized preview
+-> separate physical-agent broker retrieval
+-> edit resets access
+-> explicit re-share
+-> physical runtime allow/deny proof
+```
+
+Suspension and credential revocation are verified by the build-bound identity
+proof and real PostgreSQL coverage; they are not represented as a browser scene
+in this 50-second cut.
+
+The public capability query remains:
 
 ```text
 Prepare a website delivery handoff
 ```
 
-Expected stored assets:
+## Captured chapters
 
-```text
-prompt:website_handoff_brief_v1
-workflow:portfolio_site_delivery_v1
-decision:source_first_before_generation_v1
-```
-
-Adaptation request:
-
-```text
-Adapt this grounded starting point for a small delivery team.
-```
-
-## 110-second shot list
-
-| Time | Screen and action | Narration point |
+| Approximate time | Screen and action | Visible evidence |
 | --- | --- | --- |
-| `00:00-00:12` | Open `/demo`; hold on the capture-review-reuse lifecycle and product name. | "Organizational AI Memory preserves proven AI work as governed organizational capability." |
-| `00:12-00:32` | Run the default search and point to the three typed/versioned results, why-it-worked excerpts, and evidence. | "A task starts from a deterministic PostgreSQL record, not a model guess." |
-| `00:32-00:47` | Filter to Prompt, clear the filter, then show the authoritative three-step plan. | "The same source assets remain visible through role-aware filtering and reuse." |
-| `00:47-01:04` | Submit the adaptation request and show the generated cited steps. | "Spark adapts only the selected public-safe records; validated citations keep the result grounded and non-authoritative." |
-| `01:04-01:20` | Point to coverage metrics, the capability gap, `PASS 22/22`, and rerun the public boundary. | "Analytics state what is measured, while executed controls prove the application, policy, Linux, database, broker, governance, and revocation boundaries." |
-| `01:20-01:34` | Open the prompt asset and show governance plus `asset -> observation -> source turn`. | "Reusable capability retains why it worked and where the supporting narrative came from." |
-| `01:34-01:48` | Cut to the prepared Architect Console effective-access screenshot. | "A linked agent has its own OS identity and data grant; even the architect is explicitly denied direct canonical-memory writes." |
-| `01:48-01:50` | Return to `/demo` product name and lifecycle. | "Individual learning becomes permanent, governed organizational capability." |
+| `00:00-00:15` | Onboard Mai Nguyen, display the masked result, queue and confirm the immutable plan, then show succeeded provisioning and the active pair. | One human, one distinct agent, no visible secret, revision-bound privileged operation, dedicated runtime identity. |
+| `00:15-00:23` | Enter the private workspace, author and save the work profile, then explicitly share the current profile revision. | Fragment-scrubbed session, owner-only version, separate consent action. |
+| `00:23-00:30` | Capture a private delivery experience, prove no-match before consent, share it, and retrieve it with a citation. | Typed memory, why it worked, private-by-default negative behavior, memory ID/revision/hash/audit receipt. |
+| `00:30-00:42` | Edit the memory, prove access reset, explicitly re-consent revision 4, then show desktop and mobile access ledgers. | Edit-reset, current-version-only retrieval, owner/agent visibility separation, responsive layout. |
+| `00:42-00:50` | Display the sanitized physical runtime proof. | Protected reads and direct PostgreSQL denied; own workspace and brokered cited retrieval allowed. |
+
+## Evidence labels
+
+Every protected scene must carry one unobtrusive label in the edit or adjacent
+caption:
+
+- `EMPLOYEE PREVIEW` for `/workspace/api/v1/agent-context`
+- `PHYSICAL AGENT PROOF` for the dedicated agent process and broker path
+- `PUBLIC CAPABILITY` for the separate public organizational-memory workflow
+
+Do not call the employee preview a physical-agent run. Do not call the Personal
+Memory Agent a digital twin, employee identity, autonomous clone, or source of
+canonical organizational truth.
 
 ## Recording rules
 
-1. Record at `1440 x 1000` or 1080p, 100% zoom, in a clean browser profile.
-2. Confirm readiness, the 22/22 proof, and one generated Spark response before
-   recording.
-3. Record the real interaction state. If Spark falls back, narrate the fallback
-   contract rather than simulating generation.
-4. Never show an operator token, cookie, terminal, internal path, model auth
-   file, or browser account chrome.
-5. Use the prepared Architect Console screenshots unless a private recording
-   session is already authenticated.
-6. Do not claim measured time savings, ROI, autonomous gap discovery, or broad
-   enterprise deployment.
-7. Export H.264 MP4 at 1080p with legible text and normalized speech.
+1. Record at 1080p or `1440 x 1000`, 100% zoom, in clean browser profiles.
+2. Use a synthetic employee and synthetic memory content only.
+3. Authenticate protected sessions off camera. Crop browser password managers,
+   account chrome, and notification surfaces.
+4. Never show workspace links, operator tokens, cookies, broker credentials,
+   secret-bearing paths, terminal history, database URLs, or model-auth files.
+   The synthetic runtime UID/unit/workspace identifiers may remain visible as
+   physical-enforcement evidence.
+5. Capture the actual returned state. Do not edit status labels, hashes, counts,
+   timestamps, or access results into screenshots or video frames.
+6. If Spark falls back, narrate the deterministic fallback; do not splice a
+   generated response from another run.
+7. If a future physical-agent capture fails, fail that release run. The
+   employee preview is not a substitute.
+8. Do not claim measured time savings, ROI, autonomous enterprise rollout,
+   continuous gap discovery, or a digital copy of an employee.
+9. Export H.264/yuv420p with legible UI text. Narration, if added for portal
+   upload, must not change or cover the underlying evidence.
 
-Suggested filename:
+## Output and verification
+
+Verified output:
 
 ```text
-artifacts/submission/video/organizational-ai-memory-demo-110s.mp4
+artifacts/submission/media/organizational-ai-memory-employee-workflow.mp4
+artifacts/submission/media/organizational-ai-memory-employee-workflow.webm
+artifacts/submission/media/employee-workflow-capture-report.json
+artifacts/submission/media/release-media-manifest.json
 ```
 
-## Final review
+```text
+browser_capture_utc:      2026-07-11T13:43:02.498Z through 2026-07-11T13:43:57.124Z
+physical_proof_checked:   2026-07-11T13:44:51.061Z
+release_mp4_built:        2026-07-11T13:45:47.251Z
+release_commit:           525ff861b3580365839f487ca0dca10d0bf791cd
+deployed_source_sha256:   da4a85d2c50f0605f9bc43287c768edf2a113d00b69fe7ef0c8c36c62c0ce561
+employee_proof_run_id:    0711-final-f
+video_sha256:             5233af147e807b41452d67fa7d71dddf17f160841caa091f0034785bc1670bc3
+duration_seconds:         50.08
+public_video_url:         not uploaded; operator-only
+reviewer:                 Codex release audit, 2026-07-11T13:52:18Z
+```
 
-The video is ready only if a reviewer can answer:
+The employee-workflow video is releasable when a reviewer can distinguish:
 
-1. What is stored?
-2. Why did the search select these assets?
-3. Which part is authoritative?
-4. Where is the provenance?
-5. How is an agent's access physically constrained?
-6. What happens when generation or authorization fails?
+1. owner-only memory from an explicitly shared current revision
+2. employee preview from the physical Personal Memory Agent process
+3. successful personal retrieval from the private no-match state
+
+The complete submission package, not this 50-second cut alone, additionally
+proves reviewed organizational capability, optional cited Spark adaptation,
+cross-employee denial, and revocation through the public captures, integration
+evidence, and build-bound identity proof.

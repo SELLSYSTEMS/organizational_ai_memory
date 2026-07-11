@@ -1,6 +1,6 @@
 {
   "base_url": "https://memory.sellsystems.agency",
-  "captured_at": "2026-07-11T04:12:59.529Z",
+  "captured_at": "2026-07-11T13:50:57.641Z",
   "browser": "Playwright with system Chrome at /usr/bin/google-chrome",
   "browser_availability": "Browser plugin not available; repository Playwright used with system Chrome.",
   "captures": [
@@ -16,8 +16,8 @@
       "unexpected_errors": []
     },
     {
-      "filename": "02-judge-demo-capability-loop-1440.png",
-      "route": "/demo",
+      "filename": "02-capability-workspace-1440.png",
+      "route": "/capabilities",
       "viewport": {
         "width": 1440,
         "height": 1000
@@ -29,8 +29,8 @@
       "unexpected_errors": []
     },
     {
-      "filename": "03-judge-demo-spark-plan-1440.png",
-      "route": "/demo",
+      "filename": "03-capability-spark-plan-1440.png",
+      "route": "/capabilities",
       "viewport": {
         "width": 1440,
         "height": 1000
@@ -64,8 +64,8 @@
       "unexpected_errors": []
     },
     {
-      "filename": "06-judge-demo-mobile-390.png",
-      "route": "/demo",
+      "filename": "06-capability-workspace-mobile-390.png",
+      "route": "/capabilities",
       "viewport": {
         "width": 390,
         "height": 844

@@ -1,6 +1,8 @@
 # Organizational AI Memory MVP Architecture
 
-Status: deployed and verified on `2026-07-11`.
+Status: deployed architecture for release
+`525ff861b3580365839f487ca0dca10d0bf791cd`, live-verified on
+`2026-07-11` with fresh employee and physical-agent evidence.
 
 ## Product boundary
 
@@ -13,7 +15,7 @@ Organizational AI Memory turns reviewed work history into two reusable forms:
 A task retrieves stored capability records before any model is invoked.
 PostgreSQL is canonical; generated plans are optional and non-authoritative.
 
-## Deployed topology
+## Release topology
 
 ```text
 public browser
@@ -22,7 +24,7 @@ operator-managed TLS and domain boundary
     |
 nginx :80
     |
-    +-- /, /demo, /assets, /method, /evidence
+    +-- /, /capabilities, /assets, /method, /evidence
     |      -> public service 127.0.0.1:3000, oam-public
     |      -> oam_public_api -> oam_public_runtime -> fixed oam_public views
     |
@@ -30,6 +32,11 @@ nginx :80
            -> operator service 127.0.0.1:3010, oam-operator
            -> authenticated app human + root-provisioned context hash
            -> shared oam_operator_api -> oam_operator_runtime -> FORCE RLS
+    |
+    +-- /workspace/
+           -> employee service 127.0.0.1:3020, oam-employee
+           -> hash-only employee workspace credential
+           -> oam_employee_api -> oam_employee_runtime -> employee DB context + FORCE RLS
 
 operator service -> root-owned provisioner Unix socket
                  -> explicit plan + revision confirmation
@@ -45,7 +52,7 @@ public service -> Codex Unix socket -> oam-codex sidecar
 all canonical records -> PostgreSQL 17
 ```
 
-The public, operator, and broker services use distinct non-login Linux
+The public, operator, employee, and broker services use distinct non-login Linux
 identities and distinct PostgreSQL logins. Each database login has exactly one
 runtime-role membership and is rejected at startup if it is superuser,
 `BYPASSRLS`, missing its required membership, or has a cross-workload
@@ -87,10 +94,18 @@ membership, policy assignment, broker binding, and capability grant. Its
 permission set is intersected with the sponsor's ceiling and always explicitly
 denies `memory.canonical.write`.
 
+The Personal Memory Agent is not a digital copy, delegated human identity, or
+impersonation mechanism. It is a separate application and runtime principal
+bound to exactly one employee. The employee's human authority is never derived
+from the agent's Linux UID, broker credential, or policy assignment.
+
 Provisioned agents run as locked system users named from a bounded runtime key.
-Their systemd units expose only a private workspace and broker socket. Project
-source, installed application source, platform environment, Codex credentials,
-and direct PostgreSQL access are denied.
+Their systemd units grant a private persistent workspace and the governed
+AF_UNIX broker path. Project source, installed application source, platform
+environment, Codex credentials, and direct PostgreSQL access are denied. A
+runtime probe verifies that AF_INET socket creation is denied; standard runtime
+and library reads plus systemd-provided private temporary storage are not
+described as absent.
 
 ## Canonical memory
 
@@ -125,6 +140,48 @@ bounded text upload
 No public, agent, reviewer, architect, operator service, or provisioner path in
 this MVP writes a promoted candidate directly into `memory.capability_assets`.
 
+## Personal employee memory
+
+Every onboarded employee has one authoritative row in
+`identity.employee_personal_agents`; the human ID is the primary key and the
+agent ID is unique. The pair cannot be activated by onboarding alone. Activation
+requires an active employee, agent, department memberships, policy assignment,
+broker binding, broker credential, personal-context and approved-capability
+grants, plus a succeeded physical provisioning job.
+
+Employee profile and memory content live in the separate `personal` schema.
+Profiles and memory bodies are append-only versions with content hashes. A new
+memory is owner-only. An explicit revision-bound action changes the current
+version to `owner_and_personal_agent`; older versions are not silently shared.
+Every content edit creates a new owner-only version and removes agent access
+until the employee explicitly shares that new revision. Employee-authorized
+preview and broker-authorized physical-agent retrieval both return memory ID,
+revision, and SHA-256 citations.
+
+```text
+employee private version
+-> explicit current-version agent access
+-> brokered Personal Memory Agent retrieval
+-> citation {memory_id, revision, content_sha256}
+```
+
+This path does not publish personal memory into organizational capability.
+Promotion remains a separate quarantine, review, and draft-only governance path.
+
+### Preview is not physical execution
+
+The employee workspace exposes a deterministic preview so an employee can see
+which explicitly shared current versions their linked agent is allowed to use.
+That request executes in the employee web workload under the employee's
+hash-bound database context.
+
+The physical Personal Memory Agent is a different path: its dedicated locked
+Linux process presents its own broker credential, the broker resolves the agent
+principal and active personal-context grant, and PostgreSQL returns only the
+allowed pair's current shared versions. A release artifact must label these
+paths separately. A successful preview does not prove that the physical agent
+unit, broker credential, runtime binding, or grant is working.
+
 Capture decisions are bound to bytes, not caller assertions. The operator
 service reopens the sealed regular file without following symlinks, verifies
 root ownership, mode, link count, size, and SHA-256, and derives candidate
@@ -137,7 +194,7 @@ and UPDATE or DELETE is rejected by PostgreSQL.
 
 ## Ordered identity migrations
 
-The current identity plane is an ordered, idempotent v1-v7 chain:
+The current identity plane is an ordered, idempotent v1-v8 chain:
 
 1. **v1:** principals, department policy, runtime bindings, broker grants,
    quarantine, independent review, draft promotion, audit, RLS, and public
@@ -152,6 +209,10 @@ The current identity plane is an ordered, idempotent v1-v7 chain:
 7. **v7:** root-provisioned operator context mappings, transaction-bound human
    and department resolution, and FORCE RLS across operator-visible identity,
    quarantine, governance, proof, and audit tables
+8. **v8:** strict human-to-personal-agent cardinality, hash-only employee
+   workspace context, append-only personal profile and memory versions, explicit
+   per-version agent access, physical-provisioning activation, broker retrieval,
+   suspension fail-closure, and employee interaction audit
 
 ## Public task flow
 
@@ -220,6 +281,10 @@ Recommendation outcome measurement, historical growth series, and continuous
 automated duplicate/gap inference are not yet implemented and are not claimed.
 
 ## Verified failure properties
+
+The following properties are implemented and verified by the build-bound
+identity proof, API/security suite, real PostgreSQL integration cases, browser
+QA, and protected workflow evidence.
 
 - Canonical PostgreSQL availability gates readiness; Spark does not.
 - Generated output cannot replace, reorder, approve, or persist selected assets.

@@ -1,6 +1,6 @@
 {
   "baseUrl": "https://memory.sellsystems.agency",
-  "generatedAt": "2026-07-11T04:12:40.589Z",
+  "generatedAt": "2026-07-11T13:50:30.043Z",
   "browser": "Playwright with system Chrome at /usr/bin/google-chrome",
   "browserAvailability": "Browser plugin not available; repository Playwright used with system Chrome.",
   "checks": [
@@ -43,10 +43,10 @@
       "unexpectedConsoleErrors": []
     },
     {
-      "route": "/demo",
+      "route": "/capabilities",
       "viewport": "desktop-1440",
       "status": 200,
-      "title": "Demo | Organizational AI Memory",
+      "title": "Capabilities | Organizational AI Memory",
       "h1": [
         "1. Grounded capability search"
       ],
@@ -140,10 +140,10 @@
       "unexpectedConsoleErrors": []
     },
     {
-      "route": "/demo",
+      "route": "/capabilities",
       "viewport": "desktop-1280",
       "status": 200,
-      "title": "Demo | Organizational AI Memory",
+      "title": "Capabilities | Organizational AI Memory",
       "h1": [
         "1. Grounded capability search"
       ],
@@ -237,10 +237,10 @@
       "unexpectedConsoleErrors": []
     },
     {
-      "route": "/demo",
+      "route": "/capabilities",
       "viewport": "tablet-768",
       "status": 200,
-      "title": "Demo | Organizational AI Memory",
+      "title": "Capabilities | Organizational AI Memory",
       "h1": [
         "1. Grounded capability search"
       ],
@@ -334,10 +334,10 @@
       "unexpectedConsoleErrors": []
     },
     {
-      "route": "/demo",
+      "route": "/capabilities",
       "viewport": "mobile-390",
       "status": 200,
-      "title": "Demo | Organizational AI Memory",
+      "title": "Capabilities | Organizational AI Memory",
       "h1": [
         "1. Grounded capability search"
       ],
@@ -431,10 +431,10 @@
       "unexpectedConsoleErrors": []
     },
     {
-      "route": "/demo",
+      "route": "/capabilities",
       "viewport": "mobile-560",
       "status": 200,
-      "title": "Demo | Organizational AI Memory",
+      "title": "Capabilities | Organizational AI Memory",
       "h1": [
         "1. Grounded capability search"
       ],
@@ -528,10 +528,10 @@
       "unexpectedConsoleErrors": []
     },
     {
-      "route": "/demo",
+      "route": "/capabilities",
       "viewport": "tablet-680",
       "status": 200,
-      "title": "Demo | Organizational AI Memory",
+      "title": "Capabilities | Organizational AI Memory",
       "h1": [
         "1. Grounded capability search"
       ],
@@ -625,10 +625,10 @@
       "unexpectedConsoleErrors": []
     },
     {
-      "route": "/demo",
+      "route": "/capabilities",
       "viewport": "desktop-1080",
       "status": 200,
-      "title": "Demo | Organizational AI Memory",
+      "title": "Capabilities | Organizational AI Memory",
       "h1": [
         "1. Grounded capability search"
       ],
@@ -690,7 +690,7 @@
       "planRows": 3,
       "analyticsMetrics": 4,
       "passingProofs": 2,
-      "proofText": "\n      \n        ✓Four-plane proof passed\n        SessionPublic judgeActionVerify identity enforcementResource22 required controlsResultPASS 22/22TimeJul 11, 2026, 4:11 AM UTCPolicyapplication 4/4 · policy 2/2 · host 4/4 · data 3/3 · broker 1/1 · governance 5/5 · suspension 3/3\n      \n    \n      \n        ✓Live boundary passed\n        SessionPublic judgeActionAllow public read; reject scope injectionResourcePinned public corpusResultallow 200 · deny 400TimeJul 11, 2026, 4:12 AM UTCPolicyinvalid_query_parameters\n      \n    Open the protected Architect Console",
+      "proofText": "\n      \n        ✓Four-plane proof passed\n        ScopeReviewed public accessActionVerify identity enforcementResource22 required controlsResultPASS 22/22TimeJul 11, 2026, 1:42 PM UTCPolicyapplication 4/4 · policy 2/2 · host 4/4 · data 3/3 · broker 1/1 · governance 5/5 · suspension 3/3\n      \n    \n      \n        ✓Live boundary passed\n        ScopeReviewed public accessActionAllow public read; reject scope injectionResourcePinned public corpusResultallow 200 · deny 400TimeJul 11, 2026, 1:50 PM UTCPolicyinvalid_query_parameters\n      \n    Open the protected Architect Console",
       "lifecycleText": "Content is governed.Only approved content is reusable.Learn more",
       "hasReviewFilter": false,
       "citationLinks": 3,
@@ -713,7 +713,7 @@
           "aligned": true
         },
         {
-          "itemCount": 1,
+          "itemCount": 2,
           "directSpans": 0,
           "aligned": true
         }
@@ -721,7 +721,7 @@
       "status": "Spark-generated adaptation returned; the deterministic record remains authoritative."
     },
     "copyState": {
-      "text": "Organizational AI Memory capability plan\nTask: website_delivery_handoff\nAuthority: Non-authoritative AI-assisted adaptation\nModel: gpt-5.3-codex-spark\nSummary: Adapt the portfolio website delivery starting point into a small-agency operating model by collapsing the workflow to fewer explicit roles, preserving proof-first structure, enforcing source-first gating, and keeping implementation constraints explicit and lightweight.\n\nSteps:\n1. Establish a small-team ownership slice\n   Action: Map a minimal owner set (one PM/content owner, one proof owner, one design/build owner) and define a simple release cadence so the scope lock step is explicit even with fewer stakeholders, while keeping ownership and constraints explicit.\n   Assets: workflow:portfolio_site_delivery_v1, prompt:website_handoff_brief_v1\n   Source turns: st-009, st-002\n   Human review: Required before use\n2. Use the same portfolio workflow but prune non-essential handoff overhead\n   Action: Keep the sequence: scope lock → proof-first handoff brief → source gate → architecture map → proof mapping → anti-template constraints → deliverable package → finalize route, but reduce meeting artifacts to a single shared handoff packet suitable for a small team.\n   Assets: workflow:portfolio_site_delivery_v1\n   Source turns: st-009\n   Human review: Required before use\n3. Generate a compact handoff brief from the selected prompt template\n   Action: Run the brief generation step with compact inputs for small agencies, requiring project name, audience profile, positioning, proof items, required sections, anti-template rules, visual constraints, and conversion goal, and reject any placeholder or uncited claims.\n   Assets: prompt:website_handoff_brief_v1\n   Source turns: st-002\n   Human review: Not requested by plan\n4. Enforce source-first gate before any draft text generation\n   Action: Before implementation copy or summary is produced, validate presence of source_reference, evidence_excerpt, collection_timestamp, source_trust_level, and review_gate_status; if missing, return dependency gaps and stop handoff progression.\n   Assets: decision:source_first_before_generation_v1\n   Source turns: st-001, st-007\n   Human review: Required before use\n5. Produce a proof-to-section mapping with confidence labels\n   Action: Attach each proof item to the relevant page sections from the brief, assign confidence labels, and explicitly call out any weak or missing evidence before design/build begins to protect small-team delivery quality.\n   Assets: workflow:portfolio_site_delivery_v1, prompt:website_handoff_brief_v1\n   Source turns: st-009, st-002\n   Human review: Required before use\n6. Finalize a small-agency handoff package\n   Action: Compile one concise package (brief, proof map, anti-template constraints, acceptance criteria, outstanding evidence gaps, and rollout owner) and route to the team as the implementation-ready checklist.\n   Assets: workflow:portfolio_site_delivery_v1, decision:source_first_before_generation_v1\n   Source turns: st-009, st-007\n   Human review: Required before use\n\nMissing context:\n- Specific role names and capacity assumptions for the small agency team are not provided.\n- Evidence repositories, proof item formats, and trust standards are not defined, so confidence labels may remain partial.\n- No conversion goal or target section count was provided for this specific adaptation instance.\n\nLimitations:\n- Context includes only generic workflow/prompt patterns and does not include the agency's actual tooling, cadence, or governance constraints; those must be supplied before execution details can be finalized.\n\nCitations:\n- W2 Portfolio site delivery workflow [workflow:portfolio_site_delivery_v1]\n- P1 Website design-to-build handoff brief [prompt:website_handoff_brief_v1]\n- D3 Source-first before generation [decision:source_first_before_generation_v1]",
+      "text": "Organizational AI Memory capability plan\nTask: website_delivery_handoff\nAuthority: Non-authoritative AI-assisted adaptation\nModel: gpt-5.3-codex-spark\nSummary: Plan to adapt the portfolio website handoff sequence for a small agency team: keep the same proof-first, anti-template discipline while compressing ownership and deliverables into a lean, reviewable flow that prevents template drift and unsupported claims before build execution.\n\nSteps:\n1. Set a lightweight scope-and-ownership anchor\n   Action: Define one request owner, one producer, one reviewer, and the target release date in a single scoped handoff ticket. Record project_name, audience, positioning, conversion_goal, proof_pack status, and delivery constraints so the team starts from shared constraints rather than ad hoc direction.\n   Assets: workflow:portfolio_site_delivery_v1\n   Source turns: st-009\n   Human review: Required before use\n2. Apply source-first gate before any draft text\n   Action: Use a hard evidence check for required fields (source_reference, evidence_excerpt, collection_timestamp, trust level, review status). If any proof is missing, pause and request missing context; do not generate claims or section copy.\n   Assets: decision:source_first_before_generation_v1\n   Source turns: st-001, st-007\n   Human review: Required before use\n3. Generate a structured handoff brief with proof mapping\n   Action: Run a compact version of the handoff brief template that enforces content hierarchy, proof mapping, and conversion goal continuity. Keep claims tied to provided proof_items and avoid placeholder copy.\n   Assets: prompt:website_handoff_brief_v1, workflow:portfolio_site_delivery_v1\n   Source turns: st-002, st-009\n   Human review: Required before use\n4. Convert brief into a small-team information architecture\n   Action: Map required_sections into a small set of implementation-priority blocks (hero, proof, process, services, contact). Assign owners for each block and keep section order stable to reduce rework during build handoff.\n   Assets: workflow:portfolio_site_delivery_v1\n   Source turns: st-009\n   Human review: Not requested by plan\n5. Attach proof to content blocks with confidence labels\n   Action: For each required section, attach the exact proof item that supports it and label confidence (high/medium) to support fast QA. Flag any unsupported language as pending before implementation.\n   Assets: workflow:portfolio_site_delivery_v1, decision:source_first_before_generation_v1\n   Source turns: st-009, st-007\n   Human review: Required before use\n6. Enforce anti-template and visual constraints for implementation\n   Action: Create an implementation constraint bundle from anti_template_rules and visual_style_constraints, then share it as mandatory constraints for design and dev to prevent generic output and preserve brand-safe differentiation.\n   Assets: prompt:website_handoff_brief_v1, workflow:portfolio_site_delivery_v1\n   Source turns: st-002, st-009\n   Human review: Not requested by plan\n\nMissing context:\n- Proof asset details are required but not provided in this request: specific source_reference, evidence_excerpt, collection_timestamp, trust level, and review_gate_status for each proof item.\n- Target visual direction is not specified; only the need for constraints exists, not the concrete style tokens (e.g., palette, typography, spacing system).\n- Team capacity/cadence is assumed (small agency) but not explicitly provided as roles, timeboxes, or communication cadence.\n\nLimitations:\n- Limited to the three selected assets and cannot add or alter source assets; this plan is non-authoritative and assumes assets are used as constraints, not sources of domain-specific truth.\n- No HTML or implementation code is produced, consistent with the source brief guardrails.\n\nCitations:\n- W2 Portfolio site delivery workflow [workflow:portfolio_site_delivery_v1]\n- D3 Source-first before generation [decision:source_first_before_generation_v1]\n- P1 Website design-to-build handoff brief [prompt:website_handoff_brief_v1]",
       "retainedAuthority": true,
       "retainedAssets": true,
       "retainedSourceTurns": true,
@@ -770,13 +770,13 @@
       },
       "operationalDefault": {
         "filter": "operational",
-        "firstPrincipal": "BIBroker Integration Agentagent:0af8ca66-afbe-45b8-9236-5e45939b6c7fagentmember1activeNot recordedJul 10, 08:01 PM UTC",
-        "selectedPrincipal": "BIBroker Integration Agentagent:0af8ca66-afbe-45b8-9236-5e45939b6c7fagentmember1activeNot recordedJul 10, 08:01 PM UTC"
+        "firstPrincipal": "MNMai Nguyen's Personal Memory Agentagent:fa51c852-e6b4-4e2f-806f-3aa1cecc7e23agentmemberPersonal pair · active4activepassedJul 11, 01:43 PM UTC",
+        "selectedPrincipal": "AAAI Architecthuman:ai_architecthumanarchitect0activeNot recordedJul 10, 07:38 PM UTC"
       },
       "desktopState": {
         "title": "Architect Console | Organizational AI Memory",
         "h1": "Overview",
-        "planeRows": 6,
+        "planeRows": 5,
         "navigationItems": 9,
         "scrollY": 0,
         "h1Top": 84,

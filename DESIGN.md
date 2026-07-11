@@ -23,10 +23,12 @@ Public routes:
 
 - `/` - capability promise plus a live deterministic recommendation
 - `/assets` - filter and inspect governed capability assets
-- `/demo` - retrieve a task starting point, optionally adapt it, and query
+- `/capabilities` - retrieve a task starting point, optionally adapt it, and query
   continuity evidence
 - `/method` - inspect formation, governance, recommendation, and safety
 - `/evidence` - inspect continuity memory objects and provenance
+- `/workspace/` - protected employee profile, memory, consent, and preview
+- `/architect/` - protected identity, provisioning, policy, and review console
 
 The internal evaluation path is absent from public navigation and must not be
 proxied by nginx.
@@ -47,7 +49,7 @@ Navigation:
 
 - `Home`
 - `Assets`
-- `Demo`
+- `Capabilities`
 - `Method`
 - `Evidence`
 
@@ -96,10 +98,10 @@ The inspector must distinguish missing values from empty assertions. An absent
 `risk_note` is hidden. External lineage and usage keys remain visible without a
 fabricated asset detail record.
 
-### Demo
+### Capabilities
 
 1. `Start a task from proven capability memory`
-2. Always-visible `Public demo only` scope
+2. Always-visible reviewed organizational-capability scope
 3. `website_delivery_handoff` as the canonical default among five stored tasks
 4. Retrieved assets and deterministic recommendation reason
 5. Optional adaptation request, clearly below the stored record
@@ -221,7 +223,7 @@ Typography:
 
 - The JSON pack is sanitized and classified `public_safe`; asset governance
   visibility remains the source value `internal`.
-- Seven assets are approved and two are reviewed.
+- All nine assets are approved for the explicit public-safe projection.
 - No asset supplies `risk_note`; no risk note may be inferred.
 - External prior-version and usage references remain plain referenced keys, not
   fabricated local records.

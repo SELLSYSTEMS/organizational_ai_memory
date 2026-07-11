@@ -19,7 +19,7 @@ const captures = [];
 
 function unexpectedErrors(errors, route) {
   return errors.filter((error) => !(
-    route === '/demo' && error.includes('400 (Bad Request)')
+    route === '/capabilities' && error.includes('400 (Bad Request)')
   ));
 }
 
@@ -60,7 +60,7 @@ await capture('01-home-capability-memory-1440.png', '/', {
   )),
 });
 
-await capture('02-judge-demo-capability-loop-1440.png', '/demo', {
+await capture('02-capability-workspace-1440.png', '/capabilities', {
   prepare: (page) => page.waitForFunction(() => (
     document.querySelectorAll('.judge-results-table tbody tr').length === 3
     && document.querySelectorAll('.judge-plan-row').length === 3
@@ -68,7 +68,7 @@ await capture('02-judge-demo-capability-loop-1440.png', '/demo', {
   )),
 });
 
-await capture('03-judge-demo-spark-plan-1440.png', '/demo', {
+await capture('03-capability-spark-plan-1440.png', '/capabilities', {
   prepare: async (page) => {
     await page.waitForFunction(() => document.querySelector('[data-assist-submit]')?.disabled === false);
     await page.locator('[data-assist-form] input[name="request"]').fill('Adapt this grounded starting point for a small delivery team.');
@@ -97,7 +97,7 @@ await capture('05-method-architecture-1440.png', '/method', {
   prepare: (page) => page.waitForFunction(() => document.body.innerText.includes('website_delivery_handoff')),
 });
 
-await capture('06-judge-demo-mobile-390.png', '/demo', {
+await capture('06-capability-workspace-mobile-390.png', '/capabilities', {
   viewport: { width: 390, height: 844 },
   prepare: (page) => page.waitForFunction(() => (
     document.querySelectorAll('.judge-results-table tbody tr').length === 3

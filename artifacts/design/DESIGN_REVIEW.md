@@ -5,12 +5,9 @@
 The production direction remains `architecture brief + case-study ledger`, now
 extended into a governed capability ledger.
 
-Accepted Image Gen references from the continuity phase:
-
-- `concepts/home-demo-concept.png`
-- `concepts/method-concept.png`
-- `concepts/evidence-concept.png`
-- `concepts/demo-mobile-concept.png`
+Image-generation and Stitch exploration informed the continuity phase. Raw
+exploration exports remain local and are not release evidence; the implemented
+live surfaces and curated submission captures are authoritative.
 
 The additive capability phase extends the established information system rather
 than introducing a separate visual concept. It must preserve:
@@ -32,7 +29,7 @@ Accepted product additions:
 - filters for type, capability area, and review status
 - a ledger plus side inspector for governance, lineage, use, and evidence
 - five task-start choices backed by thirteen stored mappings
-- `website_delivery_handoff` as the canonical Home, Demo, and Method path
+- `website_delivery_handoff` as the canonical Home, Capabilities, and Method path
 - review state, why-it-worked context, and evidence access on every recommended
   asset row
 - an optional Spark adaptation area below the deterministic recommendation
@@ -129,7 +126,7 @@ Home:
 - `Organizational AI Memory`
 - `Home`
 - `Assets`
-- `Demo`
+- `Capabilities`
 - `Method`
 - `Evidence`
 - `Start with prior work`
@@ -137,10 +134,10 @@ Home:
 - `Start with proven prior work`
 - `Deterministic record`
 
-Demo:
+Capabilities:
 
 - `Start a task from proven capability memory`
-- `Public demo only`
+- `Reviewed organizational capability`
 - `Task-start recommendation`
 - `Adapt the stored starting point`
 - `Spark-generated adaptation`
@@ -152,7 +149,7 @@ permitted in the first viewport.
 
 | Check | Required evidence | Resolution |
 | --- | --- | --- |
-| Product hierarchy | Capability promise, five nav routes, stored task action | Accepted contract |
+| Product hierarchy | Capability promise, six public navigation actions, stored task action | Accepted contract |
 | Asset catalog | Filterable 9-record ledger plus inspector | Accepted contract |
 | Governance truth | Review, version, owner, roles, visibility, missing-data handling | Accepted contract |
 | Identity truth | Human is an app principal with DB-bound department context; only linked agents receive dedicated Linux runtime identity | Accepted contract |
@@ -164,9 +161,9 @@ permitted in the first viewport.
 | Accessibility | Keyboard filters/rows/disclosures, focus, labels, live status | Browser interaction checks passed |
 | Runtime copy | Live generation state matches isolated authentication | Live generated path verified; deterministic fallback contract-tested |
 
-Raw browser QA output remains local and ignored. Eight curated, public-safe
-captures plus a machine-readable report are stored under
-`artifacts/submission/screenshots/`. The final browser suite exercises 35
+Raw browser screenshots outside the curated set remain local and ignored. Eight
+curated public-safe captures and the 35-check machine-readable QA report are
+published. The final browser suite exercises 35
 route, viewport, interaction, fallback, and provenance checks against the live
 HTTPS origin. The mobile interaction retains three stored recommendation rows
 through a non-authoritative generated adaptation and returns four grounded fact

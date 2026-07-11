@@ -3,7 +3,7 @@
 <title>Organizational AI Memory identity proof</title>
 <style>body{font:14px/1.45 system-ui,sans-serif;margin:32px;color:#17211e;background:#fff}h1{font-size:26px}dl{display:grid;grid-template-columns:160px 1fr;max-width:840px}dt,dd{padding:5px 0;margin:0;border-bottom:1px solid #d8dfdc}table{border-collapse:collapse;width:100%;margin-top:24px}th,td{border:1px solid #d8dfdc;padding:8px;text-align:left;vertical-align:top}th{background:#f4f7f6}code{overflow-wrap:anywhere}.PASS{color:#06735f}.FAIL{color:#b42318}</style></head>
 <body><h1>Organizational AI Memory identity proof</h1>
-<dl><dt>Overall</dt><dd class="PASS">PASS</dd><dt>Environment</dt><dd>target-instance</dd><dt>Generated</dt><dd>2026-07-11T04:11:17.654Z</dd><dt>Source commit</dt><dd><code>860db5e15c6c556ed456d8263aed4f4732cd2363</code></dd><dt>Source digest</dt><dd><code>d71ae5e50ce880e5e2be436ffbe0d96d017420d16c003897ea83c160cfea5687</code></dd><dt>Migration hash</dt><dd><code>eacf65e878e14530efd243d40b25c8e06212da745f30fac0a6d673ad38fdc003</code></dd></dl>
+<dl><dt>Overall</dt><dd class="PASS">PASS</dd><dt>Environment</dt><dd>target-instance</dd><dt>Generated</dt><dd>2026-07-11T13:42:15.358Z</dd><dt>Source commit</dt><dd><code>525ff861b3580365839f487ca0dca10d0bf791cd</code></dd><dt>Source digest</dt><dd><code>da4a85d2c50f0605f9bc43287c768edf2a113d00b69fe7ef0c8c36c62c0ce561</code></dd><dt>Migration hash</dt><dd><code>152dbf7f1fe423eba01b88b19f2b37bea95269e5fd1daf93ac493a646da305bf</code></dd></dl>
 <table><thead><tr><th>ID</th><th>Category</th><th>Requirement</th><th>Status</th><th>Expected</th><th>Observed</th><th>Enforcement</th></tr></thead><tbody>
     <tr>
       <td><code>APP-01</code></td>
@@ -127,7 +127,7 @@
       <td>host</td>
       <td>Private workspace write allowance</td>
       <td><strong>PASS</strong></td>
-      <td>The agent can write only its private workspace.</td>
+      <td>The agent can write its private persistent workspace.</td>
       <td>The private workspace write probe succeeded.</td>
       <td>Filesystem ownership</td>
     </tr>
@@ -199,7 +199,7 @@
       <td>host</td>
       <td>Bounded agent service</td>
       <td><strong>PASS</strong></td>
-      <td>The dedicated agent service is active under the expected identity and sandbox.</td>
-      <td>The bounded agent service was active under the dedicated identity.</td>
-      <td>Service manager sandbox</td>
+      <td>The dedicated agent service runs under its expected identity with no-new-privileges and IP sockets denied.</td>
+      <td>The active dedicated process had no-new-privileges, an available broker socket, and a denied IP-socket probe.</td>
+      <td>Service manager sandbox and runtime socket probe</td>
     </tr></tbody></table></body></html>

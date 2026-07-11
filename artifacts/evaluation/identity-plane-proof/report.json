@@ -2,11 +2,11 @@
   "schema_version": 1,
   "product": "Organizational AI Memory",
   "environment": "target-instance",
-  "source_commit": "860db5e15c6c556ed456d8263aed4f4732cd2363",
-  "source_sha256": "d71ae5e50ce880e5e2be436ffbe0d96d017420d16c003897ea83c160cfea5687",
-  "migration_sha256": "eacf65e878e14530efd243d40b25c8e06212da745f30fac0a6d673ad38fdc003",
-  "harness_sha256": "1d50473cfdf3213f74d403605412acd4af2aede8a204bbaeefe743ec01aaa5db",
-  "generated_at": "2026-07-11T04:11:17.654Z",
+  "source_commit": "525ff861b3580365839f487ca0dca10d0bf791cd",
+  "source_sha256": "da4a85d2c50f0605f9bc43287c768edf2a113d00b69fe7ef0c8c36c62c0ce561",
+  "migration_sha256": "152dbf7f1fe423eba01b88b19f2b37bea95269e5fd1daf93ac493a646da305bf",
+  "harness_sha256": "69202c18b811f325d01eb5977733eff9dee6212c8b4cf16f95bd92dbb7312479",
+  "generated_at": "2026-07-11T13:42:15.358Z",
   "overall_status": "PASS",
   "counts": {
     "pass": 22,
@@ -25,7 +25,7 @@
       "observed": "Public readiness completed with all required checks available.",
       "enforcement_point": "Application readiness gate",
       "evidence_sha256": "5fd4ed787d5956c3651ff986b21b176b589db05e7cf8522d418ca57487085fb7",
-      "duration_ms": 145
+      "duration_ms": 138
     },
     {
       "id": "APP-02",
@@ -37,7 +37,7 @@
       "observed": "An active architect identity was authenticated through the application plane.",
       "enforcement_point": "Application session authorization",
       "evidence_sha256": "af7fe77db779e04c3a8cb2258c32a90d58da0e4e40ddb3982f8a59cdbb4c5ffa",
-      "duration_ms": 24
+      "duration_ms": 13
     },
     {
       "id": "APP-03",
@@ -49,7 +49,7 @@
       "observed": "A distinct reviewer identity was authenticated and separated from the architect.",
       "enforcement_point": "Application session authorization",
       "evidence_sha256": "5b0ee005da2cd6bac212ba663ac1d22b0cbb51fcb28dc134b7b99973219d591d",
-      "duration_ms": 11
+      "duration_ms": 7
     },
     {
       "id": "APP-04",
@@ -61,7 +61,7 @@
       "observed": "The human identity remained logical-only with no runtime binding.",
       "enforcement_point": "Identity data plane",
       "evidence_sha256": "115fbee4d2aecfea62d831e787954c821d88951add65b54c3e4a96ff1b79fc17",
-      "duration_ms": 252
+      "duration_ms": 225
     },
     {
       "id": "BRK-01",
@@ -97,7 +97,7 @@
       "observed": "A real canonical mutation probe was rejected.",
       "enforcement_point": "Database privilege boundary",
       "evidence_sha256": "9beb15781b79a9d25840bd05d5dfaded0cd2db23ab8235b9d4ef052cfc91d9b3",
-      "duration_ms": 111
+      "duration_ms": 102
     },
     {
       "id": "DB-03",
@@ -121,7 +121,7 @@
       "observed": "The independent reviewer approved the candidate for draft promotion.",
       "enforcement_point": "Independent review gate",
       "evidence_sha256": "c7827a9e09e46d68f354dd19918f35424b14bfa36cdf924a1eb2ce7085ffdc36",
-      "duration_ms": 249
+      "duration_ms": 255
     },
     {
       "id": "GOV-02",
@@ -133,7 +133,7 @@
       "observed": "The architect promotion produced a governed draft, not canonical memory.",
       "enforcement_point": "Architect promotion gate",
       "evidence_sha256": "a04a509135a24f2d3e01d553ebf4cccf96bf5f72c32adcc961fee0996425c149",
-      "duration_ms": 153
+      "duration_ms": 166
     },
     {
       "id": "GOV-03",
@@ -145,7 +145,7 @@
       "observed": "The draft-specific public search still returned no match.",
       "enforcement_point": "Canonical publication boundary",
       "evidence_sha256": "b35478bbf45d7b4621d95a044ada87fe98c1f2dbba45000a2f14949aae32bdaa",
-      "duration_ms": 54
+      "duration_ms": 49
     },
     {
       "id": "OS-01",
@@ -157,7 +157,7 @@
       "observed": "A dedicated locked system identity and private ownership boundary were verified.",
       "enforcement_point": "Linux identity and ownership",
       "evidence_sha256": "346ae8fe9442121e0f14cf7301dbdf8dd196aa7ac85f873d9eabad3c3ba71341",
-      "duration_ms": 35
+      "duration_ms": 30
     },
     {
       "id": "OS-02",
@@ -177,7 +177,7 @@
       "title": "Private workspace write allowance",
       "required": true,
       "status": "PASS",
-      "expected": "The agent can write only its private workspace.",
+      "expected": "The agent can write its private persistent workspace.",
       "observed": "The private workspace write probe succeeded.",
       "enforcement_point": "Filesystem ownership",
       "evidence_sha256": "5c1d03185850b7bef618e2249af4fa4c9a87c44a2dc93bc0acd4fd7a0686d871",
@@ -193,7 +193,7 @@
       "observed": "Effective policy allowed bounded reuse and explicitly denied canonical writes.",
       "enforcement_point": "Policy decision engine",
       "evidence_sha256": "84829471a95981d12462742f171efdace0cf833e80ed6f2a855d0762807abd20",
-      "duration_ms": 228
+      "duration_ms": 265
     },
     {
       "id": "PRO-01",
@@ -205,7 +205,7 @@
       "observed": "A revision-gated plan completed through the bounded provisioner.",
       "enforcement_point": "Provisioning confirmation gate",
       "evidence_sha256": "a20cf5e8e1030063f9d3bc67574a89d4958fe250f98a890534f1ca6f0c74b80d",
-      "duration_ms": 4069
+      "duration_ms": 3739
     },
     {
       "id": "QUA-01",
@@ -217,7 +217,7 @@
       "observed": "The upload hash was verified, sealed read-only, and produced a review-pending candidate.",
       "enforcement_point": "Quarantine workflow",
       "evidence_sha256": "b00cbbfe60fba76edfe890a5116733c9cb2f9cdba1d488760b8e1d1aa2da7295",
-      "duration_ms": 588
+      "duration_ms": 613
     },
     {
       "id": "QUA-02",
@@ -229,7 +229,7 @@
       "observed": "The candidate-specific public search returned no match.",
       "enforcement_point": "Public projection boundary",
       "evidence_sha256": "b35478bbf45d7b4621d95a044ada87fe98c1f2dbba45000a2f14949aae32bdaa",
-      "duration_ms": 84
+      "duration_ms": 63
     },
     {
       "id": "SUS-01",
@@ -241,7 +241,7 @@
       "observed": "The suspended identity had no effective permissions.",
       "enforcement_point": "Identity and policy revocation",
       "evidence_sha256": "709a85688e6e4def26366cd37f21a55d6eaa366727b2c83efe1e03c4ab50307a",
-      "duration_ms": 1198
+      "duration_ms": 1436
     },
     {
       "id": "SUS-02",
@@ -253,7 +253,7 @@
       "observed": "The service stopped and host credential access was removed.",
       "enforcement_point": "Host suspension enforcement",
       "evidence_sha256": "9c094abc81b6fe596d5cd6273027c6653c35c802866d43740ef10d8dd943b1d2",
-      "duration_ms": 43
+      "duration_ms": 57
     },
     {
       "id": "SUS-03",
@@ -265,7 +265,7 @@
       "observed": "The broker rejected the pre-suspension credential.",
       "enforcement_point": "Broker authorization revocation",
       "evidence_sha256": "63723bc2b88520e80b366179b6681b6cf841db3e4e5a9657b132c48b0a828252",
-      "duration_ms": 1246
+      "duration_ms": 1359
     },
     {
       "id": "SYS-01",
@@ -273,10 +273,10 @@
       "title": "Bounded agent service",
       "required": true,
       "status": "PASS",
-      "expected": "The dedicated agent service is active under the expected identity and sandbox.",
-      "observed": "The bounded agent service was active under the dedicated identity.",
-      "enforcement_point": "Service manager sandbox",
-      "evidence_sha256": "ac47a019ed40248d5917c517fc6891911855960fae076f3565bb582ff0addf98",
+      "expected": "The dedicated agent service runs under its expected identity with no-new-privileges and IP sockets denied.",
+      "observed": "The active dedicated process had no-new-privileges, an available broker socket, and a denied IP-socket probe.",
+      "enforcement_point": "Service manager sandbox and runtime socket probe",
+      "evidence_sha256": "499041b5702b96bc1e553abcf011e5d6b0ce7b112ccf141411f63e6d127244b9",
       "duration_ms": 0
     }
   ]

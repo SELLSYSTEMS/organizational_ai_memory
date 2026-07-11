@@ -1,8 +1,8 @@
 # Organizational AI Memory
 
-Built for AABW P5, Organizational AI Memory turns bounded, public-safe work
-history into governed prompts, workflows, decisions, and agent patterns that
-people and linked agents can retrieve, inspect, and safely reuse.
+Built for AABW P5, Organizational AI Memory turns employee experience and
+reviewed work history into governed prompts, workflows, decisions, and agent
+patterns that people and linked agents can retrieve, inspect, and safely reuse.
 
 The application turns bounded, public-safe work history into distinct memory
 objects and reusable AI capability assets. A known task retrieves a stored,
@@ -30,14 +30,25 @@ asset -> observation -> source turn
 
 - Home: `https://memory.sellsystems.agency/`
 - Assets: `https://memory.sellsystems.agency/assets`
-- Demo: `https://memory.sellsystems.agency/demo`
+- Capabilities: `https://memory.sellsystems.agency/capabilities`
 - Method: `https://memory.sellsystems.agency/method`
 - Evidence: `https://memory.sellsystems.agency/evidence`
 - Architect Console: `https://memory.sellsystems.agency/architect/` (private operator token required)
+- Employee workspace: `https://memory.sellsystems.agency/workspace/` (protected;
+  employee workspace credential required)
 - Readiness: `https://memory.sellsystems.agency/api/readyz`
 - Sanitized access proof: `https://memory.sellsystems.agency/api/public/access-proof`
 
-## What is live
+## Release status
+
+Release commit `525ff861b3580365839f487ca0dca10d0bf791cd` is installed and
+live-verified on `2026-07-11`. Its deployed security/runtime source SHA-256 is
+`da4a85d2c50f0605f9bc43287c768edf2a113d00b69fe7ef0c8c36c62c0ce561`.
+The exact release passed 275/275 API/security tests, 35/35 browser checks,
+22/22 build-bound identity controls, and the complete protected employee
+workflow capture. Five previously executed real PostgreSQL integration cases
+remain recorded contract evidence; they were not rerun against the live
+database for this commit because they persist fixtures.
 
 1. Postgres 17 is the canonical memory and capability store.
 2. The public capability pack contains 9 assets across 5 types, 5 task-start
@@ -58,11 +69,23 @@ asset -> observation -> source turn
    with an HTTP `200` fallback; application readiness does not depend on Codex.
 9. A four-plane identity system aligns application principals, immutable
    department policy, dedicated agent Linux/systemd identities, and separate
-   PostgreSQL authority. The current live proof passes 22/22 controls.
+   PostgreSQL authority. The fresh build-bound proof passed 22/22 controls.
 10. A protected Architect Console implements logical humans, independent linked
     agents, confirmed provisioning, quarantine, independent review, draft-only
     promotion, effective-access inspection, proof records, and audit.
-11. The original public continuity corpus remains `public_demo + public_safe`.
+11. The live release implements atomic employee onboarding for one human
+    principal, exactly one distinct Personal Memory Agent, a hash-only workspace
+    credential, a private versioned profile, and a draft physical-provisioning
+    boundary.
+12. The live release implements employee profile, experience, lesson, preference,
+    skill, decision, and pattern versions. New or edited content is owner-only;
+    explicit current-revision access never publishes organizational memory.
+13. Pair activation requires a succeeded
+   physical job, locked Linux user, systemd unit, broker credential, policy,
+   and grants. The dedicated runtime proved repository, installed application,
+   application-environment, model-authentication, and direct-PostgreSQL denial;
+   private-workspace write and cited broker retrieval were allowed.
+14. The original public continuity corpus remains `public_demo + public_safe`.
    Its internal regression counterpart is a separate tenant with no public
    route.
 
@@ -84,9 +107,9 @@ projection only when its `source_sha256` matches that expected digest, the
 proof files have secure ownership and modes with no symlinked path component,
 and the proof is no more than 24 hours old.
 
-## Demo paths
+## Product paths
 
-For reusable capability, open `/demo`. The single-screen judge path starts with
+For reusable capability, open `/capabilities`. The integrated workspace starts with
 the deterministic free-text query `Prepare a website delivery handoff`, resolves
 `website_delivery_handoff`, and returns these assets before optional generation:
 
@@ -111,10 +134,11 @@ Every selected fact and asset exposes its own source path.
 | --- | --- |
 | `/` | Capability-first product explanation and live stored recommendation |
 | `/assets` | Filterable governed asset ledger and source inspector |
-| `/demo` | Single-screen search, stored recommendation, cited Spark adaptation, analytics, and access proof |
+| `/capabilities` | Search, stored recommendation, cited Spark adaptation, analytics, and access proof |
 | `/method` | Formation, governance, recommendation, adaptation, temporal truth, and safety |
 | `/evidence` | Live fact, observation, turn, summary, and reflection inspector |
 | `/architect/` | Protected identity, policy, provisioning, quarantine, review, proof, and audit console |
+| `/workspace/` | Protected employee profile, private memory, explicit agent access, and grounded retrieval |
 | `GET /api/healthz` | Process liveness |
 | `GET /api/readyz` | Database, public corpus, and capability-pack readiness |
 | `GET /api/public/corpus` | Public continuity corpus metadata and counts |
@@ -142,10 +166,12 @@ nginx :80
   |-- public app 127.0.0.1:3000, oam-public, oam_public_api
   |     |-- fixed oam_public views in Postgres 17
   |     `-- Unix socket -> oam-codex -> gpt-5.3-codex-spark
-  `-- /architect/ -> operator 127.0.0.1:3010, oam-operator
+  |-- /architect/ -> operator 127.0.0.1:3010, oam-operator
         |-- app human -> DB-bound secret context -> FORCE RLS
         |-- shared oam_operator_api role -> identity/governance data plane
         `-- Unix socket -> root allowlisted provisioner
+  `-- /workspace/ -> employee 127.0.0.1:3020, oam-employee
+        `-- workspace token hash -> DB-bound human/department/agent context
 
 linked agent UID -> sandboxed systemd unit -> broker Unix socket
                                          -> oam-broker -> FORCE RLS
@@ -166,6 +192,7 @@ Qdrant and TEI are not running. The API reports semantic retrieval as
 app/
   server.mjs                       Node HTTP entrypoint
   operator-server.mjs              protected Architect Console backend
+  employee-server.mjs              protected employee workspace backend
   memory-broker.mjs                broker-only agent retrieval boundary
   provisioner.mjs                  root allowlisted host operations
   agent-runtime.mjs                linked-agent runtime proof and broker client
@@ -174,6 +201,7 @@ app/
   lib/codex-*.mjs                  bounded Spark client and runner
   lib/public-memory-*.mjs          continuity memory repository and service
   public/                          responsive product UI
+  employee-public/                 private employee product UI
 config/demo/
   public_demo_seed.json            synthetic public-safe continuity thread
   internal_demo_seed.json          isolated internal regression thread
@@ -201,42 +229,37 @@ sql/
   identity_data_plane_v5_*.sql     department-scoped operator audit
   identity_data_plane_v6_*.sql     immutable policy, append-only evidence, proof scope
   identity_data_plane_v7_*.sql     DB-bound operator context and FORCE RLS
+  identity_data_plane_v8_*.sql     one-to-one personal agents and private versioned memory
   identity_operator_context_seed_v1.sql  root-provisioned human/department mappings
 deploy/
   nginx/                           instance-side routing and rate limits
   systemd/                         application and isolated sidecar units
 ```
 
-## Local start
+## Target installation
 
-Prerequisites for the public application:
-
-- Node.js 22+
-- Postgres with `platform` and `memory` schemas applied
-- `/etc/tg_ops/platform.env` or standard `PG*`/`DATABASE_URL` variables
+Use the confirmation-gated installer on this target. It applies the ordered
+schema chain with administrative authority, creates independent least-privileged
+runtime logins and environment files, installs systemd/nginx configuration,
+and verifies workload memberships before startup:
 
 ```bash
 cd /home/admin/organizational-ai-memory
-npm install
-psql "$DATABASE_URL" -f sql/capability_memory_schema_v1.sql
-psql "$DATABASE_URL" -f sql/capability_memory_schema_v2.sql
-npm run demo:seed
-npm run demo:capabilities:import
-npm run demo:eval:internal
-npm run app:test
-npm run app:start
+OAM_TRUSTED_PROXY_CIDR='<target proxy CIDR>' \
+OAM_INSTALL_CONFIRM=INSTALL_ORGANIZATIONAL_AI_MEMORY_IDENTITY_PLANE \
+  scripts/deploy/install_identity_plane.sh
 ```
 
-The app defaults to `http://127.0.0.1:3000`. Without
+Do not use one `DATABASE_URL` for both migration and application runtime. Schema
+and seed operations require an administrative connection; the public process
+must run as the dedicated `oam_public_api` login with exactly
+`oam_public_runtime`. The application does not source the legacy
+`/etc/tg_ops/platform.env` file. Manual database construction is supported only
+for disposable test databases and must follow the installer's exact SQL order.
+
+The public process binds to `http://127.0.0.1:3000`. Without
 `OAM_CODEX_ASSIST_ENABLED=true` and a working isolated sidecar, capability
 assist intentionally returns the deterministic HTTP `200` fallback.
-
-The protected four-plane identity system also requires identity data-plane
-v1-v7, policy, operator-context seed, demo-seed, and runtime-login migrations in
-installer order.
-Use `scripts/deploy/install_identity_plane.sh` on this target; a manual
-database build must apply the same ordered SQL chain and is intended only for
-isolated test databases.
 
 ## Data safety and pack fidelity
 
@@ -287,11 +310,13 @@ secrets, or private financial/legal material were imported into the demo.
 See:
 
 - [Operator runbook](docs/runtime/ORGANIZATIONAL_AI_MEMORY_RUNBOOK.md)
-- [Demo script](docs/demo/ORGANIZATIONAL_AI_MEMORY_DEMO_SCRIPT.md)
+- [Recording script](docs/demo/ORGANIZATIONAL_AI_MEMORY_DEMO_SCRIPT.md)
 - [MVP architecture](docs/architecture/ORGANIZATIONAL_AI_MEMORY_MVP_ARCHITECTURE.md)
 - [Known gaps](docs/KNOWN_GAPS.md)
-- [Demo video plan](docs/demo/DEMO_VIDEO_PLAN.md)
+- [Product video plan](docs/demo/DEMO_VIDEO_PLAN.md)
 - [Submission screenshot manifest](docs/submission/SCREENSHOT_MANIFEST.md)
+- [Release media hash manifest](artifacts/submission/media/release-media-manifest.json)
+- [Judging alignment](docs/submission/JUDGING_ALIGNMENT.md)
 - [Safe publishing guide](docs/submission/PUBLISHING.md)
 - [Design contract](DESIGN.md)
 - [Design review](artifacts/design/DESIGN_REVIEW.md)

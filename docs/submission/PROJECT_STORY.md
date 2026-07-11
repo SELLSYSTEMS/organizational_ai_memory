@@ -1,12 +1,19 @@
 # Organizational AI Memory
 
-**Elevator pitch:** Organizational AI Memory turns proven prompts, workflows,
-decisions, and agent practices into governed, searchable capability that
-employees and AI agents can safely reuse with full provenance.
+**Elevator pitch:** Organizational AI Memory binds each employee to exactly one
+distinct governed Personal Memory Agent, then turns explicitly shared
+experience and reviewed work into searchable, reusable capability with full
+provenance.
 
 **Primary challenge:** P5, Organizational AI Memory. Independent agent
 identities are part of its enforcement architecture, ensuring that agent reuse
 remains bounded by explicit policy.
+
+**Evidence status:** Release `525ff861b3580365839f487ca0dca10d0bf791cd`
+is live. It has build-bound 22/22 identity proof, 275/275 API/security checks,
+five passing real-PostgreSQL integration cases, 35/35 browser checks, eight
+public product captures, a 20-frame protected workflow, and a hashed H.264
+walkthrough.
 
 ## Inspiration
 
@@ -30,6 +37,23 @@ promote, or change it.
 
 ## What it does
 
+An architect can onboard an employee through one protected workflow. The
+system atomically creates the human principal, exactly one Personal Memory
+Agent, a private employee workspace, and the policy records needed for physical
+provisioning. The pair stays unusable until a confirmed root provisioner creates
+and proves the agent's locked Linux identity, private state, systemd unit,
+broker credential, grants, and lack of direct PostgreSQL authority.
+
+The employee then records a versioned profile, experiences, lessons,
+preferences, skills, decisions, and patterns. New memory is private. A separate
+revision-bound action can let only the linked Personal Memory Agent retrieve the
+current version. Editing creates a new owner-only version, so the employee must
+explicitly share the revision again. Results carry memory ID, revision, and
+SHA-256 citations. The employee workspace preview and the dedicated Linux agent
+process are labeled as separate execution paths. Personal sharing does not
+publish content into organizational memory; that remains a separate
+review-gated path.
+
 Organizational AI Memory captures reusable capability as typed, versioned
 prompts, workflows, agent patterns, decision patterns, and best practices. Each
 asset records its purpose, constraints, review state, intended consumers, why it
@@ -44,7 +68,7 @@ public-safe records into a cited plan. It cannot choose different assets or
 change authoritative memory, and the complete stored recommendation remains
 available if generation fails.
 
-The protected Architect Console demonstrates the governed path from quarantined
+The protected Architect Console provides the governed path from quarantined
 input to a reviewed promotion draft:
 
 ```text
@@ -81,7 +105,7 @@ Deterministic lexical retrieval runs over fixed public views and stored task
 mappings.
 
 The runtime is divided into least-privileged workloads: a public service,
-operator API, Unix-socket memory broker, root-owned allowlisted provisioner,
+operator API, employee workspace, Unix-socket memory broker, root-owned allowlisted provisioner,
 isolated Codex sidecar, and per-agent systemd services. Each application
 database login has exactly one workload membership. PostgreSQL grants, FORCE
 RLS, and security-barrier views protect the data plane; Linux ownership,
@@ -103,6 +127,15 @@ protected transaction and applies FORCE RLS across identity, governance, proof,
 and audit records. Caller-provided IDs cannot widen that scope. Scan findings
 and candidate evidence are append-only, activated policy content is immutable,
 and every proof run carries a department scope.
+
+The personal-memory data plane uses a separate `personal` schema, forced RLS,
+append-only profile and memory versions, exact one-to-one human/agent keys,
+hash-only workspace credentials, and an explicit post-provision activation
+function. The employee web process has its own `oam-employee` Linux account and
+`oam_employee_api` login with exactly one runtime-role membership. A physical
+agent still receives no database login; it retrieves explicitly shared current
+personal-memory versions, and separately approved organizational capability,
+through the broker under its own credential and grants.
 
 `gpt-5.3-codex-spark` runs under the isolated `oam-codex` account. It receives a
 bounded projection of the already selected assets and must return a strict
@@ -130,16 +163,22 @@ RLS enforce the department boundary independently of request IDs. We also bound
 capture review to sealed bytes and immutable evidence so an approved candidate
 cannot be silently changed afterward.
 
+The employee flow added a second subtle boundary: onboarding cannot imply that
+an agent is ready. We made the pair start in draft and required a succeeded,
+cryptographically bound physical provisioning job before a separate database
+activation succeeds. Suspension revokes both the logical pair and workspace
+credential, while employee offboarding also stops and locks the linked runtime.
+
 Live infrastructure proof uncovered concrete edge cases, including inherited
 systemd drop-ins that could weaken unit settings, an agent process that exited
 after its first proof, idempotent PostgreSQL upgrade ordering, and an initially
 over-restrictive sponsor-policy intersection. We fixed these issues and converted
-them into regression coverage rather than hiding them in the demo.
+them into regression coverage rather than hiding them in release material.
 
 ## Accomplishments that we're proud of
 
-- One public judge screen connects deterministic search, governed source
-  records, cited adaptation, analytics, and live access evidence.
+- One public capability workspace connects deterministic search, governed
+  source records, cited adaptation, analytics, and dated access evidence.
 - The public capability pack contains 9 approved assets across 5 types, 5 task
   definitions, and 13 stored recommendation mappings, all connected to
   sanitized source turns.
@@ -154,11 +193,16 @@ them into regression coverage rather than hiding them in the demo.
 - The public proof is build-bound: its source digest must match the root-owned
   digest of the deployed security/runtime source, while stale, unsafe,
   symlinked, or substituted proof files fail closed.
-- The live Spark path returns structured plans from `gpt-5.3-codex-spark`, while
-  the deterministic recommendation remains independently usable.
+- The dated public release verified structured plans from
+  `gpt-5.3-codex-spark`, while the deterministic recommendation remains
+  independently usable.
 - Automated API/security, real PostgreSQL integration, and browser
   route/viewport suites cover the product and its allow/deny boundaries without
   relying on a slide-only demonstration.
+- The live protected workflow and recorded real-PostgreSQL integration coverage exercise atomic
+  onboarding, one-to-one cardinality, physical activation conditions, private
+  versioned capture, explicit agent access, cited retrieval, cross-employee
+  denial, edit reset, re-consent, and revocation.
 
 ## What we learned
 
@@ -172,6 +216,11 @@ transaction-local context on a shared workload; the product should not pretend
 that the MVP creates a host and database account per employee. For a linked
 agent, the Linux process, broker credential, policy assignment, and data path
 must all refer to the same independent principal.
+
+Calling an agent a "digital copy" would overstate what the system can know and
+encourage unsafe impersonation. The product instead calls it a Personal Memory
+Agent: a distinct principal that supports one employee within explicit,
+revocable scope and never acts as the employee's identity.
 
 Finally, transparent limits made the product more credible. The interface
 distinguishes stored facts from authored analytics signals, reports optional
@@ -206,10 +255,11 @@ ceiling.
 ## Optional Links
 
 - [Live product](https://memory.sellsystems.agency/)
-- [Single-screen judge demo](https://memory.sellsystems.agency/demo)
+- [Capability workspace](https://memory.sellsystems.agency/capabilities)
+- [Protected employee workspace](https://memory.sellsystems.agency/workspace/)
 - [Architecture and authority method](https://memory.sellsystems.agency/method)
 - [Public evidence inspector](https://memory.sellsystems.agency/evidence)
 - [Sanitized 22-control proof](https://memory.sellsystems.agency/api/public/access-proof)
 
-The source-repository URL and final video URL should be added only after the
-operator publishes and verifies those artifacts.
+The source-repository URL and public video URL
+should be added only after the operator publishes and verifies those artifacts.

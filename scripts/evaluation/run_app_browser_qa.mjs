@@ -8,7 +8,7 @@ const executablePath = process.env.OAM_CHROME_PATH || '/usr/bin/google-chrome';
 const operatorCredentialFile = process.env.OAM_QA_OPERATOR_CREDENTIAL_FILE || '';
 const requireOperator = process.env.OAM_QA_REQUIRE_OPERATOR === '1';
 const browserAvailability = 'Browser plugin not available; repository Playwright used with system Chrome.';
-const routes = ['/', '/assets', '/demo', '/method', '/evidence'];
+const routes = ['/', '/assets', '/capabilities', '/method', '/evidence'];
 const viewports = [
   { key: 'desktop-1440', width: 1440, height: 1000, screenshot: true },
   { key: 'desktop-1280', width: 1280, height: 900, screenshot: false },
@@ -93,10 +93,10 @@ for (const viewport of viewports) {
     checks.push(check);
 
     if (check.status !== 200) failures.push(`${route} ${viewport.key}: HTTP ${check.status}`);
-    if (['/', '/demo', '/method'].includes(route) && !check.canonicalWebsiteTask) {
+    if (['/', '/capabilities', '/method'].includes(route) && !check.canonicalWebsiteTask) {
       failures.push(`${route} ${viewport.key}: canonical website-delivery path is not visible`);
     }
-    if (['/', '/demo'].includes(route) && check.missingReviewBadges) {
+    if (['/', '/capabilities'].includes(route) && check.missingReviewBadges) {
       failures.push(`${route} ${viewport.key}: recommendation lifecycle metadata is missing`);
     }
     if (route === '/evidence' && await page.locator('[data-evidence-type="assets"]').count()) {
@@ -107,7 +107,7 @@ for (const viewport of viewports) {
     if (check.tinyTargets.length) failures.push(`${route} ${viewport.key}: interactive targets smaller than 44 x 44`);
     if (check.readyText !== 'ok') failures.push(`${route} ${viewport.key}: visible retrieval error`);
     const unexpectedConsoleErrors = consoleErrors.filter((message) => !(
-      route === '/demo' && message.includes('400 (Bad Request)')
+      route === '/capabilities' && message.includes('400 (Bad Request)')
     ));
     check.unexpectedConsoleErrors = unexpectedConsoleErrors;
     if (unexpectedConsoleErrors.length || pageErrors.length || failedRequests.length) {
@@ -123,7 +123,7 @@ const interactionContext = await browser.newContext({
 const interactionPage = await interactionContext.newPage();
 const interactionPageErrors = [];
 interactionPage.on('pageerror', (error) => interactionPageErrors.push(error.message));
-await interactionPage.goto(`${baseUrl}/demo`, { waitUntil: 'networkidle' });
+await interactionPage.goto(`${baseUrl}/capabilities`, { waitUntil: 'networkidle' });
 await interactionPage.waitForFunction(() => (
   document.querySelectorAll('.judge-results-table tbody tr').length === 3
   && document.querySelectorAll('.judge-plan-row').length === 3
@@ -219,7 +219,7 @@ if (interactionPageErrors.length) failures.push(`judge interaction emitted page 
 await interactionContext.close();
 
 const projectorPage = await browser.newPage({ viewport: { width: 1366, height: 768 } });
-await projectorPage.goto(`${baseUrl}/demo`, { waitUntil: 'networkidle' });
+await projectorPage.goto(`${baseUrl}/capabilities`, { waitUntil: 'networkidle' });
 await projectorPage.waitForFunction(() => document.querySelectorAll('.judge-plan-row').length === 3);
 const projectorState = await projectorPage.evaluate(() => {
   const firstPlan = document.querySelector('.judge-plan-row')?.getBoundingClientRect();
@@ -250,7 +250,7 @@ for (const expectedValue of ['4500 USD per month', '3000 USD per month', 'August
 await continuityPage.close();
 
 const provenancePage = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-await provenancePage.goto(`${baseUrl}/demo?task=website_delivery_handoff`, { waitUntil: 'networkidle' });
+await provenancePage.goto(`${baseUrl}/capabilities?task=website_delivery_handoff`, { waitUntil: 'networkidle' });
 await provenancePage.waitForFunction(() => document.querySelectorAll('.judge-results-table tbody tr').length === 3);
 await provenancePage.locator('.judge-results-table tbody tr td:nth-child(2) a').first().click();
 await provenancePage.waitForURL('**/assets?asset=*');
@@ -350,7 +350,13 @@ if (operatorCredentialFile) {
     if (operatorInteraction.loginStatus !== 200) failures.push(`architect console returned HTTP ${operatorInteraction.loginStatus}`);
     if (!effectiveAccess.permissions.includes('candidate.create')) failures.push('architect effective access omitted candidate.create');
     if (!effectiveAccess.denials.includes('memory.canonical.write')) failures.push('architect effective access omitted canonical-write denial');
-    if (operationalDefault.filter !== 'operational' || /identity proof/i.test(operationalDefault.firstPrincipal) || !/broker integration agent/i.test(operationalDefault.selectedPrincipal)) failures.push('architect console did not default to the canonical operational principal set');
+    const operationalText = `${operationalDefault.firstPrincipal} ${operationalDefault.selectedPrincipal}`;
+    if (operationalDefault.filter !== 'operational'
+        || /identity proof|integration agent|integration member|provisioning contract/i.test(operationalText)
+        || !/personal memory agent/i.test(operationalDefault.firstPrincipal)
+        || !/ai architect/i.test(operationalDefault.selectedPrincipal)) {
+      failures.push('architect console did not default to the canonical operational principal set');
+    }
     if (desktopState.h1 !== 'Overview' || !desktopState.planeRows || desktopState.navigationItems !== 9) failures.push('architect overview did not render the complete live identity state');
     if (desktopState.scrollY !== 0 || desktopState.h1Top < 58) failures.push('architect navigation focused content beneath the sticky topbar');
     if (desktopState.overflow || mobileOpenState.overflow || mobileState.overflow || !mobileOpenState.navOpen || !mobileOpenState.backdropOpen || !mobileOpenState.focusInsideNav || mobileState.navOpen || mobileState.backdropOpen || !mobileState.focusReturned) failures.push('architect console responsive navigation, dismissal, focus return, or overflow check failed');
