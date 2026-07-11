@@ -62,11 +62,27 @@ The following eight files were freshly captured at
 | `01-home-capability-memory-1440.png` | Home recommendation and four temporal facts loaded | "Organizational AI Memory starts from reviewed capability and preserves current truth without erasing history." |
 | `02-capability-workspace-1440.png` | Three deterministic assets, four analytics metrics, and fresh 22/22 proof visible | "Deterministic search connects governed reuse, analytics, and build-bound access proof." |
 | `03-capability-spark-plan-1440.png` | `gpt-5.3-codex-spark` plan with validated asset and source-turn citations | "Spark adapts selected records while deterministic capability remains authoritative." |
-| `04-assets-governance-provenance-1440.png` | Prompt inspector with open source path | "Typed capability retains version, review state, why it worked, and provenance." |
+| `04-assets-governance-provenance-1440.png` | Asset inventory with governed-state, duplication, and authored-gap signals | "The synthetic pack exposes reviewed inventory and clearly labels authored duplication and gap signals." |
 | `05-method-architecture-1440.png` | Public architecture and authority method | "Application identity, policy, runtime identity, and data authority are distinct enforcement planes." |
 | `06-capability-workspace-mobile-390.png` | Responsive public capability workflow | "The public capability workflow remains usable without horizontal overflow on mobile." |
 | `07-architect-console-four-plane-1440.png` | Authenticated four-plane overview with no credential visible | "The protected console maps principals to policy, runtime bindings, and data authority." |
 | `08-architect-effective-access-1440.png` | AI Architect evaluation shows allowed actions and canonical-write denial | "Reviewed promotion produces a draft; direct canonical-memory write remains denied." |
+
+## Final judge-video focal captures
+
+The final public-only capture at `1920 x 1080` is stored under
+`artifacts/submission/media/final-judge-video/sources/`. It used one assist
+request and produced a six-step `gpt-5.3-codex-spark` adaptation constrained to
+the three deterministic records and their permitted source turns.
+
+| Filename | Verified state |
+| --- | --- |
+| `01-home-1920x1080.png` | P5 product and stored starting point visible |
+| `02-search-results-1920x1080.png` | Exact prompt, workflow, and decision selected before generation |
+| `03-asset-inspector-provenance-1920x1080.png` | Typed content, version, approval, operational value, and why-it-worked context |
+| `04-asset-source-path-1920x1080.png` | Focused `asset -> observation -> source turn` path and lineage |
+| `05-assist-result-1920x1080.png` | Fresh six-step Spark adaptation with validated citations |
+| `06-analytics-access-proof-1920x1080.png` | Inventory analytics and governed-access proof in the same capability workspace |
 
 ## Capture contract
 
@@ -83,7 +99,8 @@ The following eight files were freshly captured at
    broker path. `/workspace/` preview alone is insufficient.
 6. Any unexpected page error, console error, missing citation, stale proof, or
    cross-employee allow fails the current capture set.
-7. The capture reports and `release-media-manifest.json` jointly store the
+7. The capture reports, `release-media-manifest.json`, and
+   `final-judge-media-manifest.json` jointly store the
    release commit, deployed source digest, UTC timestamps, viewport, route,
    observed state, and file SHA-256 for every image.
 8. Run a secret scan and manual review before adding images to Git.

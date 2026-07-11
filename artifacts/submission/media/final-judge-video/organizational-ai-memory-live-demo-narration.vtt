@@ -1,0 +1,73 @@
+WEBVTT
+
+1
+00:00:00.035 --> 00:00:03.529
+Goal: prepare a website handoff
+the next owner can execute.
+
+2
+00:00:03.576 --> 00:00:08.022
+Before any model runs, Organizational
+AI Memory selects an approved prompt,
+
+3
+00:00:08.057 --> 00:00:11.575
+workflow, and source-first
+decision, each with review state,
+
+4
+00:00:11.622 --> 00:00:14.222
+why-it-worked context, and source lineage.
+
+5
+00:00:14.246 --> 00:00:18.576
+In this fresh capture, Spark creates
+six cited steps from those records.
+
+6
+00:00:18.692 --> 00:00:22.500
+Each step keeps its selected
+asset and source-turn citations.
+
+7
+00:00:22.616 --> 00:00:25.031
+Deterministic selection
+remains authoritative.
+
+8
+00:00:25.112 --> 00:00:28.456
+Personal memory stays owner-only
+until revision consent.
+
+9
+00:00:28.502 --> 00:00:32.101
+A locked Linux agent retrieves it only
+through a broker with revision and
+
+10
+00:00:32.218 --> 00:00:34.632
+SHA-256 citation.
+
+11
+00:00:34.760 --> 00:00:39.509
+Seven runtime checks deny source,
+model credentials, direct PostgreSQL,
+
+12
+00:00:39.532 --> 00:00:43.503
+and outbound sockets. Editing
+resets access until re-consent.
+
+13
+00:00:43.619 --> 00:00:46.881
+Spark adapts the plan; it
+cannot decide company truth.
+
+14
+00:00:46.997 --> 00:00:50.550
+When people move on, the organization
+keeps reviewed capability,
+
+15
+00:00:50.619 --> 00:00:51.757
+not private memory.

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-11T20:05:25.077Z",
+  "provider": "ElevenLabs",
+  "voice_id": "HsgAn6u75ZbG3h23K3dR",
+  "model_id": "eleven_multilingual_v2",
+  "output_format": "mp3_44100_128",
+  "voice_settings": {
+    "stability": 0.5,
+    "similarity_boost": 0.75,
+    "style": 0,
+    "use_speaker_boost": true,
+    "speed": 1
+  },
+  "generation_scope": [
+    "live-demo"
+  ],
+  "credential_source": "root-owned local file (not copied or logged)",
+  "generated": [
+    {
+      "id": "full",
+      "source_narration": "organizational-ai-memory-full-narration.txt",
+      "word_count": 416,
+      "audio": {
+        "path": "organizational-ai-memory-full-narration.mp3",
+        "bytes": 2793265,
+        "sha256": "4a04cf0008ca3bd16fe35f219320d61112b4fcd1c135d310b8094cab3bdbc816"
+      },
+      "alignment": {
+        "path": "organizational-ai-memory-full-narration-alignment.json",
+        "bytes": 114302,
+        "sha256": "258a59f33cbc880c664d88bafe5fc1fc170eb9fd93af69af11dcfe225b08512b"
+      },
+      "captions": {
+        "path": "organizational-ai-memory-full-narration.vtt",
+        "bytes": 4582,
+        "sha256": "23c08d36cfb103ddf0a9e5721a92936a59a4608cf4f39b6f81c81b7cfc354c87",
+        "cue_count": 50,
+        "aligned_duration_seconds": 174.522,
+        "max_lines": 2,
+        "max_line_length": 42
+      }
+    },
+    {
+      "id": "live-demo",
+      "source_narration": "organizational-ai-memory-live-demo-narration.txt",
+      "word_count": 119,
+      "audio": {
+        "path": "organizational-ai-memory-live-demo-narration.mp3",
+        "bytes": 830946,
+        "sha256": "cedc951ef1939c32f8e1163931e4048fb7ca205482c60272175e4b630b8ec135"
+      },
+      "alignment": {
+        "path": "organizational-ai-memory-live-demo-narration-alignment.json",
+        "bytes": 32869,
+        "sha256": "5e9b3f5bd875df88122f7fbabac40decadf296237aedf08df72f18dc84e914ed"
+      },
+      "captions": {
+        "path": "organizational-ai-memory-live-demo-narration.vtt",
+        "bytes": 1353,
+        "sha256": "0f27af1a6678af9c87698e6c8c317ab6d23edd29b79961aea0477cbe4a1068fc",
+        "cue_count": 15,
+        "aligned_duration_seconds": 51.873,
+        "max_lines": 2,
+        "max_line_length": 42
+      }
+    }
+  ]
+}

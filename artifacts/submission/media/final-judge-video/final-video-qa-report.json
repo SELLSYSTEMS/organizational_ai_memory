@@ -1,0 +1,355 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-07-11T20:33:35.347Z",
+  "source_capture": {
+    "path": "artifacts/submission/media/final-judge-video/sources/public-interaction-capture-report.json",
+    "passed": true,
+    "assist_attempts": 1,
+    "assist": {
+      "status": "generated",
+      "model": "gpt-5.3-codex-spark",
+      "selected_asset_keys": [
+        "prompt:website_handoff_brief_v1",
+        "workflow:portfolio_site_delivery_v1",
+        "decision:source_first_before_generation_v1"
+      ],
+      "plan_step_count": 6,
+      "steps": [
+        {
+          "asset_keys": [
+            "workflow:portfolio_site_delivery_v1"
+          ],
+          "source_turn_ids": [
+            "st-009"
+          ]
+        },
+        {
+          "asset_keys": [
+            "prompt:website_handoff_brief_v1"
+          ],
+          "source_turn_ids": [
+            "st-002"
+          ]
+        },
+        {
+          "asset_keys": [
+            "decision:source_first_before_generation_v1"
+          ],
+          "source_turn_ids": [
+            "st-001",
+            "st-007"
+          ]
+        },
+        {
+          "asset_keys": [
+            "workflow:portfolio_site_delivery_v1",
+            "prompt:website_handoff_brief_v1"
+          ],
+          "source_turn_ids": [
+            "st-009",
+            "st-002"
+          ]
+        },
+        {
+          "asset_keys": [
+            "workflow:portfolio_site_delivery_v1",
+            "decision:source_first_before_generation_v1"
+          ],
+          "source_turn_ids": [
+            "st-009",
+            "st-007"
+          ]
+        },
+        {
+          "asset_keys": [
+            "prompt:website_handoff_brief_v1",
+            "workflow:portfolio_site_delivery_v1"
+          ],
+          "source_turn_ids": [
+            "st-002",
+            "st-009"
+          ]
+        }
+      ],
+      "selected_asset_provenance": {
+        "prompt:website_handoff_brief_v1": [
+          "st-002"
+        ],
+        "workflow:portfolio_site_delivery_v1": [
+          "st-009"
+        ],
+        "decision:source_first_before_generation_v1": [
+          "st-001",
+          "st-007"
+        ]
+      },
+      "cited_asset_keys": [
+        "workflow:portfolio_site_delivery_v1",
+        "prompt:website_handoff_brief_v1",
+        "decision:source_first_before_generation_v1"
+      ],
+      "cited_source_turn_ids": [
+        "st-009",
+        "st-002",
+        "st-001",
+        "st-007"
+      ],
+      "per_step_citation_containment": true
+    },
+    "expected_public_boundary_denials": {
+      "url": "https://memory.sellsystems.agency/api/public/evidence?type=fact&thread=private",
+      "expected_count": 2,
+      "observed_count": 2
+    }
+  },
+  "voice_generation": {
+    "path": "artifacts/submission/media/final-judge-video/voice-generation-report.json",
+    "provider": "ElevenLabs",
+    "voice_id": "HsgAn6u75ZbG3h23K3dR",
+    "model_id": "eleven_multilingual_v2",
+    "generated_count": 2,
+    "public_safe": true
+  },
+  "release_control_evidence": {
+    "deployed_code_commit": "525ff861b3580365839f487ca0dca10d0bf791cd",
+    "deployed_source_sha256": "da4a85d2c50f0605f9bc43287c768edf2a113d00b69fe7ef0c8c36c62c0ce561",
+    "api_security": {
+      "passed": 275,
+      "total": 275,
+      "source": "handoff/FINAL_HACKATHON_MVP_HANDOFF_2026-07-10.md",
+      "source_sha256": "d425254312791f5d5db50d494675c1b1853e197048da26de4d3c0d486e3445c1"
+    },
+    "postgres_integration": {
+      "passed": 5,
+      "total": 5,
+      "freshness": "recorded contract evidence; not a fresh live-database run",
+      "source": "handoff/FINAL_HACKATHON_MVP_HANDOFF_2026-07-10.md",
+      "source_sha256": "d425254312791f5d5db50d494675c1b1853e197048da26de4d3c0d486e3445c1"
+    },
+    "identity": {
+      "passed": 22,
+      "total": 22,
+      "source": "artifacts/evaluation/identity-plane-proof/report.json",
+      "source_sha256": "5a7bc1f187434647082b510c54055f4850a76c246f08488bef92e9814c5bb4da"
+    },
+    "browser": {
+      "passed": 35,
+      "total": 35,
+      "source": "artifacts/qa/browser/report.json",
+      "source_sha256": "45c4a7d31168a0db40178d2b0180b6aa94f319532a48bcb32eaaa9e4814dc0bb"
+    },
+    "physical_agent_boundaries": {
+      "passed": 7,
+      "total": 7,
+      "source": "artifacts/evaluation/personal-agent-runtime-proof-sanitized.json",
+      "source_sha256": "144f3fcf67c9edd2ef9227aa9b91a8ea750df64e5e9305e4958fa104755b0638"
+    }
+  },
+  "citation_validation_evidence": {
+    "source_commit": "525ff861b3580365839f487ca0dca10d0bf791cd",
+    "validator_path": "app/lib/structured-capability-plan.mjs",
+    "validator_sha256": "e0a992cba4475d39ab8cd42ab2f8d78a3131cf2d5246a69a3e045696cc956fa5",
+    "validator_test_path": "test/api/structured-capability-plan.test.mjs",
+    "validator_test_sha256": "514ccf4a93d22a8727d76a5e9de45f483404a10c56f726dbb602b523d852d46b",
+    "per_asset_source_turn_containment": true
+  },
+  "builds": [
+    {
+      "id": "full-judge-demo",
+      "video": {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-p5-judge-demo.mp4",
+        "bytes": 12260891,
+        "sha256": "5e0e03bb0e2a67c087d8c908f6b8a73121708a38791ee93e161b854c6d6a50dc",
+        "duration_seconds": 177
+      },
+      "captions": {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-p5-judge-demo.vtt",
+        "bytes": 4582,
+        "sha256": "23c08d36cfb103ddf0a9e5721a92936a59a4608cf4f39b6f81c81b7cfc354c87",
+        "cue_count": 50,
+        "first_cue_seconds": 0.07,
+        "last_cue_seconds": 174.406,
+        "max_lines": 2,
+        "max_line_length": 42
+      },
+      "streams": {
+        "video": {
+          "codec": "h264",
+          "profile": "High",
+          "width": 1920,
+          "height": 1080,
+          "pixel_format": "yuv420p",
+          "frame_rate": "30/1",
+          "duration_seconds": 177,
+          "frame_count": 5310
+        },
+        "audio": {
+          "codec": "aac",
+          "profile": "LC",
+          "sample_rate": 48000,
+          "channels": 2,
+          "duration_seconds": 177
+        }
+      },
+      "faststart": true,
+      "full_video_decode": "PASS",
+      "full_audio_decode": "PASS",
+      "loudness": {
+        "integrated_lufs": -16.03,
+        "true_peak_dbtp": -1.47,
+        "loudness_range_lu": 3.1
+      },
+      "silence": {
+        "start_seconds": 174.487229,
+        "end_seconds": 177.017479,
+        "duration_seconds": 2.53025,
+        "expected_trailing_hold": true
+      },
+      "black_intervals": [],
+      "metadata": {
+        "format_tags": [
+          "major_brand",
+          "minor_version",
+          "compatible_brands",
+          "encoder"
+        ],
+        "stream_tags": [
+          "language",
+          "handler_name",
+          "vendor_id",
+          "encoder"
+        ]
+      },
+      "visual_review": {
+        "status": "PASS",
+        "method": "Full-resolution samples inspected from every declared scene; captions inspected both over UI and during the silent proof hold.",
+        "sample_times_seconds": [
+          2,
+          12,
+          22,
+          30,
+          36,
+          43,
+          50,
+          57,
+          63,
+          68,
+          72,
+          79,
+          83,
+          85,
+          91,
+          99,
+          105,
+          110,
+          114,
+          118,
+          121,
+          124,
+          131,
+          145,
+          154,
+          164,
+          172
+        ]
+      }
+    },
+    {
+      "id": "live-pitch-demo",
+      "video": {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-live-pitch-demo.mp4",
+        "bytes": 4970201,
+        "sha256": "7390cf8241d4f6824dff27f213ea14346883ab94fa073211cad1094be953d150",
+        "duration_seconds": 55.5
+      },
+      "captions": {
+        "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-live-pitch-demo.vtt",
+        "bytes": 1353,
+        "sha256": "0f27af1a6678af9c87698e6c8c317ab6d23edd29b79961aea0477cbe4a1068fc",
+        "cue_count": 15,
+        "first_cue_seconds": 0.035,
+        "last_cue_seconds": 51.757,
+        "max_lines": 2,
+        "max_line_length": 42
+      },
+      "streams": {
+        "video": {
+          "codec": "h264",
+          "profile": "High",
+          "width": 1920,
+          "height": 1080,
+          "pixel_format": "yuv420p",
+          "frame_rate": "30/1",
+          "duration_seconds": 55.5,
+          "frame_count": 1665
+        },
+        "audio": {
+          "codec": "aac",
+          "profile": "LC",
+          "sample_rate": 48000,
+          "channels": 2,
+          "duration_seconds": 55.5
+        }
+      },
+      "faststart": true,
+      "full_video_decode": "PASS",
+      "full_audio_decode": "PASS",
+      "loudness": {
+        "integrated_lufs": -16.02,
+        "true_peak_dbtp": -1.5,
+        "loudness_range_lu": 2.1
+      },
+      "silence": {
+        "start_seconds": 51.756896,
+        "end_seconds": 55.514625,
+        "duration_seconds": 3.757729,
+        "expected_trailing_hold": true
+      },
+      "black_intervals": [],
+      "metadata": {
+        "format_tags": [
+          "major_brand",
+          "minor_version",
+          "compatible_brands",
+          "encoder"
+        ],
+        "stream_tags": [
+          "language",
+          "handler_name",
+          "vendor_id",
+          "encoder"
+        ]
+      },
+      "visual_review": {
+        "status": "PASS",
+        "method": "Full-resolution samples inspected from every declared scene; captions inspected both over UI and during the silent proof hold.",
+        "sample_times_seconds": [
+          1,
+          5,
+          9,
+          12,
+          16,
+          20,
+          23,
+          25,
+          29,
+          34,
+          38,
+          42,
+          46,
+          50,
+          53
+        ]
+      }
+    }
+  ],
+  "poster": {
+    "path": "artifacts/submission/media/final-judge-video/organizational-ai-memory-p5-judge-demo-poster.png",
+    "bytes": 265493,
+    "sha256": "bc3a1efe67b4ca582625523cc1aecd38ddec639d6d8a82d26e3cfe6e66d85e9a",
+    "width": 1920,
+    "height": 1080
+  },
+  "visual_review_confirmation": "REVIEWED_ALL_FINAL_VIDEO_SCENES",
+  "passed": true
+}
